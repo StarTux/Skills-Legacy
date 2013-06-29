@@ -1,0 +1,20 @@
+name: Skills
+description: A skill system for Winthier
+author: StarTux
+version: 0.1
+main: com.winthier.skills.SkillsPlugin
+depend: [ Exploits ]
+commands:
+  skill:
+    aliases: [ sk ]
+    description: User interface
+    permission: skills.skill
+  skills:
+    aliases: [ sks ]
+    description: Debug interface
+    permission: skills.skills
+permissions:
+  skills.skills:
+    default: op
+  skills.skill:
+    default: op
