@@ -1,9 +1,11 @@
 package com.winthier.skills.command;
 
+import com.winthier.skills.ElementType;
 import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.skill.AbstractSkill;
 import com.winthier.skills.skill.SkillType;
+import com.winthier.skills.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,13 +32,25 @@ public class SkillCommand implements CommandExecutor {
                 }
                 if (args.length == 0) {
                         if (player == null) {
-                                sender.sendMessage("" + ChatColor.RED + "Player expected.");
+                                Util.sendMessage(sender, "&cPlayer expected");
                                 return true;
                         }
-                        for (SkillType skillType : SkillType.values()) {
-                                AbstractSkill skill = skillType.getSkill();
-                                player.sendMessage(skill.getTitle() + " Level: " + skill.getSkillLevel(player) + " Remain: " + skill.getRequiredSkillPoints(player));
+                        plugin.sqlManager.sendPlayerStatistics(sender, player.getName());
+                        return true;
+                }
+                if (args.length == 1) {
+                        if (player == null) {
+                                Util.sendMessage(sender, "&cPlayer expected");
+                                return true;
                         }
+                        String skillName = args[0];
+                        SkillType skillType = SkillType.fromUserString(skillName);
+                        if (skillType == null) {
+                                Util.sendMessage(sender, "&cUnknown skill: %s", skillName);
+                                return true;
+                        }
+                        plugin.sendSkillInfo(player, player, skillType);
+                        return true;
                 }
                 return false;
         }

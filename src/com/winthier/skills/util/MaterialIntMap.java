@@ -27,7 +27,7 @@ public class MaterialIntMap {
 
         public void load(ConfigurationSection config) {
                 for (String key : config.getKeys(false)) {
-                        Material mat = Material.matchMaterial(key);
+                        Material mat = Material.matchMaterial(key.replaceAll("-", "_"));
                         if (mat == null) {
                                 System.err.println("[Skills] Invalid material: " + key);
                                 continue;

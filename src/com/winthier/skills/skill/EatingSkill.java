@@ -3,6 +3,8 @@ package com.winthier.skills.skill;
 import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.util.MaterialIntMap;
 import com.winthier.skills.util.Util;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,17 +31,20 @@ public class EatingSkill extends AbstractSkill {
                         // give sp
                         addSkillPoints(player, Util.rollFraction(skillPoints, food, foodPoints));
                         // give health bonus
-                        final int health = Math.min(getSkillLevel(player) / levelsPerHealthPoint, food);
-                        if (health > 0) {
-                                player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + health));
+                        final int healthBoost = Util.rollFraction(food, getHealthBoost(player), 100);
+                        if (healthBoost > 0) {
+                                player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + healthBoost));
                         }
                 }
+        }
+
+        public int getHealthBoost(Player player) {
+                return Math.min(100, getSkillLevel(player) / 9);
         }
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
                 final Player player = event.getPlayer();
-                if (!canCollectSkillPoints(player)) return;
                 final Material mat = event.getItem().getType();
                 onPlayerEat(player, mat);
         }
@@ -48,10 +53,19 @@ public class EatingSkill extends AbstractSkill {
         public void onPlayerInteract(PlayerInteractEvent event) {
                 if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
                 final Player player = event.getPlayer();
-                if (!canCollectSkillPoints(player)) return;
                 if (event.getClickedBlock().getType() != Material.CAKE_BLOCK) return;
                 onPlayerEat(player, Material.CAKE);
         }
+
+        // User output
+
+        public List<String> getPerkDescription(Player player) {
+                List<String> result = new ArrayList<String>(1);
+                result.add("Eating food grants you " + getHealthBoost(player) + "% health boost");
+                return result;
+        }
+
+        // Configuration
 
         @Override
         public void loadConfiguration() {

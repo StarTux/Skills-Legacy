@@ -9,7 +9,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerManager implements Listener {
         public final SkillsPlugin plugin;
@@ -39,18 +38,15 @@ public class PlayerManager implements Listener {
         public void onPlayerQuit(PlayerQuitEvent event) {
                 final Player player = event.getPlayer();
                 // clear data in 10 seconds if the player is still offline
-                new BukkitRunnable() {
-                        public void run() {
-                                if (!player.isOnline()) {
-                                        players.remove(player.getName());
-                                }
-                        }
-                }.runTaskLater(plugin, 200L);
         }
 
-        // public PlayerInfo getPlayerInfo(String playerName) {
-        //         return players.get(playerName);
-        // }
+        /**
+         * Return a player info for a player name, if there is one
+         * in memory.
+         */
+        public PlayerInfo getPlayerInfo(String playerName) {
+                return players.get(playerName);
+        }
 
         public PlayerInfo getPlayerInfo(Player player) {
                 final String playerName = player.getName();
@@ -58,8 +54,16 @@ public class PlayerManager implements Listener {
                 if (info == null) {
                         info = new PlayerInfo(plugin, player);
                         players.put(playerName, info);
-                        plugin.sqlManager.loadPlayerInfo(info);
+                        info.load();
                 }
                 return info;
+        }
+
+        /**
+         * Remove a player information from the cache.
+         */
+        public void remove(String playerName) {
+                PlayerInfo info = players.remove(playerName);
+                if (info != null) info.onRemoval();
         }
 }

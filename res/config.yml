@@ -4,190 +4,223 @@ sql:
   Password: test
 skills:
   mining:
-    Title: Mining
-    SkillPointFactor: 100
+    Description: |-
+      Break stone and valuable ores with your pickaxe.
+      Skill points are given for stone, sandstone, coal, iron, gold, redstone, lapis, diamonds, emeralds and quartz.
+      Broken ores will drop more experience points as you climb up levels.
     sp:
-      Emerald_Ore: 150
-      Diamond_Ore: 100
-      Quartz_Ore: 10
-      Gold_Ore: 20
-      Lapis_Ore: 20
-      Iron_Ore: 10
-      Redstone_Ore: 5
-      Glowing_Redstone_Ore: 5
-      Coal_Ore: 2
+      Emerald-Ore: 50
+      Diamond-Ore: 30 # 50 | 10
+      Gold-Ore: 20 # 20 | 10
+      Lapis-Ore: 30 # 45 | 15
+      Redstone-Ore: 5 # 6 | 1.5
+      Glowing-Redstone-Ore: 5 # 6 | 1.5
+      Quartz-Ore: 2
+      Iron-Ore: 2 # 2 | 1.75
+      Coal-Ore: 1
+      Obsidian: 1
+      Sandstone: 1/2
+      Stone: 1/16
     xp:
-      Iron_Ore: 3 
-      Gold_Ore: 5
+      Iron-Ore: 3 
+      Gold-Ore: 5
   smelting:
-    Title: Smelting
-    SkillPointFactor: 100
+    Description: |-
+      Refine materials in a furnace. You earn skill points as you take the end result out.
+      Earn skill points for cooking food, stone, dyes and ores.
+      The amount of dropped experience points increases as you level up.
     sp:
-      Emerald: 20
-      Diamond: 20
-      Quartz: 20
-      Gold_Ingot: 20
-      Iron_Ingot: 10
-      Coal: 10
-      Ink_Sack: 20
-      Cooked_Beef: 2
-      Cooked_Chicken: 2
-      Cooked_Fish: 2
-      Grilled_Pork: 2
-      Stone: 1
+      Emerald: 4
+      Diamond: 2
+      Gold-Ingot: 2
+      Quartz: 1
+      Iron-Ingot: 1
+      Quartz: 1
+      Coal: 1
+      Ink-Sack: 1/2
+      Cooked-Beef: 1/2
+      Cooked-Fish: 1/2
+      Grilled-Pork: 1/2
+      Cooked-Chicken: 1/4
+      Stone: 1/16
     xp: {}
   eating:
-    Title: Eating
-    SkillPointFactor: 10
+    Description: |-
+      Fill up your hunger bar by eating good foods.
+      Get the more skill points the healthier and more delicious your diet is.
+      Eating food gives you a health boost depending on your skill level.
     LevelsPerHealthPoint: 100
     food:
-      BREAD: 5
-      CARROT_ITEM: 4
-      BAKED_POTATO: 6
-      POTATO_ITEM: 1
-      POISONOUS_POTATO: 2
-      GOLDEN_CARROT: 6
-      PUMPKIN_PIE: 8
-      COOKIE: 2
-      MELON: 2
-      MUSHROOM_SOUP: 6
-      RAW_CHICKEN: 2
-      COOKED_CHICKEN: 6
-      RAW_BEEF: 3
-      COOKED_BEEF: 8
-      RAW_FISH: 2
-      COOKED_FISH: 5
-      PORK: 3
-      GRILLED_PORK: 8
-      APPLE: 4
-      GOLDEN_APPLE: 4
-      ROTTEN_FLESH: 4
-      SPIDER_EYE: 2
-      CAKE: 2
+      Bread: 5
+      Carrot-Item: 4
+      Baked-Potato: 6
+      Potato-Item: 1
+      Poisonous-Potato: 2
+      Golden-Carrot: 6
+      Pumpkin-Pie: 8
+      Cookie: 2
+      Melon: 2
+      Mushroom-Soup: 6
+      Raw-Chicken: 2
+      Cooked-Chicken: 6
+      Raw-Beef: 3
+      Cooked-Beef: 8
+      Raw-Fish: 2
+      Cooked-Fish: 5
+      Pork: 3
+      Grilled-Pork: 8
+      Apple: 4
+      Golden-Apple: 4
+      Rotten-Flesh: 4
+      Spider-Eye: 2
+      Cake: 2
     sp:
-      BREAD: 5
-      CARROT_ITEM: 4
-      BAKED_POTATO: 6
-      POTATO_ITEM: 1
-      POISONOUS_POTATO: 2
-      GOLDEN_CARROT: 6
-      PUMPKIN_PIE: 8
-      COOKIE: 2
-      MELON: 2
-      MUSHROOM_SOUP: 6
-      RAW_CHICKEN: 2
-      COOKED_CHICKEN: 6
-      RAW_BEEF: 3
-      COOKED_BEEF: 8
-      RAW_FISH: 2
-      COOKED_FISH: 5
-      PORK: 3
-      GRILLED_PORK: 8
-      APPLE: 4
-      GOLDEN_APPLE: 4
-      ROTTEN_FLESH: 0
-      SPIDER_EYE: 2
-      CAKE: 2
+      Bread: 5
+      Carrot-Item: 4
+      Baked-Potato: 6
+      Potato-Item: 1
+      Poisonous-Potato: 2
+      Golden-Carrot: 6
+      Pumpkin-Pie: 8
+      Cookie: 2
+      Melon: 2
+      Mushroom-Soup: 6
+      Raw-Chicken: 2
+      Cooked-Chicken: 6
+      Raw-Beef: 3
+      Cooked-Beef: 8
+      Raw-Fish: 2
+      Cooked-Fish: 5
+      Pork: 3
+      Grilled-Pork: 8
+      Apple: 4
+      Golden-Apple: 4
+      Rotten-Flesh: 0
+      Spider-Eye: 0
+      Cake: 2
   herbalism:
-    Title: Herbalism
-    SkillPointFactor: 10
-    structures:
+    Description: |-
+      Cultivate and harvest growing things.
+      Earn skill points for fertilizing and harvesting trees, wheat, vegetables, fruit and other plants.
     sp:
-      structures:
-        Tree: 5
-        Swamp: 5
-        Big_Tree: 5
-        Birch: 10
-        Jungle_Bush: 10
-        Redwood: 10
-        Tall_Redwood: 10
-        Small_Jungle: 20
-        Red_Mushroom: 50
-        Brown_Mushroom: 50
-        Jungle: 80
-      blocks:
+      fertilize:
         Crops: 1
         Carrot: 1
         Potato: 1
-        Log: 1
-        Leaves: 1
+        Melon_Stem: 3
+        Pumpkin_Stem: 3
+        Sapling: 5
+        Red-Mushroom: 7
+        Brown-Mushroom: 7        
+      harvest:
+        Long-Grass: 1/16
+        Dead-Bush: 1/8
+        Log: 1/4
+        Leaves: 1/4
+        Crops: 1
+        Carrot: 1
+        Potato: 1
+        Cactus: 1
         Pumpkin: 1
-        Melon_Block: 1
+        Melon-Block: 1
         Vine: 1
-        Sugar_Cane_Block: 1
-        Water_Lily: 10
-  travelling:
-    Title: Travelling
-    SkillPointFactor: 10
+        Sugar-Cane-Block: 1
+        Red-Rose: 2
+        Yellow-Flower: 2
+        Water-Lily: 10
+      #structures:
+        #Tree: 3
+        #Swamp: 3
+        #Big-Tree: 3
+        #Birch: 6
+        #Jungle-Bush: 6
+        #Redwood: 6
+        #Tall-Redwood: 6
+        #Small-Jungle: 12
+        #Red-Mushroom: 24
+        #Brown-Mushroom: 24
+        #Jungle: 48
+  traveling:
+    Description: |-
+      Explore the world of Winthier.
+      Traveling long distances by foot, pig, horse or ender pearl gives you skill points.
     NormDistance: 16
-    MinPearlingDistance: 16
-    WalkingSkillPoints: 10
-    SprintingSkillPoints: 20
-    PearlingSkillPoints: 30
+    MinPearlingDistance: 32
+    WalkingSkillPoints: 1
+    SprintingSkillPoints: 3
+    PearlingSkillPoints: 5
+    RidingSkillPoints: 10
+    FarTravelDistance: 64
   wildlife:
-    Title: Wildlife
-    SkillPointFactor: 10
+    Description: |-
+      Take care of wild and farm animals.
+      Collect skill points by taming, breeding, shearing different animals or catching fish.
+      As you level up this skill, you will have more luck catching fish and get more experience points for fishing and breeding.
     sp:
-      Shearing: 5
-      Fishing: 10
+      Shearing: 1
+      Fishing: 8
       breeding:
         Chicken: 1
-        Cow: 5
-        Mushroom_Cow: 5
-        Ocelot: 10
-        Pig: 5
-        Sheep: 5
-        Wolf: 5
+        Cow: 4
+        Mushroom-Cow: 4
+        Pig: 4
+        Sheep: 4
+        Ocelot: 8
+        Wolf: 8
       taming:
-        Ocelot: 100
-        Wolf: 100
+        Ocelot: 20
+        Wolf: 20
     xp:
       breeding:
         Chicken: 5
         Cow: 5
-        Mushroom_Cow: 5
+        Mushroom-Cow: 5
         Ocelot: 5
         Pig: 5
         Sheep: 5
         Wolf: 5
   melee:
-    Title: Melee
-    SkillPointFactor: 10
+    Description: |-
+      Fight hostile mobs in close combat.
+      You gain skill points by killing monsters with swords, axes or your fists. You get different amounts for zombies, skeletons, creepers and more.
+      The higher your level is, the more experience points your victims will drop.
     MinKillDistance: 5
     sp:
-      Silverfish: 5
-      Slime: 5
-      Cave_Spider: 10
-      Enderman: 10
-      Pig_Zombie: 10
-      Skeleton: 10
-      Spider: 10
-      Witch: 10
-      Zombie: 10
-      Magma_Cube: 10
-      Blaze: 20
-      Creeper: 30
-      Giant: 50
-      Wither: 100
-      Ender_Dragon: 100
+      Silverfish: 1
+      Slime: 1
+      Cave-Spider: 2
+      Enderman: 2
+      Pig-Zombie: 2
+      Skeleton: 2
+      Spider: 2
+      Zombie: 2
+      Magma-Cube: 2
+      Blaze: 4
+      Witch: 5
+      Creeper: 5
+      Giant: 10
+      Wither: 20
+      Ender-Dragon: 50
   archery:
-    Title: Archery
-    SkillPointFactor: 5
+    Description: |-
+      Snipe hostile mobs from a distance with ranged weapons.
+      Use your bow to kill monsters from a distance. The farther away you are from your target, the more skill points you gain.
+      Your prey will drop bonus experience points the higher your skill level is.
     MinKillDistance: 15
     NormDistance: 16
     sp:
-      Silverfish: 5
-      Slime: 5
-      Cave_Spider: 10
-      Enderman: 10
-      Pig_Zombie: 10
-      Skeleton: 10
-      Spider: 10
-      Witch: 10
-      Zombie: 10
-      Magma_Cube: 10
-      Blaze: 20
-      Creeper: 30
-      Giant: 50
-      Wither: 100
-      Ender_Dragon: 100
+      Silverfish: 1
+      Slime: 1
+      Cave-Spider: 2
+      Enderman: 2
+      Pig-Zombie: 2
+      Skeleton: 2
+      Spider: 2
+      Zombie: 2
+      Magma-Cube: 2
+      Blaze: 4
+      Witch: 5
+      Creeper: 5
+      Giant: 10
+      Wither: 20
+      Ender-Dragon: 50

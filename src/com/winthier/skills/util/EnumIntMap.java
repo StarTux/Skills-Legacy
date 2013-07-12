@@ -24,11 +24,15 @@ public class EnumIntMap<K extends Enum<K>> {
                 values[key.ordinal()] = value;
         }
 
+        public void put(K key, int value) {
+                values[key.ordinal()] = value;
+        }
+
         public void load(Class<K> clazz, ConfigurationSection config) {
                 for (String strKey : config.getKeys(false)) {
                         K key = null;
                         try {
-                                key = Enum.valueOf(clazz, strKey.toUpperCase());
+                                key = Enum.valueOf(clazz, strKey.toUpperCase().replaceAll("-", "_"));
                         } catch (IllegalArgumentException e) {
                                 // do nothing
                         }

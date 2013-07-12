@@ -6,7 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class Util {
@@ -37,6 +42,23 @@ public class Util {
                 copyResource(plugin, filename, filename, force);
         }
 
+        public static String shadowZeros(int number, int digits, ChatColor zeros, ChatColor nonzeros) {
+                String result = "" + number;
+                final String ZEROS = "000000000000000000000000000000000"; // xD
+                if (digits > result.length()) {
+                        return "" + zeros + ZEROS.substring(0, digits - result.length()) + nonzeros + result;
+                } else {
+                        return "" + nonzeros + result;
+                }
+        }
+
+        public static String shadowZeros(String string, ChatColor zeros, ChatColor nonzeros) {
+                Pattern pattern = Pattern.compile("^(0*)([^0].*)?$");
+                Matcher matcher = pattern.matcher(string);
+                if (!matcher.matches()) return "";
+                return "" + zeros + matcher.group(1) + nonzeros + matcher.group(2);
+        }
+
         public static void copyResource(SkillsPlugin plugin, String filename, String dest, boolean force) {
                 File destFile = new File(plugin.getDataFolder(), dest);
                 if (!force && destFile.exists()) return;
@@ -63,8 +85,10 @@ public class Util {
 
         public static int rollFraction(int coefficient, int dividend, int divisor) {
                 if (divisor == 0) return 0;
-                int result = (coefficient * dividend) / divisor;
-                if (random.nextInt(divisor) < dividend % divisor) result += 1;
+                dividend *= coefficient;
+                int result = dividend / divisor;
+                final int remainder = dividend % divisor;
+                if (remainder > 0 && random.nextInt(divisor) < remainder) result += 1;
                 return result;
         }
 
@@ -87,6 +111,13 @@ public class Util {
 
         public static int horizontalDistance(Location a, Location b) {
                 return sqrt(horizontalDistanceSquared(a, b));
+        }
+
+        public static void sendMessage(CommandSender sender, String msg, Object... args) {
+                msg = ChatColor.translateAlternateColorCodes('&', msg);
+                msg = String.format(msg, args);
+                //if (sender instanceof ConsoleCommandSender) msg = ChatColor.stripColor(msg);
+                sender.sendMessage(msg);
         }
 
         public static int sqrt(int x) {

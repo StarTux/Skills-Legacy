@@ -6,15 +6,20 @@ main: com.winthier.skills.SkillsPlugin
 depend: [ Exploits ]
 commands:
   skill:
-    aliases: [ sk ]
-    description: User interface
+    aliases: [ sk, skills, sks ]
+    description: User interface for Skills
     permission: skills.skill
-  skills:
-    aliases: [ sks ]
-    description: Debug interface
-    permission: skills.skills
+  skillconfig:
+    aliases: [ skc, skillsconfig ]
+    description: Admin interface for Skills
+    permission: skills.skillconfig
 permissions:
-  skills.skills:
-    default: op
   skills.skill:
+    description: Use the /skill command
+    default: op
+  skills.skill.other:
+    description: Lookup skill info of other players
+    default: op
+  skills.skillconfig:
+    description: Use the /skillconfig command
     default: op

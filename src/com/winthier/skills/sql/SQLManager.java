@@ -5,6 +5,7 @@ import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.skill.AbstractSkill;
 import com.winthier.skills.skill.SkillType;
+import org.bukkit.command.CommandSender;
 
 public class SQLManager {
         public final SkillsPlugin plugin;
@@ -46,6 +47,10 @@ public class SQLManager {
                 if (!ret) {
                         plugin.getLogger().warning("Loading player info of " + playerInfo.getName() + " failed!");
                 }
+        }
+
+        public void sendPlayerStatistics(CommandSender sender, String player) {
+                connectionManager.queueRequest(new PlayerStatisticsRequest(plugin, sender, player));
         }
 
         public void saveSkillInfo(AbstractSkill skill) {

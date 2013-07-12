@@ -1,5 +1,6 @@
 package com.winthier.skills.player;
 
+import com.winthier.skills.ElementType;
 import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.skill.AbstractSkill;
 import com.winthier.skills.skill.SkillType;
@@ -7,12 +8,14 @@ import java.util.EnumMap;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerInfo {
         private final SkillsPlugin plugin;
         private Player player;
         private final Map<SkillType, PlayerSkillInfo> skillInfo = new EnumMap<SkillType, PlayerSkillInfo>(SkillType.class);
-        public final TravellingPlayerInfo travellingPlayerInfo = new TravellingPlayerInfo(this);
+        private BukkitRunnable removalTask = null;;
+        public final TravelingPlayerInfo travelingPlayerInfo = new TravelingPlayerInfo(this);
 
         public PlayerInfo(SkillsPlugin plugin, Player player) {
                 this.plugin = plugin;
@@ -44,6 +47,16 @@ public class PlayerInfo {
                 return skillInfo.get(skillType).skillPoints;
         }
 
+        public int getElementalLevel(ElementType elem) {
+                int sum = 0;
+                SkillType skillTypes[] = elem.getSkills();
+                sum += getSkillPoints(skillTypes[0]) * 2;
+                sum += getSkillPoints(skillTypes[1]);
+                sum += getSkillPoints(skillTypes[2]);
+                sum /= 2;
+                return AbstractSkill.getLevelForSkillPoints(sum);
+        }
+
         public void setSkillPoints(SkillType skillType, int skillPoints) {
                 skillInfo.get(skillType).skillPoints = skillPoints;
                 flushCache(skillType);
@@ -66,9 +79,38 @@ public class PlayerInfo {
 
         public void onJoin(Player player) {
                 this.player = player;
+                cancelRemoval();
+                travelingPlayerInfo.setLocation(player.getLocation());
+                travelingPlayerInfo.setFarTravelLocation(player.getLocation());
         }
 
         // Caching functions and procedures
+
+        public void load() {
+                plugin.sqlManager.loadPlayerInfo(this);
+        }
+
+        private void removeSoon() {
+                cancelRemoval();
+                removalTask = new BukkitRunnable() {
+                        public void run() {
+                                if (!player.isOnline()) {
+                                        plugin.playerManager.remove(player.getName());
+                                }
+                        }
+                };
+                removalTask.runTaskLater(plugin, 200L);
+        }
+
+        private void cancelRemoval() {
+                if (removalTask == null) return;
+                try { removalTask.cancel(); } catch (IllegalStateException e) {}
+                removalTask = null;
+        }
+
+        public void onRemoval() {
+                cancelRemoval();
+        }
 
         public int getSkillLevel(SkillType skillType) {
                 return skillInfo.get(skillType).skillLevel;

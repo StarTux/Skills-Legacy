@@ -1,7 +1,9 @@
 package com.winthier.skills.skill;
 
 import com.winthier.skills.SkillsPlugin;
+import com.winthier.skills.util.Util;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +16,7 @@ public abstract class AbstractSkill implements Listener {
         public final SkillsPlugin plugin;
         public final SkillType skillType;
         public final static int MAX_LEVEL = 1000;
-        private int skillPointFactor = 1;
-        private String title;
-        private List<String> description;
+        private String description;
         private final static int[] gaussian = new int[MAX_LEVEL + 1];
 
         static {
@@ -40,16 +40,12 @@ public abstract class AbstractSkill implements Listener {
                 return skillType;
         }
 
-        public String getTitle() {
-                return title;
-        }
-
-        public List<String> getDescription() {
+        public String getDescription() {
                 return description;
         }
 
-        public int getSkillPointFactor() {
-                return skillPointFactor;
+        public List<String> getPerkDescription(Player player) {
+                return Collections.<String>emptyList();
         }
 
         // Utility functions for subclasses
@@ -60,11 +56,11 @@ public abstract class AbstractSkill implements Listener {
 
         public int getSkillPointsForLevel(int level) {
                 if (level > MAX_LEVEL) return 0;
-                return gaussian[level] * skillPointFactor;
+                return gaussian[level];
         }
 
-        public int getLevelForSkillPoints(int skillPoints) {
-                int i = Arrays.binarySearch(gaussian, skillPoints / skillPointFactor);
+        public static int getLevelForSkillPoints(int skillPoints) {
+                int i = Arrays.binarySearch(gaussian, skillPoints);
                 if (i < 0) return -i - 2;
                 return i;
         }
@@ -96,7 +92,8 @@ public abstract class AbstractSkill implements Listener {
          */
         public void addSkillPoints(Player player, int skillPoints) {
                 // TODO hooks
-                player.sendMessage(skillType.getName() + " sp + " + skillPoints);
+                //player.sendMessage(skillType.getName() + " sp + " + skillPoints);
+                if (!canCollectSkillPoints(player)) return;
                 plugin.playerManager.getPlayerInfo(player).addSkillPoints(skillType, skillPoints);
         }
 
@@ -113,13 +110,17 @@ public abstract class AbstractSkill implements Listener {
         // Handlers
 
         public void onLevelUp(Player player, int oldLevel, int newLevel) {
-                player.sendMessage("You have reached " + title + " level " + newLevel + "!");
+                Util.sendMessage(player, "&b%s %s\u25A3 &3Level&f %d", skillType.getDisplayName(), skillType.getColor(), newLevel);
         }
 
         // configuration
 
         protected int multiplyXp(Player player, int xp) {
-                return xp * (100 + getSkillLevel(player)) / 100;
+                return Util.rollFraction(xp, getXpMultiplier(player), 100);
+        }
+
+        protected int getXpMultiplier(Player player) {
+                return 100 + getSkillLevel(player) / 2;
         }
 
         protected ConfigurationSection getSkillsSection() {
@@ -131,9 +132,7 @@ public abstract class AbstractSkill implements Listener {
         }
 
         public void loadConfig() {
-                skillPointFactor = getConfig().getInt("SkillPointFactor", 1);
-                title = getConfig().getString("Title", skillType.name().toLowerCase());
-                description = getConfig().getStringList("Description");
+                description = getConfig().getString("Description", "");
                 loadConfiguration();
         }
 

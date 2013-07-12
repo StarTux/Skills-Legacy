@@ -2,6 +2,8 @@ package com.winthier.skills.skill;
 
 import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.util.EnumIntMap;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -134,7 +136,6 @@ public class WildlifeSkill extends AbstractSkill {
          * the deserved SP and increased XP as a perk.
          */
         public void onPlayerBreed(Player player, LivingEntity baby) {
-                if (!canCollectSkillPoints(player)) return;
                 final EntityType entityType = baby.getType();
                 // give sp
                 final int skillPoints = breedingSpMap.get(entityType);
@@ -142,7 +143,7 @@ public class WildlifeSkill extends AbstractSkill {
                 // give xp
                 final int xp = multiplyXp(player, breedingXpMap.get(entityType));
                 if (xp > 0) player.giveExp(xp);
-                player.sendMessage("Gratz! SP=" + skillPoints + ", XP=" + xp);
+                //player.sendMessage("Gratz! SP=" + skillPoints + ", XP=" + xp);
         }
 
         /**
@@ -151,7 +152,6 @@ public class WildlifeSkill extends AbstractSkill {
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerShearEntity(PlayerShearEntityEvent event) {
                 final Player player = event.getPlayer();
-                if (!canCollectSkillPoints(player)) return;
                 if (shearingSkillPoints > 0) addSkillPoints(player, shearingSkillPoints);
         }
 
@@ -162,7 +162,6 @@ public class WildlifeSkill extends AbstractSkill {
         public void onEntityTame(EntityTameEvent event) {
                 if (!(event.getOwner() instanceof Player)) return;
                 final Player player = (Player)event.getOwner();
-                if (!canCollectSkillPoints(player)) return;
                 // give sp
                 final int skillPoints = tamingSpMap.get(event.getEntityType());
                 if (skillPoints > 0) addSkillPoints(player, skillPoints);
@@ -179,12 +178,11 @@ public class WildlifeSkill extends AbstractSkill {
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerFish(PlayerFishEvent event) {
                 final Player player = event.getPlayer();
-                if (!canCollectSkillPoints(player)) return;
                 switch (event.getState()) {
                 case FISHING:
                         final Fish fish = event.getHook();
                         double biteChance = fish.getBiteChance();
-                        biteChance = biteChance * (100 + getSkillLevel(player)) / 100.0;
+                        biteChance = biteChance * getBiteChanceMultiplier(player) / 100.0;
                         fish.setBiteChance(biteChance);
                         break;
                 case CAUGHT_FISH:
@@ -202,6 +200,22 @@ public class WildlifeSkill extends AbstractSkill {
                         }
                 }
         }
+
+        public int getBiteChanceMultiplier(Player player) {
+                return 100 + getSkillLevel(player);
+        }
+
+        // User output
+
+        public List<String> getPerkDescription(Player player) {
+                List<String> result = new ArrayList<String>(3);
+                result.add("Caught fish drop +" + (getXpMultiplier(player) - 100) + "% XP");
+                result.add("Breeding animals drops +" + (getXpMultiplier(player) - 100) + "% XP");
+                result.add("Fish bite +" + (getBiteChanceMultiplier(player) - 100) + "% more likely");
+                return result;
+        }
+
+        // Configuration routines
 
         @Override
         public void loadConfiguration() {

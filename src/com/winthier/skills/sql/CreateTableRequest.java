@@ -40,7 +40,6 @@ public class CreateTableRequest implements SQLRequest {
                           " `skill` VARCHAR(16) NOT NULL," +
                           " `title` VARCHAR(32) NOT NULL," +
                           " `description` VARCHAR(256) NOT NULL," +
-                          " `point_factor` SMALLINT(5) UNSIGNED NOT NULL," +
                           " PRIMARY KEY(`skill`)" +
                           ") ENGINE=MyISAM");
                 s.close();

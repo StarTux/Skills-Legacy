@@ -1,7 +1,10 @@
 package com.winthier.skills;
 
+import com.winthier.skills.command.ConfigCommand;
 import com.winthier.skills.command.SkillCommand;
+import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.player.PlayerManager;
+import com.winthier.skills.skill.AbstractSkill;
 import com.winthier.skills.skill.SkillType;
 import com.winthier.skills.sql.SQLManager;
 import com.winthier.skills.util.Util;
@@ -14,6 +17,7 @@ public class SkillsPlugin extends JavaPlugin {
         public final PlayerManager playerManager = new PlayerManager(this);
         public final SQLManager sqlManager = new SQLManager(this);
         public final SkillCommand skillCommand = new SkillCommand(this);
+        public final ConfigCommand configCommand = new ConfigCommand(this);
 
         @Override
         public void onEnable() {
@@ -26,6 +30,7 @@ public class SkillsPlugin extends JavaPlugin {
                 SkillType.loadAll();
                 playerManager.onEnable();
                 skillCommand.onEnable();
+                configCommand.onEnable();
                 // write config
                 getConfig().options().copyDefaults(true);
                 saveConfig();
@@ -39,29 +44,29 @@ public class SkillsPlugin extends JavaPlugin {
 
         @Override
         public boolean onCommand(CommandSender sender, Command command, String label, String args[]) {
-                Player player = null;
-                if (sender instanceof Player) player = (Player)sender;
-                if (args.length == 3 && args[0].equals("setlevel")) {
-                        SkillType skillType = SkillType.fromString(args[1]);
-                        if (skillType == null) {
-                                sender.sendMessage("Bad skill type: " + args[1]);
-                                return true;
-                        }
-                        int level;
-                        try {
-                                level = Integer.parseInt(args[2]);
-                        } catch (NumberFormatException e) {
-                                sender.sendMessage("Bad skill level: " + args[2]);
-                                e.printStackTrace();
-                                return true;
-                        }
-                        skillType.getSkill().setSkillLevel(player, level);
-                        player.sendMessage("Set skill level to " + level);
-                        return true;
-                }
-                if (args.length == 1 && args[0].equals("starve")) {
-                        player.setFoodLevel(0);
-                }
                 return false;
+        }
+
+        /**
+         * Send skill information about player to sender.
+         */
+        public void sendSkillInfo(CommandSender sender, Player player, SkillType skillType) {
+                AbstractSkill skill = skillType.getSkill();
+                PlayerInfo info = playerManager.getPlayerInfo(player);
+                Util.sendMessage(sender, "&3=== %s\u25A3 &b%s %s\u25A3 &bSkill Info&3 ===", skillType.getColor(), skillType.getDisplayName(), skillType.getColor());
+                Util.sendMessage(sender, "&3 &m   &b Elements &3&m   ");
+                for (ElementType elem : skillType.getElements()) {
+                        Util.sendMessage(sender, " %s\u25A3 &b%s", elem.getColor(), elem.getDisplayName());
+                }
+                Util.sendMessage(sender, "&3 &m   &b Description &3&m   ");
+                for (String line : skill.getDescription().split("\n")) {
+                        Util.sendMessage(sender, " &7%s", line);
+                }
+                Util.sendMessage(sender, "&3 &m   &b Perks &3&m   ");
+                for (String line : skill.getPerkDescription(player)) {
+                        Util.sendMessage(sender, " &7%s", line);
+                }
+                Util.sendMessage(sender, "&3 &m   &b Statistics &3&m   ");
+                Util.sendMessage(sender, "&3 Level: &b%d&3 SP: &b%d&3 For next level: &b%s", info.getSkillLevel(skillType), info.getSkillPoints(skillType), info.getRequiredSkillPoints(skillType));
         }
 }
