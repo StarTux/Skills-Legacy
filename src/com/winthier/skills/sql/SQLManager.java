@@ -53,6 +53,22 @@ public class SQLManager {
                 connectionManager.queueRequest(new PlayerStatisticsRequest(plugin, sender, player));
         }
 
+        public void sendHighscore(CommandSender sender, SkillType skill, int page) {
+                connectionManager.queueRequest(new SendHighscoreRequest(plugin, sender, skill, page));
+        }
+
+        public void loadHighscoreScoreboard(SkillType skill) {
+                connectionManager.queueRequest(new HighscoreScoreboardRequest(plugin, skill));
+        }
+
+        public void sendTotalHighscore(CommandSender sender, int page) {
+                connectionManager.queueRequest(new SendTotalHighscoreRequest(plugin, sender, page));
+        }
+
+        public void loadTotalHighscoreScoreboard() {
+                connectionManager.queueRequest(new TotalHighscoreScoreboardRequest(plugin));
+        }
+
         public void saveSkillInfo(AbstractSkill skill) {
                 connectionManager.queueRequest(new SaveSkillInfoRequest(skill));
         }

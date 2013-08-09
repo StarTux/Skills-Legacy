@@ -5,12 +5,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 public class TravelingPlayerInfo {
-        public final PlayerInfo info;
-        private Location anchor, farTravelAnchor;
-
-        public TravelingPlayerInfo(PlayerInfo info) {
-                this.info = info;
-        }
+        private Location anchor;
+        private Location farTravelAnchor;
 
         public void setLocation(Location loc) {
                 anchor = loc.clone();

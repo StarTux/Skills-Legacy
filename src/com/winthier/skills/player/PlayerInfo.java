@@ -13,9 +13,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class PlayerInfo {
         private final SkillsPlugin plugin;
         private Player player;
+
+        // Skill information
         private final Map<SkillType, PlayerSkillInfo> skillInfo = new EnumMap<SkillType, PlayerSkillInfo>(SkillType.class);
-        private BukkitRunnable removalTask = null;;
-        public final TravelingPlayerInfo travelingPlayerInfo = new TravelingPlayerInfo(this);
+        private int totalLevel = 0;
+
+        // Additional specific information.
+        public final TravelingPlayerInfo travelingInfo = new TravelingPlayerInfo();
+        public final SpellsPlayerInfo spellsInfo = new SpellsPlayerInfo(this);
+
+        private BukkitRunnable removalTask = null;
 
         public PlayerInfo(SkillsPlugin plugin, Player player) {
                 this.plugin = plugin;
@@ -47,13 +54,21 @@ public class PlayerInfo {
                 return skillInfo.get(skillType).skillPoints;
         }
 
+        public int getSkillLevel(SkillType skillType) {
+                return skillInfo.get(skillType).skillLevel;
+        }
+
+        public int getTotalSkillLevel() {
+                return totalLevel;
+        }
+
         public int getElementalLevel(ElementType elem) {
                 int sum = 0;
                 SkillType skillTypes[] = elem.getSkills();
                 sum += getSkillPoints(skillTypes[0]) * 2;
                 sum += getSkillPoints(skillTypes[1]);
                 sum += getSkillPoints(skillTypes[2]);
-                sum /= 2;
+                sum /= 4;
                 return AbstractSkill.getLevelForSkillPoints(sum);
         }
 
@@ -67,7 +82,7 @@ public class PlayerInfo {
                 final PlayerSkillInfo info = skillInfo.get(skillType);
                 info.skillPoints += skillPoints;
                 plugin.sqlManager.addSkillPoints(player.getName(), skillType, skillPoints);
-                if (info.skillPoints >= info.requiredSkillPoints) {
+                if (info.skillPoints >= info.requiredSkillPoints && info.skillLevel < AbstractSkill.MAX_LEVEL) {
                         int oldLevel = info.skillLevel;
                         flushCache(skillType);
                         int newLevel = info.skillLevel;
@@ -75,13 +90,28 @@ public class PlayerInfo {
                 }
         }
 
-        // Event handlers
+        // Event handlers. We listen to some events that are
+        // general enough so the particular skills shouldn't
+        // bother.
 
         public void onJoin(Player player) {
+                // Update Player reference.
                 this.player = player;
+
+                // The player joined. If we were waiting to remove
+                // his data, cancel that.
                 cancelRemoval();
-                travelingPlayerInfo.setLocation(player.getLocation());
-                travelingPlayerInfo.setFarTravelLocation(player.getLocation());
+
+                // Update locations for the traveling skill.
+                travelingInfo.setLocation(player.getLocation());
+                travelingInfo.setFarTravelLocation(player.getLocation());
+        }
+
+        public void onQuit(Player player) {
+                // Update Player reference.
+                this.player = player;
+
+                removeSoon();
         }
 
         // Caching functions and procedures
@@ -112,10 +142,6 @@ public class PlayerInfo {
                 cancelRemoval();
         }
 
-        public int getSkillLevel(SkillType skillType) {
-                return skillInfo.get(skillType).skillLevel;
-        }
-
         /**
          * This function returns the remaining skill points
          * required to level up, not the total points needed,
@@ -124,13 +150,27 @@ public class PlayerInfo {
         public int getRequiredSkillPoints(SkillType skillType) {
                 AbstractSkill skill = skillType.getSkill();
                 PlayerSkillInfo info = skillInfo.get(skillType);
+                if (info.skillLevel >= AbstractSkill.MAX_LEVEL) return 0;
                 return info.requiredSkillPoints - info.skillPoints;
         }
 
         public void flushCache(SkillType skillType) {
                 AbstractSkill skill = skillType.getSkill();
                 PlayerSkillInfo info = skillInfo.get(skillType);
-                info.skillLevel = skill.getLevelForSkillPoints(info.skillPoints);
-                info.requiredSkillPoints = skill.getSkillPointsForLevel(info.skillLevel + 1);
+
+                // Cache data.
+                final int oldSkillLevel = info.skillLevel;
+                final int newSkillLevel = skill.getLevelForSkillPoints(info.skillPoints);
+
+                // Update level and required skill points.
+                info.skillLevel = newSkillLevel;
+                info.requiredSkillPoints = skill.getSkillPointsForLevel(newSkillLevel + 1);
+
+                // Update total skill level.
+                totalLevel += newSkillLevel - oldSkillLevel;
+
+                // Update Scoreboards
+                plugin.scoreboardManager.setSkillLevel(skillType, player, newSkillLevel);
+                plugin.scoreboardManager.setTotalLevel(player, totalLevel);
         }
 }

@@ -6,11 +6,11 @@ import com.winthier.skills.util.EnumIntMap;
 import com.winthier.skills.util.Util;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -33,9 +33,9 @@ public class ArcherySkill extends AbstractSkill {
                 if (lastDamage.getDamage() <= 0) return;
                 final EntityDamageByEntityEvent lastEntityDamage = (EntityDamageByEntityEvent)lastDamage;
                 final Entity damager = lastEntityDamage.getDamager();
-                if (!(damager instanceof Projectile)) return;
-                final Projectile projectile = (Projectile)damager;
-                final LivingEntity shooter = projectile.getShooter();
+                if (!(damager instanceof Arrow)) return;
+                final Arrow arrow = (Arrow)damager;
+                final LivingEntity shooter = arrow.getShooter();
                 if (!(shooter instanceof Player)) return;
                 Player player = (Player)shooter;
                 // give sp

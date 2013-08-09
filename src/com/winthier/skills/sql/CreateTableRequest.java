@@ -16,15 +16,15 @@ public class CreateTableRequest implements SQLRequest {
                 s.execute("CREATE TABLE IF NOT EXISTS `skills_sp` (" +
                           " `player` VARCHAR(16) NOT NULL," +
                           " `skill` VARCHAR(16) NOT NULL," +
-                          " `points` INT(11) NOT NULL," +
+                          " `points` INT(11) UNSIGNED NOT NULL," +
                           " PRIMARY KEY (`player`, `skill`)" +
                           ") ENGINE=MyISAM");
                 s.close();
 
                 s = c.createStatement();
                 s.execute("CREATE TABLE IF NOT EXISTS `skills_gaussian` (" +
-                          " `points` INT(7) NOT NULL," +
-                          " `level` INT(4) NOT NULL," +
+                          " `points` INT(8) UNSIGNED NOT NULL," +
+                          " `level` SMALLINT(4) UNSIGNED NOT NULL," +
                           " PRIMARY KEY(`points`)" +
                           ") ENGINE=MyISAM");
                 s.close();
@@ -35,12 +35,21 @@ public class CreateTableRequest implements SQLRequest {
                         s.close();
                 }
 
+                // s = c.createStatement();
+                // s.execute("CREATE TABLE IF NOT EXISTS `skills_skills` (" +
+                //           " `skill` VARCHAR(16) NOT NULL," +
+                //           " `title` VARCHAR(32) NOT NULL," +
+                //           " `description` VARCHAR(256) NOT NULL," +
+                //           " PRIMARY KEY(`skill`)" +
+                //           ") ENGINE=MyISAM");
+                // s.close();
+
                 s = c.createStatement();
-                s.execute("CREATE TABLE IF NOT EXISTS `skills_skills` (" +
-                          " `skill` VARCHAR(16) NOT NULL," +
-                          " `title` VARCHAR(32) NOT NULL," +
-                          " `description` VARCHAR(256) NOT NULL," +
-                          " PRIMARY KEY(`skill`)" +
+                s.execute("CREATE TABLE IF NOT EXISTS `skills_spells` (" +
+                          " `player` VARCHAR(16) NOT NULL," +
+                          " `spell` VARCHAR(32) NOT NULL," +
+                          " `level` TINYINT(2) UNSIGNED NOT NULL," +
+                          " PRIMARY KEY(`player`)" +
                           ") ENGINE=MyISAM");
                 s.close();
         }

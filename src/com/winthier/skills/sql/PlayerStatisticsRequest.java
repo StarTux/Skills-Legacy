@@ -61,7 +61,7 @@ public class PlayerStatisticsRequest extends BukkitRunnable implements SQLReques
                         sum += skillPoints.get(skillTypes[0]) * 2;
                         sum += skillPoints.get(skillTypes[1]);
                         sum += skillPoints.get(skillTypes[2]);
-                        sum /= 2;
+                        sum /= 4;
                         elements.set(elem, AbstractSkill.getLevelForSkillPoints(sum));
                 }
                 s.close();

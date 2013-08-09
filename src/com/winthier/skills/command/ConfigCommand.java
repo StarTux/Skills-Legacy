@@ -1,9 +1,11 @@
 package com.winthier.skills.command;
 
+import com.winthier.skills.ElementType;
 import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.skill.AbstractSkill;
 import com.winthier.skills.skill.SkillType;
+import com.winthier.skills.spell.Totem;
 import com.winthier.skills.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -122,9 +124,9 @@ public class ConfigCommand implements CommandExecutor {
                                 sender.sendMessage("Bad skill level: " + levelName);
                                 return true;
                         }
-                        // If the player isn't online
-                        if (player != null) {
-                                skillType.getSkill().setSkillLevel(player, level);
+                        // If the player is online
+                        if (affectedPlayer != null) {
+                                skillType.getSkill().setSkillLevel(affectedPlayer, level);
                         } else {
                                 plugin.sqlManager.setSkillPoints(playerName, skillType, skillType.getSkill().getSkillPointsForLevel(level));
                                 // force reload in case player data are still cached
@@ -145,17 +147,29 @@ public class ConfigCommand implements CommandExecutor {
                         Util.sendMessage(sender, "&ePlayer data flushed.");
                         return true;
                 }
+                if (args.length == 1 && args[0].equals("totems")) {
+                        if (player == null) {
+                                Util.sendMessage(sender, "&cPlayer expected");
+                                return true;
+                        }
+                        for (ElementType element : ElementType.values()) {
+                                player.getInventory().addItem(Totem.createTotem(element));
+                                player.sendMessage(element.getDisplayName() + " totem given.");
+                        }
+                        return true;
+                }
                 sendHelp(sender);
                 return true;
         }
 
         private void sendHelp(CommandSender sender) {
                 Util.sendMessage(sender, "&eSkills Configuration Interface");
-                Util.sendMessage(sender, "&f&nUSAGE: &e/skc &6<subcommand> [args...]");
-                Util.sendMessage(sender, "&f&nSUBCOMMANDS");
+                Util.sendMessage(sender, "&fUSAGE:&e /skc &6<subcommand> [args...]");
+                Util.sendMessage(sender, "&fSUBCOMMANDS");
                 Util.sendMessage(sender, "&e/skc &6reload&r - Reload the configuration file");
                 Util.sendMessage(sender, "&e/skc &6flush&r - Reload all player data");
                 Util.sendMessage(sender, "&e/skc &6stats <player>&r - Lookup a player's skill statistics.");
                 Util.sendMessage(sender, "&e/skc &6setlevel <skill> [player] <level>&r - Modify a player's skill level.");
+                Util.sendMessage(sender, "&e/skc &6totems&r - Get a full set of totems.");
         }
 }

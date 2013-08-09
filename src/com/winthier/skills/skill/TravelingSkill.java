@@ -28,7 +28,7 @@ public class TravelingSkill extends AbstractSkill {
         public void onPlayerMove(PlayerMoveEvent event) {
                 final Player player = event.getPlayer();
                 final Location to = event.getTo();
-                final TravelingPlayerInfo info = plugin.playerManager.getPlayerInfo(player).travelingPlayerInfo;
+                final TravelingPlayerInfo info = plugin.playerManager.getPlayerInfo(player).travelingInfo;
                 int dist = info.distanceSquared(to);
                 if (dist == -1) {
                         info.setLocation(event.getFrom());
@@ -75,15 +75,15 @@ public class TravelingSkill extends AbstractSkill {
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerTeleport(PlayerTeleportEvent event) {
                 final Player player = event.getPlayer();
-                final TravelingPlayerInfo info = plugin.playerManager.getPlayerInfo(player).travelingPlayerInfo;
+                final TravelingPlayerInfo info = plugin.playerManager.getPlayerInfo(player).travelingInfo;
                 final Location to = event.getTo();
                 final Location from = event.getFrom();
                 info.setLocation(to);
                 info.setFarTravelLocation(to);
                 if (event.getCause() == TeleportCause.ENDER_PEARL) {
                         int dist = Util.horizontalDistanceSquared(from, to);
-                        if (dist > minPearlingDistanceSquared) {
-                                final int skillPoints = Util.rollFraction(pearlingSkillPoints, Util.sqrt(dist), normDistance);
+                        if (dist >= minPearlingDistanceSquared) {
+                                final int skillPoints = pearlingSkillPoints;
                                 addSkillPoints(player, skillPoints);
                         }
                 }

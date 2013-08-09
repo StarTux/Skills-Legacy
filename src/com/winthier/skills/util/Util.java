@@ -1,5 +1,12 @@
 package com.winthier.skills.util;
 
+import com.comphenix.protocol.Packets;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.utility.MinecraftReflection;
+import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.winthier.skills.SkillsPlugin;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,9 +20,12 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class Util {
         public final static Random random = new Random(System.currentTimeMillis());
+        public final static String ICON = "\u25A3";
+
         final static int[] sqrtTable = {
                 0,    16,  22,  27,  32,  35,  39,  42,  45,  48,  50,  53,  55,  57,
                 59,   61,  64,  65,  67,  69,  71,  73,  75,  76,  78,  80,  81,  83,
@@ -113,11 +123,14 @@ public class Util {
                 return sqrt(horizontalDistanceSquared(a, b));
         }
 
-        public static void sendMessage(CommandSender sender, String msg, Object... args) {
+        public static String format(String msg, Object... args) {
                 msg = ChatColor.translateAlternateColorCodes('&', msg);
                 msg = String.format(msg, args);
-                //if (sender instanceof ConsoleCommandSender) msg = ChatColor.stripColor(msg);
-                sender.sendMessage(msg);
+                return msg;
+        }
+
+        public static void sendMessage(CommandSender sender, String msg, Object... args) {
+                sender.sendMessage(format(msg, args));
         }
 
         public static int sqrt(int x) {
@@ -180,5 +193,42 @@ public class Util {
                         }
                 }
                 throw new IllegalArgumentException("Attemt to take the square root of negative number");
+        }
+
+        public static ItemStack addGlow(ItemStack item) {
+                item = MinecraftReflection.getBukkitItemStack(item);
+                NbtCompound compound = (NbtCompound)NbtFactory.fromItemTag(item);
+                compound.put(NbtFactory.ofList("ench"));
+                return item;
+        }
+
+        public static ItemStack removeGlow(ItemStack item) {
+                item = MinecraftReflection.getBukkitItemStack(item);
+                NbtCompound compound = (NbtCompound)NbtFactory.fromItemTag(item);
+                compound.remove("ench");
+                return item;
+        }
+
+        public static void playParticleEffect(Player player, Location location, String particleName, int count, float offset, float speed) {
+                try {
+                        final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+                        PacketContainer packet = protocolManager.createPacket(63);
+                        packet.getStrings().write(0, particleName);
+                        // location
+                        packet.getFloat().write(0, (float)location.getX());
+                        packet.getFloat().write(1, (float)location.getY());
+                        packet.getFloat().write(2, (float)location.getZ());
+                        // offset
+                        packet.getFloat().write(3, offset);
+                        packet.getFloat().write(4, offset);
+                        packet.getFloat().write(5, offset);
+                        // speed
+                        packet.getFloat().write(6, speed);
+                        // count
+                        packet.getIntegers().write(0, count);
+                        protocolManager.sendServerPacket(player, packet);
+                } catch (Throwable t) {
+                        t.printStackTrace();
+                }
         }
 }

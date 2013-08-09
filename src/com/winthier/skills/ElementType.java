@@ -7,7 +7,7 @@ public enum ElementType {
         EARTH("Earth", ChatColor.DARK_GREEN),
         FIRE("Fire", ChatColor.DARK_RED),
         WATER("Water", ChatColor.DARK_BLUE),
-        AIR("Air", ChatColor.WHITE);
+        AIR("Air", ChatColor.BLUE);
 
         public final String displayName;
         public final ChatColor color;
@@ -42,10 +42,10 @@ public enum ElementType {
                 if (skillTypes != null) return skillTypes;
                 switch (this) {
                 case EARTH:
-                        setSkills(SkillType.MINING, SkillType.HERBALISM, SkillType.SMELTING);
+                        setSkills(SkillType.MINING, SkillType.HERBALISM, SkillType.ALCHEMY);
                         break;
                 case FIRE:
-                        setSkills(SkillType.MELEE, SkillType.SMELTING, SkillType.ARCHERY);
+                        setSkills(SkillType.MELEE, SkillType.ALCHEMY, SkillType.ARCHERY);
                         break;
                 case AIR:
                         setSkills(SkillType.TRAVELING, SkillType.ARCHERY, SkillType.WILDLIFE);

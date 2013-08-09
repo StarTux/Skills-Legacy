@@ -4,9 +4,7 @@ import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.util.Util;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -15,7 +13,7 @@ import org.bukkit.event.Listener;
 public abstract class AbstractSkill implements Listener {
         public final SkillsPlugin plugin;
         public final SkillType skillType;
-        public final static int MAX_LEVEL = 1000;
+        public final static int MAX_LEVEL = 999;
         private String description;
         private final static int[] gaussian = new int[MAX_LEVEL + 1];
 
@@ -73,6 +71,7 @@ public abstract class AbstractSkill implements Listener {
          */
         public static final boolean canCollectSkillPoints(Player player) {
                 if (player.getGameMode() == GameMode.CREATIVE) return false;
+                if (!player.hasPermission("skills.play")) return false;
                 return true;
         }
 
@@ -128,7 +127,12 @@ public abstract class AbstractSkill implements Listener {
         }
 
         public ConfigurationSection getConfig() {
-                return getSkillsSection().getConfigurationSection(skillType.getName());
+                ConfigurationSection result = getSkillsSection().getConfigurationSection(skillType.getName());
+                if (result == null) {
+                        plugin.getLogger().warning("Skill type has no configuration section: " + skillType.getName());
+                        result = getSkillsSection().createSection(skillType.getName());
+                }
+                return result;
         }
 
         public void loadConfig() {

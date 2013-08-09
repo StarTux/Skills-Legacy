@@ -1,6 +1,5 @@
 package com.winthier.skills.skill;
 
-//import org.bukkit.event.world.StructureGrowEvent;
 import com.winthier.exploits.ExploitsPlugin;
 import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.util.EnumIntMap;
@@ -23,11 +22,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class HerbalismSkill extends AbstractSkill {
-        //private final EnumIntMap<TreeType> structureSpMap = new EnumIntMap<TreeType>(TreeType.class, 0);
+        private final EnumIntMap<TreeType> structureSpMap = new EnumIntMap<TreeType>(TreeType.class, 0);
         private final MaterialIntMap harvestSpMap = new MaterialIntMap(0);
         private final MaterialFractionMap fertilizeSpMap = new MaterialFractionMap(0);
 
@@ -35,16 +35,19 @@ public class HerbalismSkill extends AbstractSkill {
                 super(plugin, skillType);
         }
 
-        // StructureGrowEvent is broken (getPlayer() always yields
-        // null). See below for the replacement.
-        // @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-        // public void onStructureGrow(StructureGrowEvent event) {
-        //         final Player player = event.getPlayer();
-        //         if (player == null) return;
-        //         // give sp
-        //         final int skillPoints = structureSpMap.get(event.getSpecies());
-        //         if (skillPoints > 0) addSkillPoints(player, skillPoints);
-        // }
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        public void onStructureGrow(StructureGrowEvent event) {
+                final Player player = event.getPlayer();
+                if (player == null) return;
+                onTreeGrow(player, event.getSpecies());
+        }
+
+        public void onTreeGrow(Player player, TreeType species) {
+                if (player == null) return;
+                // give sp
+                final int skillPoints = structureSpMap.get(species);
+                if (skillPoints > 0) addSkillPoints(player, skillPoints);
+        }
 
         /**
          * Check if a herbalism block is harvested.
@@ -78,13 +81,19 @@ public class HerbalismSkill extends AbstractSkill {
                 final Block block = event.getClickedBlock();
                 if (isFullyGrown(block)) return;
                 final int skillPoints = fertilizeSpMap.get(block.getType());
-                if (skillPoints <= 0) return;
                 if (Util.random.nextInt(100) < getInstantBonemealChance(player)) {
-                        if (setFullyGrown(block)) {
-                                addSkillPoints(player, skillPoints);
+                        if (setFullyGrown(block, player)) {
+                                if (skillPoints > 0) addSkillPoints(player, skillPoints);
+                                int amount = item.getAmount() - 1;
+                                if (amount > 0) {
+                                        item.setAmount(amount);
+                                } else {
+                                        player.setItemInHand(null);
+                                }
                                 return;
                         }
                 }
+                if (skillPoints <= 0) return;
                 new BukkitRunnable() {
                         public void run() {
                                 if (!isFullyGrown(block)) return;
@@ -122,7 +131,7 @@ public class HerbalismSkill extends AbstractSkill {
                 }
         }
 
-        private static boolean setFullyGrown(Block block) {
+        private boolean setFullyGrown(Block block, Player player) {
                 final Material mat = block.getType();
                 switch(mat) {
                 case CROPS:
@@ -133,16 +142,16 @@ public class HerbalismSkill extends AbstractSkill {
                         block.setData((byte)7);
                         return true;
                 case SAPLING:
-                        return growTree(block);
+                        return growTree(block, player);
                 case BROWN_MUSHROOM:
                 case RED_MUSHROOM:
-                        return growMushroom(block);
+                        return growMushroom(block, player);
                 default:
                         return false;
                 }
         }
 
-        private static boolean growMushroom(Block block) {
+        private boolean growMushroom(Block block, Player player) {
                 final Material id = block.getType();
                 final byte data = block.getData();
                 block.setType(Material.AIR);
@@ -152,9 +161,11 @@ public class HerbalismSkill extends AbstractSkill {
                 switch (id) {
                 case RED_MUSHROOM:
                         result = world.generateTree(loc, TreeType.RED_MUSHROOM);
+                        if (result) onTreeGrow(player, TreeType.RED_MUSHROOM);
                         break;
                 case BROWN_MUSHROOM:
                         result = world.generateTree(loc, TreeType.BROWN_MUSHROOM);
+                        if (result) onTreeGrow(player, TreeType.BROWN_MUSHROOM);
                         break;
                 }
                 if (!result) {
@@ -164,26 +175,33 @@ public class HerbalismSkill extends AbstractSkill {
                 return result;
         }
 
-        private static boolean growTree(Block block) {
+        private boolean growTree(Block block, Player player) {
                 final int data = block.getData();
                 block.setType(Material.AIR);
                 final World world = block.getWorld();
                 final Location loc = block.getLocation();
+                final TreeType species;
                 boolean result = false;
                 switch (data & 0x03) {
                 case 0: // Oak
                         result = world.generateTree(loc, TreeType.TREE);
+                        if (result) onTreeGrow(player, TreeType.TREE);
                         if (!result) result = world.generateTree(loc, TreeType.BIG_TREE);
+                        if (result) onTreeGrow(player, TreeType.BIG_TREE);
                         break;
                 case 1: // Spruce
                         result = world.generateTree(loc, TreeType.REDWOOD);
+                        if (result) onTreeGrow(player, TreeType.REDWOOD);
                         break;
                 case 2: // Birch
                         result = world.generateTree(loc, TreeType.BIRCH);
+                        if (result) onTreeGrow(player, TreeType.BIRCH);
                         break;
                 case 3: // Jungle
                         result = growBigJungleTree(block);
+                        if (result) onTreeGrow(player, TreeType.JUNGLE);
                         if (!result) result = world.generateTree(loc, TreeType.SMALL_JUNGLE);
+                        if (result) onTreeGrow(player, TreeType.SMALL_JUNGLE);
                 }
                 if (!result) {
                         block.setType(Material.SAPLING);
@@ -263,6 +281,6 @@ public class HerbalismSkill extends AbstractSkill {
         public void loadConfiguration() {
                 fertilizeSpMap.load(getConfig().getConfigurationSection("sp.fertilize"));
                 harvestSpMap.load(getConfig().getConfigurationSection("sp.harvest"));
-                //structureSpMap.load(TreeType.class, getConfig().getConfigurationSection("sp.structures"));
+                structureSpMap.load(TreeType.class, getConfig().getConfigurationSection("sp.structures"));
         }
 }

@@ -1,6 +1,5 @@
 package com.winthier.skills.command;
 
-import com.winthier.skills.ElementType;
 import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.skill.AbstractSkill;
@@ -52,6 +51,8 @@ public class SkillCommand implements CommandExecutor {
                         plugin.sendSkillInfo(player, player, skillType);
                         return true;
                 }
-                return false;
+                Util.sendMessage(sender, "&e/%s&r - Display skill overview.", label);
+                Util.sendMessage(sender, "&e/%s &6[skill]&r - Display skill statistics.", label);
+                return true;
         }
 }

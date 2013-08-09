@@ -31,13 +31,14 @@ public class PlayerManager implements Listener {
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerJoin(PlayerJoinEvent event) {
-                getPlayerInfo(event.getPlayer()).onJoin(event.getPlayer());
+                final Player player = event.getPlayer();
+                getPlayerInfo(player).onJoin(player);
         }
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerQuit(PlayerQuitEvent event) {
                 final Player player = event.getPlayer();
-                // clear data in 10 seconds if the player is still offline
+                getPlayerInfo(player).onQuit(player);
         }
 
         /**
