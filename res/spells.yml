@@ -1,0 +1,222 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # #  Earth
+earth-firework:
+  Type: Firework
+  Element: Earth
+  DisplayName: Firework
+  Icon: Firework
+  effects:
+  - Effect: Ball-Large
+    Colors: [ Lime ]
+    Fades: [ Brown, Black ]
+    Flicker: true
+    Trail: true    
+  XPCost: 1
+  MaxLevel: 1
+  UnlockLevels: [ 1 ]
+  UnlockPrices: [ 0 ]
+  Description: Create a firework.
+haste:
+  Type: PotionEffect
+  Element: Earth
+  PotionEffect: Fast-Digging
+  DisplayName: Haste
+  Icon: Gold-Pickaxe
+  XPCost: 10
+  MaxLevel: 10
+  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
+  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
+  Amplifiers:   [   1,   2,   2,   2,   2,   2,   2,   2,   2,   2 ]
+  Durations:    [  20,  20,  40,  50,  60,  70,  90, 100, 110, 120 ]
+  Description: Activate the Haste effect to break blocks faster.
+haste2:
+  Type: PotionEffect
+  Element: Earth
+  PotionEffect: Fast-Digging
+  DisplayName: Advanced Haste
+  Icon: Gold-Pickaxe
+  XPCost: 15
+  MaxLevel: 10
+  UnlockLevels: [ 100, 150, 200, 250, 300, 450, 500, 550, 600, 650 ]
+  UnlockPrices: [ 500, 550, 600, 650, 700, 750, 800, 850, 900, 950 ] 
+  Amplifiers:   [   3,   3,   4,   4,   4,   4,   4,   4,   4,   4 ]
+  Durations:    [  10,  10,  20,  30,  40,  50,  60,  70,  90, 100 ]
+  Description: Activate the Advanced Haste effect to break blocks with supreme efficiency.
+resist:
+  Type: PotionEffect
+  Element: Earth
+  PotionEffect: Damage-Resistance
+  DisplayName: Resistance
+  Icon: Gold-Chestplate
+  XPCost: 5
+  MaxLevel: 10
+  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
+  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
+  Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
+  Durations:    [  30,  60,  90, 120, 150, 180, 210, 240, 250, 280 ]
+  Description: Activate the Resistance effect for additional protection from harm.
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # Fire
+fire-firework:
+  Type: Firework
+  Element: Fire
+  DisplayName: Firework
+  Icon: Firework
+  effects:
+  - Effect: Ball-Large
+    Colors: [ Yellow ]
+    Fades: [ Red ]
+    Flicker: true
+    Trail: true    
+  XPCost: 1
+  MaxLevel: 1
+  UnlockLevels: [ 1 ]
+  UnlockPrices: [ 0 ]
+  Description: Create a firework.
+fire-resist:
+  Type: PotionEffect
+  Element: Fire
+  PotionEffect: Fire-Resistance
+  DisplayName: Fire Resistance
+  Icon: Lava
+  XPCost: 5
+  MaxLevel: 10
+  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
+  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
+  Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
+  Durations:    [  30,  60,  90, 120, 150, 180, 210, 240, 250, 280 ]
+  Description: Activate the Fire Resistance effect for extra fire protection.
+strength:
+  Type: PotionEffect
+  Element: Fire
+  PotionEffect: Increase-Damage
+  DisplayName: Strength
+  Icon: Gold-Sword
+  XPCost: 5
+  MaxLevel: 10
+  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
+  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
+  Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
+  Durations:    [  10,  30,  60,  90, 120, 120, 150, 180, 210, 240 ]
+  Description: Activate the Strength effect to deal more damage.
+harm:
+  Type: PotionEffect
+  Element: Fire
+  PotionEffect: Harm
+  DisplayName: Instant Damage
+  Icon: Fire
+  XPCost: 5
+  MaxLevel: 2
+  UnlockLevels: [  10,  50 ]
+  UnlockPrices: [ 100, 500 ]
+  Amplifiers:   [   1,   2 ]
+  Description: Activate the Damage effect to hurt your enemies.
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #  Air
+air-firework:
+  Type: Firework
+  Element: Air
+  DisplayName: Firework
+  Icon: Firework
+  effects:
+  - Effect: Ball-Large
+    Colors: [ White, Silver ]
+    Fades: [ White, Light-Blue ]
+    Flicker: true
+    Trail: true    
+  XPCost: 1
+  MaxLevel: 1
+  UnlockLevels: [ 1 ]
+  UnlockPrices: [ 0 ]
+  Description: Create a firework.
+arrow:
+  Type: Arrow
+  Element: Air
+  DisplayName: Shoot Arrow
+  Icon: Arrow
+  XPCost: 1
+  MaxLevel: 10
+  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
+  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
+  Velocities:   [ 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0 ]
+  Description: Conjure an arrow out of thin air to throw it at your enemies.
+speed:
+  Type: PotionEffect
+  Element: Air
+  PotionEffect: Speed
+  DisplayName: Swiftness
+  Icon: Sugar
+  XPCost: 5
+  MaxLevel: 10
+  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
+  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
+  Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
+  Durations:    [  30,  60,  90, 120, 150, 180, 210, 240, 250, 280 ]
+  Description: Activate the Speed effect to run faster.
+jump:
+  Type: PotionEffect
+  Element: Air
+  PotionEffect: Jump
+  DisplayName: Jump Boost
+  Icon: Gold-Boots
+  XPCost: 5
+  MaxLevel: 10
+  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
+  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
+  Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
+  Durations:    [  30,  60,  90, 120, 150, 180, 210, 240, 250, 280 ]
+  Description: Activate the Jump Boost effect to jump higher.
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # #  Water
+water-firework:
+  Type: Firework
+  Element: Water
+  DisplayName: Firework
+  Icon: Firework
+  effects:
+  - Effect: Ball-Large
+    Colors: [ Light-Blue ]
+    Fades: [ Blue ]
+    Flicker: true
+    Trail: true    
+  XPCost: 1
+  MaxLevel: 1
+  UnlockLevels: [ 1 ]
+  UnlockPrices: [ 0 ]
+  Description: Create a firework.
+health:
+  Type: PotionEffect
+  Element: Water
+  PotionEffect: Heal
+  DisplayName: Instant Health
+  Icon: Speckled-Melon
+  XPCost: 5
+  MaxLevel: 2
+  UnlockLevels: [  10,  50 ]
+  UnlockPrices: [ 100, 500 ]
+  Amplifiers:   [   1,   2 ]
+  Description: Activate the Health Boost effect to heal up.
+health2:
+  Type: PotionEffect
+  Element: Water
+  PotionEffect: Heal
+  DisplayName: Advanced Instant Health
+  Icon: Speckled-Melon
+  XPCost: 15
+  MaxLevel: 7
+  UnlockLevels: [ 100, 200, 300, 400, 500, 600, 700 ]
+  UnlockPrices: [ 650, 700, 750, 800, 850, 900, 1000 ]
+  Amplifiers:   [   3,   4,   5,   6,   7,   8,   9 ]
+  Description: Activate the Health Boost effect to heal up.
+regen:
+  Type: PotionEffect
+  Element: Water
+  PotionEffect: Regeneration
+  DisplayName: Regeneration
+  Icon: Ghast-Tear
+  XPCost: 15
+  MaxLevel: 10
+  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
+  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
+  Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
+  Durations:    [  15,  30,  45,  60,  75,  75,  90, 105, 120, 135 ]
+  Description: Activate the Regeneration effect to regenerate your health.

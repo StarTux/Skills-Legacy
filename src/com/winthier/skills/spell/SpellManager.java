@@ -2,7 +2,9 @@ package com.winthier.skills.spell;
 
 import com.winthier.skills.ElementType;
 import com.winthier.skills.SkillsPlugin;
+import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.util.Util;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,7 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +24,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +35,7 @@ public class SpellManager implements Listener {
         private final SkillsPlugin plugin;
         private final Map<String, AbstractSpell> spellByName = new HashMap<String, AbstractSpell>();
         private final Map<ElementType, AbstractSpell[]> spellLists = new EnumMap<ElementType, AbstractSpell[]>(ElementType.class);
+        private ConfigurationSection config;
 
         public SpellManager(SkillsPlugin plugin) {
                 this.plugin = plugin;
@@ -40,6 +47,13 @@ public class SpellManager implements Listener {
         }
 
         public void onDisable() {
+        }
+
+        public ConfigurationSection getConfig() {
+                if (config == null) {
+                        config = plugin.getConfigFile("spells.yml");
+                }
+                return config;
         }
 
         @EventHandler(ignoreCancelled = false, priority = EventPriority.LOW)
@@ -55,7 +69,7 @@ public class SpellManager implements Listener {
                         break;
                 case LEFT_CLICK_BLOCK:
                         event.setCancelled(true);
-                        onUseTotem(player, item, event.getClickedBlock());
+                        onUseTotem(player, item, event.getClickedBlock(), event.getBlockFace());
                         break;
                 case RIGHT_CLICK_AIR:
                 case RIGHT_CLICK_BLOCK:
@@ -97,6 +111,24 @@ public class SpellManager implements Listener {
                 onUseTotem(player, item, event.getEntity());
         }
 
+        @EventHandler(ignoreCancelled = false, priority = EventPriority.LOW)
+        public void onCraftItem(CraftItemEvent event) {
+                if (!(event.getWhoClicked() instanceof Player)) return;
+                Player player = (Player)event.getWhoClicked();
+                for (ItemStack item : event.getInventory().getMatrix()) {
+                        if (Totem.isTotem(item)) {
+                                event.setCancelled(true);
+                                Util.sendMessage(player, "&cCareful! Don't use your totem for crafting.");
+                                return;
+                        }
+                }
+        }
+
+
+        public AbstractSpell getSpell(String spellName) {
+                return spellByName.get(spellName);
+        }
+
         /**
          * Find the spell that is loaded on a totem.
          * @return The spell or null if none is loaded or the
@@ -105,19 +137,14 @@ public class SpellManager implements Listener {
         public AbstractSpell getSpell(ItemStack totem) {
                 ItemMeta meta = totem.getItemMeta();
                 List<String> lore = meta.getLore();
-                if (lore.size() < 2) {
+                if (lore.size() < 1) {
                         return null;
                 } else {
-                        String spellName = ChatColor.stripColor(lore.get(1));
+                        final String line = lore.get(0);
+                        if (line.length() < Totem.TOTEM_LORE_MAGIC.length() + 2) return null;
+                        final String spellName = line.substring(Totem.TOTEM_LORE_MAGIC.length() + 1, line.length());
                         return spellByName.get(spellName);
                 }
-        }
-
-        public void setSpell(ItemStack totem, AbstractSpell spell) {
-                ItemMeta meta = totem.getItemMeta();
-                meta.setLore(Arrays.<String>asList(Totem.TOTEM_LORE_MAGIC, spell.totemName));
-                meta.setDisplayName(spell.getTotemDisplayName());
-                totem.setItemMeta(meta);
         }
 
         public AbstractSpell[] getSpells(ElementType element) {
@@ -126,24 +153,39 @@ public class SpellManager implements Listener {
 
         // Totem use functions. A positive check for the item being a totem is assumed.
 
-        public void onSwitchTotem(Player player, ItemStack totem) {
+        public boolean onSwitchTotem(Player player, ItemStack totem) {
                 AbstractSpell currentSpell = getSpell(totem);
                 AbstractSpell nextSpell = null;
+                final ElementType element = Totem.getTotemType(totem);
+                if (element == null) return false;
+                final AbstractSpell[] spells = spellLists.get(element);
                 if (currentSpell == null) {
-                        final ElementType element = Totem.getTotemType(totem);
-                        if (element == null) return;
-                        nextSpell = spellLists.get(element)[0];
+                        // For a previously empty totem, look for
+                        // the first activated spell.
+                        for (AbstractSpell spell : spells) {
+                                if (spell.hasActivated(player)) {
+                                        nextSpell = spell;
+                                        break;
+                                }
+                        }
                 } else {
-                        final ElementType element = currentSpell.getElement();
-                        final int index = currentSpell.getElementIndex() + 1;
-                        final AbstractSpell[] spells = spellLists.get(element);
-                        if (index < spells.length) {
-                                nextSpell = spells[index];
-                        } else {
-                                nextSpell = spells[0];
+                        // A spell is already loaded on the
+                        // totem. Attempt to find the next
+                        // activated spell.
+                        int index = currentSpell.getElementIndex();
+                        for (int i = 0; i < spells.length; ++i) {
+                                index += 1;
+                                if (index >= spells.length) index = 0;
+                                AbstractSpell spell = spells[index];
+                                if (spell.hasActivated(player)) {
+                                        nextSpell = spell;
+                                        break;
+                                }
                         }
                 }
-                setSpell(totem, nextSpell);
+                if (nextSpell == null) return false;
+                nextSpell.loadOnto(totem, player);
+                return true;
         }
 
         /**
@@ -151,17 +193,22 @@ public class SpellManager implements Listener {
          */
         private boolean canUseSpell(Player player, AbstractSpell spell) {
                 if (spell == null) return false;
-                if (player.getLevel() < spell.getXpCost()) return false;
-                final int level = plugin.playerManager.getPlayerInfo(player).getElementalLevel(spell.getElement());
-                if (level < spell.getMinLevel()) return false;
+                if (!spell.hasUnlocked(player)) return false;
+                if (player.getLevel() < spell.getXPCost()) return false;
+                //final int level = plugin.playerManager.getPlayerInfo(player).getElementalLevel(spell.getElement());
                 return true;
         }
 
         /**
          * 
          */
-        private void onUseSpell(Player player, AbstractSpell spell) {
-                player.setLevel(Math.max(0, player.getLevel() - spell.getXpCost()));
+        private void onUseSpell(Player player, Location loc, AbstractSpell spell) {
+                int cost = spell.getXPCost();
+                final PlayerInfo info = plugin.playerManager.getPlayerInfo(player);
+                if (info.getPrimaryElement() == spell.getElement()) {
+                        cost = plugin.proficiencySpellCostFactor.roll(cost);
+                }
+                player.setLevel(Math.max(0, player.getLevel() - spell.getXPCost()));
                 String particleName = null;
                 String soundName = null;
                 switch (spell.getElement()) {
@@ -182,75 +229,114 @@ public class SpellManager implements Listener {
                         particleName = "tilecrack_18_0";
                         break;
                 }
-                player.playSound(player.getEyeLocation(), soundName, 1.0f, 1.0f);
-                Util.playParticleEffect(player, player.getEyeLocation(), particleName, 64, 0.5f, 0.01f);
+                player.playSound(loc, soundName, 0.5f, 1.0f);
+                Util.playParticleEffect(player, loc, particleName, 64, 0.5f, 0.01f);
+        }
+
+        private void onFailSpell(Player player, Location loc, AbstractSpell spell) {
+                player.playSound(loc, "liquid.lavapop", 0.66f, 0.66f);
         }
 
         public void onUseTotem(Player player, ItemStack totem) {
                 AbstractSpell spell = getSpell(totem);
                 if (canUseSpell(player, spell) && spell.cast(player)) {
-                        onUseSpell(player, spell);
+                        onUseSpell(player, player.getEyeLocation(), spell);
                 } else {
+                        onFailSpell(player, player.getEyeLocation(), spell);
                 }
         }
 
         public void onUseTotem(Player player, ItemStack totem, Entity entity) {
                 AbstractSpell spell = getSpell(totem);
+                Location loc = player.getLocation().add(0.5, 0.5, 0.5);
                 if (canUseSpell(player, spell) && spell.cast(player, entity)) {
-                        onUseSpell(player, spell);
+                        onUseSpell(player, loc, spell);
                 } else {
+                        onFailSpell(player, loc, spell);
                 }
         }
 
-        public void onUseTotem(Player player, ItemStack totem, Block block) {
+        public void onUseTotem(Player player, ItemStack totem, Block block, BlockFace face) {
                 AbstractSpell spell = getSpell(totem);
-                if (canUseSpell(player, spell) && spell.cast(player, block)) {
-                        onUseSpell(player, spell);
+                Location loc = block.getRelative(face).getLocation().add(0.5, 0.5, 0.5);
+                if (canUseSpell(player, spell) && spell.cast(player, block, face)) {
+                        onUseSpell(player, loc, spell);
                 } else {
+                        onFailSpell(player, loc, spell);
                 }
         }
 
+        @SuppressWarnings("unchecked")
         public void loadSpells() {
-                AbstractSpell[] spells = {
-                        // Basic spells most players will get
-                        // first. They correspond to the potion
-                        // effect that comes most natural with the
-                        // relevent element.
-                        new PotionEffectSpell(plugin, ElementType.WATER, "health", PotionEffectType.HEAL),
-                        new PotionEffectSpell(plugin, ElementType.WATER, "regeneration", PotionEffectType.REGENERATION),
+                List<AbstractSpell> spells = new ArrayList<AbstractSpell>();
+                ConfigurationSection config = getConfig();
+                // Load all the spells and make sure the basic
+                // configuration structure is okay.
+                for (String key : config.getKeys(false)) {
+                        ConfigurationSection section = config.getConfigurationSection(key);
+                        if (section == null) {
+                                plugin.getLogger().warning("[Spell] " + key + ": Not a section.");
+                                continue;
+                        }
+                        String type = section.getString("Type");
+                        if (type == null) {
+                                plugin.getLogger().warning("[Spell] " + key + ": Missing type.");
+                                continue;
+                        }
+                        String className = "com.winthier.skills.spell." + type + "Spell";
+                        Class clazz = null;
+                        try {
+                                clazz = Class.forName(className);
+                        } catch (Throwable t) {}
+                        if (clazz == null) {
+                                plugin.getLogger().warning("[Spell] " + key + ": Class not found: " + className);
+                                continue;
+                        }
+                        Constructor ctor = null;
+                        try {
+                                ctor = clazz.getConstructor();
+                        } catch (Throwable t) {}
+                        if (ctor == null) {
+                                plugin.getLogger().warning("[Spell] " + key + ": No suitable constructor found.");
+                                continue;
+                        }
+                        Object o = null;
+                        try {
+                                o = ctor.newInstance();
+                        } catch (Throwable t) {}
+                        if (o == null || !(o instanceof AbstractSpell)) {
+                                plugin.getLogger().warning("[Spell] " + key + ": Not an instance of AbstractSpell.");
+                                continue;
+                        }
+                        AbstractSpell spell = (AbstractSpell)o;
+                        spell.init(plugin, key);
+                        spells.add(spell);
+                }
 
-                        new PotionEffectSpell(plugin, ElementType.FIRE,  "increase-damage", PotionEffectType.INCREASE_DAMAGE),
-                        new PotionEffectSpell(plugin, ElementType.FIRE,  "fire-resistance", PotionEffectType.FIRE_RESISTANCE),
-
-                        new PotionEffectSpell(plugin, ElementType.EARTH, "fast-digging", PotionEffectType.FAST_DIGGING),
-                        new PotionEffectSpell(plugin, ElementType.EARTH, "damage-resistance", PotionEffectType.DAMAGE_RESISTANCE),
-
-                        new PotionEffectSpell(plugin, ElementType.AIR,   "speed", PotionEffectType.SPEED),
-                        new PotionEffectSpell(plugin, ElementType.AIR,   "jump", PotionEffectType.JUMP)
-                };
                 // Clear all available lists.
                 spellByName.clear();
                 spellLists.clear();
                 // Prepare temporary spell lists.
                 Map<ElementType, List<AbstractSpell>> tmpSpellList = new EnumMap<ElementType, List<AbstractSpell>>(ElementType.class);
                 for (ElementType element : ElementType.values()) {
-                        tmpSpellList.put(element, new ArrayList<AbstractSpell>(spells.length / 4));
+                        tmpSpellList.put(element, new ArrayList<AbstractSpell>(spells.size() / 3));
                 }
                 // Prepare all spells and put them into the temporary lists.
                 for (AbstractSpell spell : spells) {
-                        spell.loadConfig();
-                        tmpSpellList.get(spell.getElement()).add(spell);
-                        spellByName.put(spell.getName(), spell);
+                        if (spell.loadConfig()) {
+                                tmpSpellList.get(spell.getElement()).add(spell);
+                                spellByName.put(spell.getName(), spell);
+                        }
                 }
                 // Put them in the final lists, sort them and set the indices.
                 for (ElementType element : ElementType.values()) {
                         AbstractSpell list[] = tmpSpellList.get(element).toArray(new AbstractSpell[0]);
                         spellLists.put(element, list);
-                        Arrays.<AbstractSpell>sort(list, new Comparator<AbstractSpell>() {
-                                        public int compare(AbstractSpell o1, AbstractSpell o2) {
-                                                return o1.minElementLevel - o2.minElementLevel;
-                                        }
-                                });
+                        // Arrays.<AbstractSpell>sort(list, new Comparator<AbstractSpell>() {
+                        //                 public int compare(AbstractSpell o1, AbstractSpell o2) {
+                        //                         return o1.getUnlockLevel(1) - o2.getUnlockLevel(1);
+                        //                 }
+                        //         });
                         int i = 0;
                         for (AbstractSpell spell : list) spell.setElementIndex(i++);
                 }

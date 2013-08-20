@@ -12,6 +12,18 @@ public class CreateTableRequest implements SQLRequest {
         @Override
         public void execute(Connection c) throws SQLException {
                 Statement s;
+
+                // Create table for players.
+                s = c.createStatement();
+                s.execute("CREATE TABLE IF NOT EXISTS `skills_players` (" +
+                          " `player` VARCHAR(16) NOT NULL," +
+                          " `element` VARCHAR(16) DEFAULT NULL," +
+                          " `last-switch` DATETIME DEFAULT NULL," +
+                          " PRIMARY KEY(`player`)" +
+                          ") ENGINE=MyISAM");
+                s.close();
+
+                // Create table for skill points.
                 s = c.createStatement();
                 s.execute("CREATE TABLE IF NOT EXISTS `skills_sp` (" +
                           " `player` VARCHAR(16) NOT NULL," +
@@ -21,6 +33,7 @@ public class CreateTableRequest implements SQLRequest {
                           ") ENGINE=MyISAM");
                 s.close();
 
+                // Create table for gauss numbers.
                 s = c.createStatement();
                 s.execute("CREATE TABLE IF NOT EXISTS `skills_gaussian` (" +
                           " `points` INT(8) UNSIGNED NOT NULL," +
@@ -44,12 +57,14 @@ public class CreateTableRequest implements SQLRequest {
                 //           ") ENGINE=MyISAM");
                 // s.close();
 
+                // Create table for spell levels.
                 s = c.createStatement();
                 s.execute("CREATE TABLE IF NOT EXISTS `skills_spells` (" +
                           " `player` VARCHAR(16) NOT NULL," +
                           " `spell` VARCHAR(32) NOT NULL," +
                           " `level` TINYINT(2) UNSIGNED NOT NULL," +
-                          " PRIMARY KEY(`player`)" +
+                          " `active` BOOL NOT NULL DEFAULT TRUE," +
+                          " PRIMARY KEY(`player`, `spell`)" +
                           ") ENGINE=MyISAM");
                 s.close();
         }

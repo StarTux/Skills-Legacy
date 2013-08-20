@@ -5,6 +5,7 @@ import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.skill.AbstractSkill;
 import com.winthier.skills.skill.SkillType;
+import com.winthier.skills.spell.AbstractSpell;
 import com.winthier.skills.spell.Totem;
 import com.winthier.skills.util.Util;
 import org.bukkit.ChatColor;
@@ -22,18 +23,18 @@ public class ConfigCommand implements CommandExecutor {
         }
 
         public void onEnable() {
-                plugin.getCommand("skillconfig").setExecutor(this);
+                plugin.getCommand("SkillConfig").setExecutor(this);
         }
 
         @Override
         public boolean onCommand(CommandSender sender, Command command, String label, String args[]) {
                 Player player = null;
                 if (sender instanceof Player) player = (Player)sender;
-                if (args.length == 1 && args[0].equals("help")) {
+                if (args.length == 1 && args[0].equalsIgnoreCase("Help")) {
                         sendHelp(sender);
                         return true;
                 }
-                if (args.length >= 1 && args[0].equals("info")) {
+                if (args.length >= 1 && args[0].equalsIgnoreCase("Info")) {
                         if (args.length != 3) {
                                 Util.sendMessage(sender, "&eUsage: /%s <player> <skill>", label);
                                 return true;
@@ -53,7 +54,7 @@ public class ConfigCommand implements CommandExecutor {
                         plugin.sendSkillInfo(sender, other, skillType);
                         return true;
                 }
-                if (args.length >= 1 && args[0].equals("stats")) {
+                if (args.length >= 1 && args[0].equalsIgnoreCase("Stats")) {
                         String playerName = null;
                         if (args.length == 1) {
                                 if (player != null) {
@@ -79,9 +80,9 @@ public class ConfigCommand implements CommandExecutor {
                         plugin.sqlManager.sendPlayerStatistics(sender, playerName);
                         return true;
                 }
-                if (args.length >= 1 && args[0].equals("setlevel")) {
+                if (args.length >= 1 && args[0].equalsIgnoreCase("SkillLevel")) {
                         if (args.length < 3 || args.length > 4) {
-                                Util.sendMessage(sender, "&cUsage: /%s setlevel <skill> [player] <level>", label);
+                                Util.sendMessage(sender, "&cUsage: /%s SkillLevel <skill> [player] <level>", label);
                                 return true;
                         }
                         String skillName = args[1];
@@ -135,19 +136,52 @@ public class ConfigCommand implements CommandExecutor {
                         Util.sendMessage(sender, "Set %s skill level of %s to %s.", skillType.getDisplayName(), playerName, level);
                         return true;
                 }
-                if (args.length == 1 && args[0].equals("reload")) {
+                if (args.length >= 1 && args[0].equalsIgnoreCase("SpellLevel")) {
+                        if (args.length != 4) {
+                                Util.sendMessage(sender, "&cUsage: /%s SpellLevel <spell> <player> <level>", label);
+                                return true;
+                        }
+                        AbstractSpell spell = plugin.spellManager.getSpell(args[1]);
+                        if (spell == null) {
+                                Util.sendMessage(sender, "&cSpell not found: %s.", args[1]);
+                                return true;
+                        }
+                        String playerName = args[2];
+                        Player other = plugin.getServer().getPlayer(playerName);
+                        if (other != null) playerName = other.getName();
+                        PlayerInfo info = plugin.playerManager.getPlayerInfo(playerName);
+                        int level = 0;
+                        try {
+                                level = Integer.parseInt(args[3]);
+                        } catch (NumberFormatException nfe) {
+                                Util.sendMessage(sender, "&cNot a number: %s.", args[3]);
+                                return true;
+                        }
+                        if (level < 0 || level > spell.getMaxLevel()) {
+                                Util.sendMessage(sender, "&cInvalid level. Got %d.", level);
+                                return true;
+                        }
+                        if (info == null) {
+                                plugin.sqlManager.setSpellLevel(playerName, spell, level);
+                        } else {
+                                info.spellsInfo.setSpellLevel(spell, level);
+                        }
+                        Util.sendMessage(sender, "&aSet %s level for %s to %d.", spell.getName(), playerName, level);
+                        return true;
+                }
+                if (args.length == 1 && args[0].equalsIgnoreCase("Reload")) {
                         plugin.reloadConfig();
                         SkillType.loadAll();
                         Util.sendMessage(sender, "&eConfiguration reloaded.");
                         return true;
                 }
-                if (args.length == 1 && args[0].equals("flush")) {
+                if (args.length == 1 && args[0].equalsIgnoreCase("Flush")) {
                         plugin.playerManager.onDisable();
                         plugin.playerManager.onEnable();
                         Util.sendMessage(sender, "&ePlayer data flushed.");
                         return true;
                 }
-                if (args.length == 1 && args[0].equals("totems")) {
+                if (args.length == 1 && args[0].equalsIgnoreCase("Totems")) {
                         if (player == null) {
                                 Util.sendMessage(sender, "&cPlayer expected");
                                 return true;
@@ -158,6 +192,22 @@ public class ConfigCommand implements CommandExecutor {
                         }
                         return true;
                 }
+                if (args.length == 3 && args[0].equalsIgnoreCase("Element")) {
+                        Player other = plugin.getServer().getPlayerExact(args[1]);
+                        if (other == null) {
+                                Util.sendMessage(sender, "&cPlayer not found: %s.", args[1]);
+                                return true;
+                        }
+                        ElementType element = Util.enumFromString(ElementType.class, args[2]);
+                        if (element == null) {
+                                Util.sendMessage(sender, "&cInvalid element: %s.", args[2]);
+                                return true;
+                        }
+                        PlayerInfo info = plugin.playerManager.getPlayerInfo(player);
+                        info.setPrimaryElement(element);
+                        Util.sendMessage(sender, "&aSet primary element of %s to %s.", player.getName(), element.getDisplayName());
+                        return true;
+                }
                 sendHelp(sender);
                 return true;
         }
@@ -166,10 +216,12 @@ public class ConfigCommand implements CommandExecutor {
                 Util.sendMessage(sender, "&eSkills Configuration Interface");
                 Util.sendMessage(sender, "&fUSAGE:&e /skc &6<subcommand> [args...]");
                 Util.sendMessage(sender, "&fSUBCOMMANDS");
-                Util.sendMessage(sender, "&e/skc &6reload&r - Reload the configuration file");
-                Util.sendMessage(sender, "&e/skc &6flush&r - Reload all player data");
-                Util.sendMessage(sender, "&e/skc &6stats <player>&r - Lookup a player's skill statistics.");
-                Util.sendMessage(sender, "&e/skc &6setlevel <skill> [player] <level>&r - Modify a player's skill level.");
-                Util.sendMessage(sender, "&e/skc &6totems&r - Get a full set of totems.");
+                Util.sendMessage(sender, "&e/skc &6Reload&r - Reload the configuration file");
+                Util.sendMessage(sender, "&e/skc &6Flush&r - Reload all player data");
+                Util.sendMessage(sender, "&e/skc &6Stats <player>&r - Lookup a player's skill statistics.");
+                Util.sendMessage(sender, "&e/skc &6SkillLevel <skill> [player] <level>&r - Modify a player's skill level.");
+                Util.sendMessage(sender, "&e/skc &6SpellLevel <spell> <player> <level>&r - Modify a player's spell level.");
+                Util.sendMessage(sender, "&e/skc &6Totems&r - Get a full set of totems.");
+                Util.sendMessage(sender, "&e/skc &6Element <player> <element>&r - Set the primary element of a player.");
         }
 }

@@ -1,10 +1,12 @@
 package com.winthier.skills.sql;
 
 import com.winthier.libsql.ConnectionManager;
+import com.winthier.skills.ElementType;
 import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.skill.AbstractSkill;
 import com.winthier.skills.skill.SkillType;
+import com.winthier.skills.spell.AbstractSpell;
 import org.bukkit.command.CommandSender;
 
 public class SQLManager {
@@ -71,5 +73,17 @@ public class SQLManager {
 
         public void saveSkillInfo(AbstractSkill skill) {
                 connectionManager.queueRequest(new SaveSkillInfoRequest(skill));
+        }
+
+        public boolean setSpellLevel(String player, AbstractSpell spell, int level) {
+                return connectionManager.queueRequest(new SetSpellLevelRequest(player, spell.getName(), level));
+        }
+
+        public boolean setSpellActive(String player, AbstractSpell spell, boolean active) {
+                return connectionManager.queueRequest(new SetSpellActiveRequest(player, spell.getName(), active));
+        }
+
+        public void switchElement(PlayerInfo info, ElementType element) {
+                connectionManager.queueRequest(new SwitchElementRequest(plugin, info, element, plugin.switchElementCooldown));
         }
 }

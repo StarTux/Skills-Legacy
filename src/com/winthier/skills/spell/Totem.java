@@ -14,13 +14,15 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class Totem {
         public static final String TOTEM_LORE_MAGIC = "" + ChatColor.BLACK + ChatColor.MAGIC + "Totem";
+        //public static final String TOTEM_LORE_MAGIC = "Totem";
         private final static ItemStack totems[] = new ItemStack[4];
 
         public static ElementType getTotemType(ItemStack item) {
+                if (item == null) return null;
                 switch (item.getType()) {
                 case DIAMOND: return ElementType.EARTH;
                 case FIRE:    return ElementType.FIRE;
-                case FEATHER:  return ElementType.AIR;
+                case FEATHER: return ElementType.AIR;
                 case WATER:   return ElementType.WATER;
                 default: return null;
                 }
@@ -43,7 +45,7 @@ public class Totem {
                 if (!meta.hasLore()) return false;
                 final List<String> lore = meta.getLore();
                 if (lore.size() < 1) return false;
-                return lore.get(0).equals(TOTEM_LORE_MAGIC);
+                return lore.get(0).startsWith(TOTEM_LORE_MAGIC);
         }
 
         public static ItemStack createTotem(ElementType element) {

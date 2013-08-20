@@ -28,12 +28,20 @@ public class EatingSkill extends AbstractSkill {
                 if (skillPoints > 0 && foodPoints > 0) {
                         final int hunger = 20 - player.getFoodLevel();
                         final int food = Math.min(hunger, foodPoints);
-                        // give sp
-                        addSkillPoints(player, Util.rollFraction(skillPoints, food, foodPoints));
-                        // give health bonus
-                        final int healthBoost = Util.rollFraction(food, getHealthBoost(player), 100);
-                        if (healthBoost > 0) {
-                                player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + healthBoost));
+
+                        // Give SP.
+                        final int sp = Util.rollFraction(skillPoints, food, foodPoints);
+                        addSkillPoints(player, sp);
+
+                        // Give bonus health and XP.
+                        if (plugin.perksEnabled) {
+                                final int healthBoost = Util.rollFraction(food, getHealthBoost(player), 100);
+                                if (healthBoost > 0) {
+                                        player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + healthBoost));
+                                }
+                                // Bonus XP.
+                                final int xp = multiplyXp(player, Util.rollFraction(1, sp, skillPoints));
+                                if (xp > 0) player.giveExp(xp);
                         }
                 }
         }
@@ -61,7 +69,8 @@ public class EatingSkill extends AbstractSkill {
 
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(1);
-                result.add("Eating food grants you " + getHealthBoost(player) + "% health boost");
+                result.add("Healthy food grants you " + getHealthBoost(player) + "% health boost");
+                result.add("Exquisite food gives +" + (getXpMultiplier(player) - 100) + "% XP");
                 return result;
         }
 

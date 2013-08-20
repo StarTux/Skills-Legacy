@@ -19,7 +19,7 @@ public class SkillCommand implements CommandExecutor {
         }
 
         public void onEnable() {
-                plugin.getCommand("skill").setExecutor(this);
+                plugin.getCommand("Skill").setExecutor(this);
         }
 
         @Override

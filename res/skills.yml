@@ -1,0 +1,357 @@
+mining:
+  Description: |-
+    Break stone and valuable ores with your pickaxe.
+    Skill points are given for stone, sandstone, coal, iron, gold, redstone, lapis, diamonds, emeralds and quartz.
+    Broken ores will drop more experience points as you climb up levels.
+  sp:
+    Emerald-Ore: 5
+    Diamond-Ore: 5 # 50 | 10
+    Gold-Ore: 5 # 20 | 10
+    Lapis-Ore: 4 # 45 | 15
+    Glowstone: 2
+    Redstone-Ore: 2 # 6 | 1.5
+    Glowing-Redstone-Ore: 2 # 6 | 1.5
+    Quartz-Ore: 1
+    Iron-Ore: 1 # 2 | 1.75
+    Coal-Ore: 1/2
+    Obsidian: 1
+    Sandstone: 1/8
+    Stone: 1/20
+    Dirt: 1/40
+    Sand: 1/40
+    Grass: 1/32
+  xp:
+    Stone: 1/16
+    Sandstone: 1/2
+    Obsidian: 2
+    Iron-Ore: 3 
+    Gold-Ore: 5
+alchemy:
+  Description: |-
+    Refine materials in a furnace. You earn skill points as you take cooked food, stone, dyes and ores out of a furnace.
+    Blast blocks with TNT. You gain SP for blowing up all sorts of blocks.
+  sp:
+    smelting:
+      Emerald: 2
+      Diamond: 2
+      Gold-Ingot: 2
+      Quartz: 1
+      Iron-Ingot: 1
+      Quartz: 1
+      Coal: 1
+      Ink-Sack: 1/2
+      # Foods weigh 1/4
+      Cooked-Beef: 1/4
+      Cooked-Fish: 1/4
+      Grilled-Pork: 1/4
+      Cooked-Chicken: 1/4
+      Clay-Brick: 1/2
+      Hard-Clay: 1/2
+      Glass: 1/8
+      Stone: 1/16
+      Nether-Brick: 1/16
+    blasting:
+      Emerald-Ore: 3
+      Diamond-Ore: 3
+      Gold-Ore: 3
+      Lapis-Ore: 3
+      Redstone-Ore: 2
+      Glowing-Redstone-Ore: 2
+      Quartz-Ore: 1
+      Iron-Ore: 1
+      Coal-Ore: 1/2
+      Sandstone: 1/4
+      Stone: 1/16
+  xp: {}
+eating:
+  Description: |-
+    Fill up your hunger bar by eating good foods.
+    The healthier and tastier your diet is, the more skill points you get.
+    Eating food gives you a health boost depending on your skill level.
+  LevelsPerHealthPoint: 100
+  food:
+    Bread: 5
+    Carrot-Item: 4
+    Baked-Potato: 6
+    Potato-Item: 1
+    Poisonous-Potato: 2
+    Golden-Carrot: 6
+    Pumpkin-Pie: 8
+    Cookie: 2
+    Melon: 2
+    Mushroom-Soup: 6
+    Raw-Chicken: 2
+    Cooked-Chicken: 6
+    Raw-Beef: 3
+    Cooked-Beef: 8
+    Raw-Fish: 2
+    Cooked-Fish: 5
+    Pork: 3
+    Grilled-Pork: 8
+    Apple: 4
+    Golden-Apple: 4
+    Rotten-Flesh: 4
+    Spider-Eye: 2
+    Cake: 2
+  sp:
+    Bread: 5
+    Carrot-Item: 4
+    Baked-Potato: 6
+    Potato-Item: 1
+    Poisonous-Potato: 2
+    Golden-Carrot: 8
+    Pumpkin-Pie: 8
+    Cookie: 2
+    Melon: 2
+    Mushroom-Soup: 2
+    Raw-Chicken: 2
+    Cooked-Chicken: 6
+    Raw-Beef: 3
+    Cooked-Beef: 8
+    Raw-Fish: 2
+    Cooked-Fish: 5
+    Pork: 3
+    Grilled-Pork: 8
+    Apple: 4
+    Golden-Apple: 10
+    Rotten-Flesh: 0
+    Spider-Eye: 0
+    Cake: 2
+herbalism:
+  Description: |-
+    Cultivate and harvest growing things.
+    Earn skill points for fertilizing and harvesting trees, wheat, vegetables, fruit and other plants.
+  sp:
+    fertilize:
+      Crops: 1/4
+      Carrot: 1/4
+      Potato: 1/4
+      Melon_Stem: 1
+      Pumpkin_Stem: 1
+      # The following should be covered by structures.
+      #Sapling: 5
+      #Red-Mushroom: 7
+      #Brown-Mushroom: 7        
+    harvest:
+      Long-Grass: 1/16
+      Dead-Bush: 1/8
+      Log: 1/2
+      Huge-Mushroom-1: 1/2
+      Huge-Mushroom-2: 1/2
+      Leaves: 1/4
+      Crops: 1/8
+      Carrot: 1/8
+      Potato: 1/8
+      Cactus: 1
+      Pumpkin: 1/2
+      Melon-Block: 1/2
+      Vine: 1/2
+      Sugar-Cane-Block: 1/8
+      Red-Rose: 1/2
+      Yellow-Flower: 1/2
+      Water-Lily: 1
+      Brown-Mushroom: 1/2
+      Red-Mushroom: 1/2
+    structures:
+      Tree: 2
+      Swamp: 2
+      Big-Tree: 2
+      Birch: 2
+      Jungle-Bush: 2
+      Redwood: 3
+      Tall-Redwood: 6
+      Small-Jungle: 4
+      Red-Mushroom: 4
+      Brown-Mushroom: 4
+      Jungle: 16
+  xp:
+    fertilize:
+      Crops: 1
+      Carrot: 1
+      Potato: 1
+      Melon_Stem: 3
+      Pumpkin_Stem: 3
+    harvest:
+      Long-Grass: 1/16
+      Dead-Bush: 1/8
+      Log: 1/2
+      Huge-Mushroom-1: 1/2
+      Huge-Mushroom-2: 1/2
+      Leaves: 1/4
+      Crops: 1/2
+      Carrot: 1/2
+      Potato: 1/2
+      Cactus: 1
+      Pumpkin: 1/2
+      Melon-Block: 1/2
+      Vine: 1
+      Sugar-Cane-Block: 1/4
+      Red-Rose: 1
+      Yellow-Flower: 1
+      Water-Lily: 2
+      Brown-Mushroom: 1
+      Red-Mushroom: 1
+    structures:
+      Tree: 2
+      Big-Tree: 2
+      Birch: 2
+      Redwood: 3
+      Tall-Redwood: 6
+      Small-Jungle: 4
+      Red-Mushroom: 4
+      Brown-Mushroom: 4
+      Jungle: 16
+traveling:
+  Description: |-
+    Explore the world of Winthier.
+    Traveling long distances by foot, pig, horse or ender pearl gives you skill points.
+  NormDistance: 40
+  MinPearlingDistance: 32
+  WalkingSkillPoints: 1
+  SprintingSkillPoints: 1
+  PearlingSkillPoints: 2
+  RidingSkillPoints: 1
+  FarTravelDistance: 64
+wildlife:
+  Description: |-
+    Take care of wild and farm animals.
+    Collect skill points by taming, breeding, shearing different animals or catching fish.
+    As you level up this skill, you will have more luck catching fish and get more experience points for fishing and breeding.
+  sp:
+    Fishing: 3
+    breeding:
+      Chicken: 1/4
+      Sheep: 1
+      Cow: 1
+      Mushroom-Cow: 1
+      Pig: 1
+      Sheep: 1
+      Ocelot: 2
+      Wolf: 2
+    taming:
+      Horse: 1
+      Ocelot: 3
+      Wolf: 3
+    shearing:
+      Sheep: 1/8
+      Mushroom-Cow: 1
+    butcher:
+      Chicken: 1/2
+      Cow: 1
+      Pig: 1
+      Mushroom-Cow: 1
+      Squid: 3
+  xp:
+    breeding:
+      Chicken: 1
+      Cow: 1
+      Mushroom-Cow: 2
+      Ocelot: 3
+      Pig: 1
+      Sheep: 1
+      Wolf: 3
+    taming:
+      Horse: 2
+      Ocelot: 3
+      Wolf: 3
+    shearing:
+      Sheep: 1
+      Mushroom-Cow: 2
+      
+melee:
+  Description: |-
+    Fight hostile mobs in close combat.
+    You gain skill points by killing monsters with swords, axes or your fists. You get different amounts for zombies, skeletons, creepers and more.
+    The higher your level is, the more experience points your victims will drop.
+  MinKillDistance: 7
+  sp:
+    Silverfish: 1
+    Slime: 1
+    Cave-Spider: 2
+    Enderman: 5
+    Pig-Zombie: 2
+    Skeleton: 4
+    Spider: 2
+    Zombie: 2
+    Magma-Cube: 2
+    Blaze: 4
+    Witch: 5
+    Creeper: 5
+    Giant: 10
+    Wither: 20
+    Ender-Dragon: 50
+archery:
+  Description: |-
+    Snipe hostile mobs from a distance with ranged weapons.
+    Use your bow to kill monsters from a distance. The farther away you are from your target, the more skill points you gain.
+    Your prey will drop bonus experience points the higher your skill level is.
+  NormDistance: 12
+  MinKillDistance: 10
+  sp:
+    Silverfish: 1
+    Slime: 1
+    Cave-Spider: 2
+    Enderman: 2
+    Pig-Zombie: 2
+    Skeleton: 5
+    Spider: 2
+    Zombie: 2
+    Magma-Cube: 2
+    Blaze: 4
+    Witch: 5
+    Creeper: 4
+    Giant: 10
+    Wither: 20
+    Ender-Dragon: 50
+enchanting:
+  Description: |-
+    Enchant tools, weapons, armor or books on the enchanting table.
+    Different materials give different amounts of skill points, multiplied with the experience level used.
+  sp:
+    Book: 1
+    Bow: 1/4
+
+    Wood-Pickaxe: 1/30
+    Wood-Spade: 1/30
+    Wood-Axe: 1/30
+    Wood-Sword: 1/30
+
+    Stone-Pickaxe: 1/10
+    Stone-Spade: 1/10
+    Stone-Axe: 1/10
+    Stone-Sword: 1/10
+
+    Iron-Pickaxe: 1/3
+    Iron-Spade: 1/3
+    Iron-Axe: 1/3
+    Iron-Sword: 1/3
+
+    Gold-Pickaxe: 1/2
+    Gold-Spade: 1/2
+    Gold-Axe: 1/2
+    Gold-Sword: 1/2
+
+    Diamond-Pickaxe: 2
+    Diamond-Spade: 2
+    Diamond-Axe: 2
+    Diamond-Sword: 2
+
+    Leather-Helmet: 1/10
+    Leather-Chestplate: 1/10
+    Leather-Leggings: 1/10
+    Leather-Boots: 1/10
+
+    Iron-Helmet: 1/3
+    Iron-Chestplate: 1/3
+    Iron-Leggings: 1/3
+    Iron-Boots: 1/3
+
+    Gold-Helmet: 1/2
+    Gold-Chestplate: 1/2
+    Gold-Leggings: 1/2
+    Gold-Boots: 1/2
+
+    Diamond-Helmet: 3
+    Diamond-Chestplate: 3
+    Diamond-Leggings: 3
+    Diamond-Boots: 3

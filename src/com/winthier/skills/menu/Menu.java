@@ -1,5 +1,6 @@
 package com.winthier.skills.menu;
 
+import com.winthier.skills.SkillsPlugin;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -9,13 +10,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class Menu {
-        public final MenuManager manager;
+        public final SkillsPlugin plugin;
         protected final List<ItemStack> items = new ArrayList<ItemStack>();
         protected Inventory inventory = null;
         protected String title;
 
-        public Menu(MenuManager manager, String title) {
-                this.manager = manager;
+        public Menu(SkillsPlugin plugin, String title) {
+                this.plugin = plugin;
                 setTitle(title);
         }
 
@@ -32,7 +33,7 @@ public class Menu {
                 if (inventory == null) createInventory();
                 player.openInventory(inventory);
                 // InventoryCloseEvent is called.
-                manager.setOpenMenu(player, this);
+                plugin.menuManager.setOpenMenu(player, this);
         }
 
         protected void createInventory() {

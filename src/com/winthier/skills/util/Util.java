@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +26,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class Util {
         public final static Random random = new Random(System.currentTimeMillis());
-        public final static String ICON = "\u25A3";
+        //public final static String ICON = "\u25A3"; // The filled square.
+        public final static String ICON = "\u2726";
 
         final static int[] sqrtTable = {
                 0,    16,  22,  27,  32,  35,  39,  42,  45,  48,  50,  53,  55,  57,
@@ -133,6 +136,12 @@ public class Util {
                 sender.sendMessage(format(msg, args));
         }
 
+        private static final String roman[] = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
+        public static String roman(int n) {
+                if (n <= 0 || n > roman.length) return "" + n;
+                return roman[n - 1];
+        }
+
         public static int sqrt(int x) {
                 int xn;
                 if (x >= 0x10000) {
@@ -207,6 +216,52 @@ public class Util {
                 NbtCompound compound = (NbtCompound)NbtFactory.fromItemTag(item);
                 compound.remove("ench");
                 return item;
+        }
+
+        public static int[] toIntArray(List<Integer> list) {
+                int result[] = new int[list.size()];
+                for (int i = 0; i < result.length; ++i) {
+                        result[i] = list.get(i);
+                }
+                return result;
+        }
+
+        public static double[] toDoubleArray(List<Double> list) {
+                double result[] = new double[list.size()];
+                for (int i = 0; i < result.length; ++i) {
+                        result[i] = list.get(i);
+                }
+                return result;
+        }
+
+        /**
+         * Wrap around Enum.valueOf(), but be a little more
+         * tolerant of the input.
+         */
+        public static <T extends Enum<T>> T enumFromString(Class<T> type, String name) {
+                if (name == null) return null;
+                name = name.toUpperCase().replaceAll("-", "_");
+                try {
+                        return Enum.valueOf(type, name);
+                } catch (IllegalArgumentException iae) {
+                        return null;
+                }
+        }
+
+        public static List<String> fillParagraph(String par, int width, String prefix) {
+                List<String> result = new ArrayList<String>();
+                StringBuilder line = new StringBuilder(prefix);
+                for (String word : par.split("\\s+")) {
+                        if (line.length() + word.length() - prefix.length() + 1 > width) {
+                                result.add(line.toString());
+                                line = new StringBuilder(prefix).append(word);
+                        } else {
+                                if (line.length() > prefix.length()) line.append(" ");
+                                line.append(word);
+                        }
+                }
+                if (line.length() > 0) result.add(line.toString());
+                return result;
         }
 
         public static void playParticleEffect(Player player, Location location, String particleName, int count, float offset, float speed) {

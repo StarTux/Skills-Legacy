@@ -26,24 +26,33 @@ public class MeleeSkill extends AbstractSkill {
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onEntityDeath(EntityDeathEvent event) {
-                LivingEntity entity = event.getEntity();
+                final LivingEntity entity = event.getEntity();
+                if (entity.getHealth() > 0.0) return;
+
+                // Figure out damager.
                 final EntityDamageEvent lastDamage = entity.getLastDamageCause();
                 if (lastDamage == null || !(lastDamage instanceof EntityDamageByEntityEvent)) return;
                 final EntityDamageByEntityEvent lastEntityDamage = (EntityDamageByEntityEvent)lastDamage;
                 final Entity damager = lastEntityDamage.getDamager();
+
+                // Figure out player.
                 if (!(damager instanceof Player)) return;
                 Player player = (Player)damager;
-                // give sp
+
+                // Give SP.
                 int skillPoints = spMap.get(entity.getType());
                 if (skillPoints == 0) return;
                 if (ExploitsPlugin.getKillDistance(player) < minKillDistance) return;
                 final int maxHealth = (int)entity.getMaxHealth();
                 final int playerDamage = Math.min(maxHealth, ExploitsPlugin.getPlayerDamage(entity));
                 skillPoints = Util.rollFraction(skillPoints, playerDamage, maxHealth);
-                if (skillPoints > 0) addSkillPoints(player, skillPoints);
-                // give bonus xp
-                final int xp = event.getDroppedExp();
-                event.setDroppedExp(multiplyXp(player, xp));
+                addSkillPoints(player, skillPoints);
+
+                // Give bonus XP.
+                if (plugin.perksEnabled) {
+                        final int xp = event.getDroppedExp();
+                        event.setDroppedExp(multiplyXp(player, xp));
+                }
         }
 
         // User output
@@ -59,6 +68,6 @@ public class MeleeSkill extends AbstractSkill {
         @Override
         public void loadConfiguration() {
                 minKillDistance = getConfig().getInt("MinKillDistance");
-                spMap.load(EntityType.class, getConfig().getConfigurationSection("sp"));
+                spMap.load(getConfig().getConfigurationSection("sp"));
         }
 }

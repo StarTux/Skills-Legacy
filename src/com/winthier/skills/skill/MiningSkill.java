@@ -17,7 +17,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 public class MiningSkill extends AbstractSkill {
         private final MaterialFractionMap spMap = new MaterialFractionMap(0);
-        private final MaterialIntMap xpMap = new MaterialIntMap(-1);
+        private final MaterialFractionMap xpMap = new MaterialFractionMap(-1);
 
         public MiningSkill(SkillsPlugin plugin, SkillType skillType) {
                 super(plugin, skillType);
@@ -30,19 +30,23 @@ public class MiningSkill extends AbstractSkill {
                 final boolean playerPlaced = ExploitsPlugin.isPlayerPlaced(block);
                 final Material mat = block.getType();
                 if (block.getDrops(player.getItemInHand()).isEmpty()) return;
-                // give sp
+
+                // Give SP.
                 if (!playerPlaced) {
                         final int skillPoints = spMap.roll(mat, 1);
                         if (skillPoints > 0) addSkillPoints(player, skillPoints);
                 }
-                // set xp
+
+                // Give bonus XP.
                 // If the xp map overrides the value and the block
                 // is not player placed, we use that
                 // value. Otherwise, we trust Minecraft.
-                int xp = -1;
-                xp = xpMap.get(mat);
-                if (xp < 0 || playerPlaced) xp = event.getExpToDrop();
-                event.setExpToDrop(multiplyXp(player, xp));
+                if (plugin.perksEnabled) {
+                        int xp = -1;
+                        xp = xpMap.get(mat);
+                        if (xp < 0 || playerPlaced) xp = event.getExpToDrop();
+                        event.setExpToDrop(multiplyXp(player, xp));
+                }
         }
 
         // User output

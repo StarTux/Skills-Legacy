@@ -19,7 +19,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 public class ArcherySkill extends AbstractSkill {
         private final EnumIntMap<EntityType> spMap = new EnumIntMap<EntityType>(EntityType.class, 0);
-        private int minKillDistance, normDistance;
+        private int minKillDistance;
+        private int normDistance;
 
         public ArcherySkill(SkillsPlugin plugin, SkillType skillType) {
                 super(plugin, skillType);
@@ -27,7 +28,10 @@ public class ArcherySkill extends AbstractSkill {
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onEntityDeath(EntityDeathEvent event) {
-                LivingEntity entity = event.getEntity();
+                final LivingEntity entity = event.getEntity();
+                if (entity.getHealth() > 0.0) return;
+
+                // Figure out damager.
                 final EntityDamageEvent lastDamage = entity.getLastDamageCause();
                 if (lastDamage == null || !(lastDamage instanceof EntityDamageByEntityEvent)) return;
                 if (lastDamage.getDamage() <= 0) return;
@@ -36,22 +40,27 @@ public class ArcherySkill extends AbstractSkill {
                 if (!(damager instanceof Arrow)) return;
                 final Arrow arrow = (Arrow)damager;
                 final LivingEntity shooter = arrow.getShooter();
+
+                // Figure out player.
                 if (!(shooter instanceof Player)) return;
                 Player player = (Player)shooter;
-                // give sp
+
+                // Give SP.
                 int skillPoints = spMap.get(entity.getType());
                 if (skillPoints == 0) return;
                 if (ExploitsPlugin.getKillDistance(player) < minKillDistance) return;
                 final int maxHealth = (int)entity.getMaxHealth();
                 final int playerDamage = Math.min(maxHealth, ExploitsPlugin.getPlayerDamage(entity));
                 skillPoints = Util.rollFraction(skillPoints, playerDamage, maxHealth);
-                int distance = Util.horizontalDistance(player.getLocation(), entity.getLocation());
-                //player.sendMessage("Distance = " + distance);
+                int distance = Math.min(normDistance * 4, Util.horizontalDistance(player.getLocation(), entity.getLocation()));
                 skillPoints = Util.rollFraction(skillPoints, distance, normDistance);
-                if (skillPoints > 0) addSkillPoints(player, skillPoints);
-                // give bonus xp
-                final int xp = event.getDroppedExp();
-                event.setDroppedExp(multiplyXp(player, xp));
+                addSkillPoints(player, skillPoints);
+
+                // Give bonus XP.
+                if (plugin.perksEnabled) {
+                        final int xp = event.getDroppedExp();
+                        event.setDroppedExp(multiplyXp(player, xp));
+                }
         }
 
         // User output
@@ -68,6 +77,6 @@ public class ArcherySkill extends AbstractSkill {
         public void loadConfiguration() {
                 minKillDistance = getConfig().getInt("MinKillDistance");
                 normDistance = getConfig().getInt("NormDistance");
-                spMap.load(EntityType.class, getConfig().getConfigurationSection("sp"));
+                spMap.load(getConfig().getConfigurationSection("sp"));
         }
 }

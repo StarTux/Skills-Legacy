@@ -6,14 +6,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public abstract class TotalHighscoreRequest extends BukkitRunnable implements SQLRequest {
         protected final SkillsPlugin plugin;
         protected final int page;
         protected final int pageLength;
-        // results
+        // Results
         protected int count;
         protected final String[] names;
         protected final int[] levels;

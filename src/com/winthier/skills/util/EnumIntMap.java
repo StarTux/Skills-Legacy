@@ -3,10 +3,12 @@ package com.winthier.skills.util;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class EnumIntMap<K extends Enum<K>> {
+        private final Class<K> clazz;
         private final int values[];
         private final int defaultValue;
 
         public EnumIntMap(Class<K> clazz, int defaultValue) {
+                this.clazz = clazz;
                 this.defaultValue = defaultValue;
                 values = new int[clazz.getEnumConstants().length];
                 reset();
@@ -28,7 +30,7 @@ public class EnumIntMap<K extends Enum<K>> {
                 values[key.ordinal()] = value;
         }
 
-        public void load(Class<K> clazz, ConfigurationSection config) {
+        public void load(ConfigurationSection config) {
                 for (String strKey : config.getKeys(false)) {
                         K key = null;
                         try {

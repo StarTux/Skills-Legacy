@@ -72,7 +72,7 @@ public class MenuManager implements Listener {
         }
 
         public void openSpellsMenu(Player player, ElementType element) {
-                SpellsMenu menu = new SpellsMenu(this, player, element);
+                SpellsMenu menu = new SpellsMenu(plugin, player, element);
                 menu.open(player);
         }
 }

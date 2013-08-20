@@ -1,7 +1,10 @@
 package com.winthier.skills;
 
 import com.winthier.skills.skill.SkillType;
+import com.winthier.skills.spell.Totem;
+import com.winthier.skills.util.Util;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
 public enum ElementType {
         EARTH("Earth", ChatColor.DARK_GREEN),
@@ -9,6 +12,7 @@ public enum ElementType {
         WATER("Water", ChatColor.DARK_BLUE),
         AIR("Air", ChatColor.BLUE);
 
+        public final String name;
         public final String displayName;
         public final ChatColor color;
         public final int skillAmount = 4;
@@ -17,6 +21,7 @@ public enum ElementType {
         ElementType(String displayName, ChatColor color) {
                 this.displayName = displayName;
                 this.color = color;
+                this.name = name().toLowerCase();
         }
 
         private void setSkills(SkillType primary, SkillType secondaryA, SkillType secondaryB) {
@@ -26,12 +31,20 @@ public enum ElementType {
                 skillTypes[2] = secondaryB;
         }
 
+        public String getName() {
+                return name;
+        }
+
         public String getDisplayName() {
                 return displayName;
         }
 
         public ChatColor getColor() {
                 return color;
+        }
+
+        public Material getTotemMaterial() {
+                return Totem.getTotemMaterial(this);
         }
 
         /**
@@ -55,5 +68,9 @@ public enum ElementType {
                         break;
                 }
                 return skillTypes;
+        }
+
+        public static ElementType fromString(String string) {
+                return Util.enumFromString(ElementType.class, string);
         }
 }

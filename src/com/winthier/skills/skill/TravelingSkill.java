@@ -64,8 +64,9 @@ public class TravelingSkill extends AbstractSkill {
                                 skillPoints = walkingSkillPoints;
                         }
                         addSkillPoints(player, skillPoints);
-                        // give bonus xp
-                        if (info.farTravelDistanceSquared(to) >= farTravelDistanceSquared) {
+
+                        // Give bonus XP.
+                        if (plugin.perksEnabled && info.farTravelDistanceSquared(to) >= farTravelDistanceSquared) {
                                 info.setFarTravelLocation(to);
                                 player.giveExp(getBonusXp(player));
                         }

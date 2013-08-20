@@ -48,8 +48,8 @@ public class HighscoreScoreboard {
 
         public static HighscoreScoreboard forTotals() {
                 HighscoreScoreboard result = new HighscoreScoreboard();
-                result.setSidebarTitle(Util.format("&f%s &bTotal Skill Level &f%s", Util.ICON, Util.ICON));
-                result.setBelowNameTitle(Util.format("&f%s &bTotal", Util.ICON));
+                result.setSidebarTitle(Util.format("&b%s &bTotal Skill Level &b%s", Util.ICON, Util.ICON));
+                result.setBelowNameTitle(Util.format("&b%s &bTotal", Util.ICON));
                 return result;
         }
 

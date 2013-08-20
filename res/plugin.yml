@@ -3,7 +3,7 @@ description: A skill system for Winthier
 author: StarTux
 version: 0.1
 main: com.winthier.skills.SkillsPlugin
-depend: [ Exploits, ProtocolLib ]
+depend: [ Exploits, LibSQL, ProtocolLib, Vault ]
 commands:
   Skill:
     aliases: [ Skills, sk ]
@@ -14,18 +14,38 @@ commands:
     aliases: [ High, HiScore, hi ]
     usage: /<command> [skilltype]
     permission: skills.hi
+  Element:
+    aliases: [ Elem ]
+    description: Choose your primary element
+    usage: /<command> <element>
+    permission: skills.element
   SkillConfig:
     aliases: [ SkillsConfig, skc ]
     description: Admin interface for Skills.
     usage: /<command> [skilltype]
     permission: skills.skillconfig
 permissions:
+  skills.player:
+    description: Permissions for players.
+    default: op
+    children:
+      skills.play: true
+      skills.skill: true
+      skills.hi: true
+      skills.element: true
+  skills.admin:
+    description: Permissions for administrators.
+    default: op
+    children:
+    - skills.skillconfig
   skills.skill:
     description: Use the /skill command.
     default: op
   skills.hi:
-    description:
-    description: Use the /hi command
+    description: Use the /hi command.
+    default: op
+  skills.element:
+    description: Use the /elem command.
     default: op
   skills.skillconfig:
     description: Use the /skillconfig command.

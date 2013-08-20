@@ -33,15 +33,17 @@ public class EnchantingSkill extends AbstractSkill {
                 final Player player = event.getEnchanter();
                 final int xpLevels = event.getExpLevelCost();
                 final ItemStack item = event.getItem();
-                // give sp
+
+                // Give SP.
                 final int sp = itemSpMap.roll(item.getType(), xpLevels);
-                if (sp > 0) {
-                        addSkillPoints(player, sp);
-                }
+                addSkillPoints(player, sp);
         }
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
         public void onPrepareItemEnchant(PrepareItemEnchantEvent event) {
+                if (!plugin.perksEnabled) return;
+
+                // Perk: Give higher XP levels on the enchanting table.
                 final Player player = event.getEnchanter();
                 final int books = event.getEnchantmentBonus();
                 final int[] levels = event.getExpLevelCostsOffered();

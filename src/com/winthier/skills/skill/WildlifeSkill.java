@@ -1,11 +1,15 @@
 package com.winthier.skills.skill;
 
+import com.winthier.exploits.ExploitsPlugin;
 import com.winthier.skills.SkillsPlugin;
-import com.winthier.skills.util.EnumIntMap;
+import com.winthier.skills.util.EnumFractionMap;
+import com.winthier.skills.util.Fraction;
+import com.winthier.skills.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fish;
@@ -14,7 +18,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
@@ -31,10 +39,19 @@ import org.bukkit.metadata.MetadataValue;
  */
 public class WildlifeSkill extends AbstractSkill {
         public final static String BREEDER_KEY = "breeder";
-        public final EnumIntMap<EntityType> breedingSpMap = new EnumIntMap<EntityType>(EntityType.class, 0);
-        public final EnumIntMap<EntityType> breedingXpMap = new EnumIntMap<EntityType>(EntityType.class, 0);
-        public final EnumIntMap<EntityType> tamingSpMap = new EnumIntMap<EntityType>(EntityType.class, 0);
-        private int shearingSkillPoints, fishingSkillPoints;
+        // Breeding
+        private final EnumFractionMap<EntityType> breedingSPMap = new EnumFractionMap<EntityType>(EntityType.class, 0);
+        private final EnumFractionMap<EntityType> breedingXPMap = new EnumFractionMap<EntityType>(EntityType.class, 0);
+        // Taming
+        private final EnumFractionMap<EntityType> tamingSPMap = new EnumFractionMap<EntityType>(EntityType.class, 0);
+        private final EnumFractionMap<EntityType> tamingXPMap = new EnumFractionMap<EntityType>(EntityType.class, 0);
+        // Shearing
+        private final EnumFractionMap<EntityType> shearingSPMap = new EnumFractionMap<EntityType>(EntityType.class, 0);
+        private final EnumFractionMap<EntityType> shearingXPMap = new EnumFractionMap<EntityType>(EntityType.class, 0);
+        // Butchering
+        private final EnumFractionMap<EntityType> butcherSPMap = new EnumFractionMap<EntityType>(EntityType.class, 0);
+        // Fishing
+        Fraction fishingSkillPoints = null;
 
         public WildlifeSkill(SkillsPlugin plugin, SkillType skillType) {
                 super(plugin, skillType);
@@ -137,13 +154,16 @@ public class WildlifeSkill extends AbstractSkill {
          */
         public void onPlayerBreed(Player player, LivingEntity baby) {
                 final EntityType entityType = baby.getType();
-                // give sp
-                final int skillPoints = breedingSpMap.get(entityType);
-                if (skillPoints > 0) addSkillPoints(player, skillPoints);
-                // give xp
-                final int xp = multiplyXp(player, breedingXpMap.get(entityType));
-                if (xp > 0) player.giveExp(xp);
-                //player.sendMessage("Gratz! SP=" + skillPoints + ", XP=" + xp);
+
+                // Give SP.
+                final int skillPoints = breedingSPMap.get(entityType);
+                addSkillPoints(player, skillPoints);
+
+                // Give bonus XP.
+                if (plugin.perksEnabled) {
+                        final int xp = multiplyXp(player, breedingXPMap.get(entityType));
+                        if (xp > 0) player.giveExp(xp);
+                }
         }
 
         /**
@@ -152,7 +172,17 @@ public class WildlifeSkill extends AbstractSkill {
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerShearEntity(PlayerShearEntityEvent event) {
                 final Player player = event.getPlayer();
-                if (shearingSkillPoints > 0) addSkillPoints(player, shearingSkillPoints);
+                final EntityType entityType = event.getEntity().getType();
+
+                // Give SP.
+                final int sp = shearingSPMap.get(entityType);
+                addSkillPoints(player, sp);
+
+                // Give bonus XP.
+                if (plugin.perksEnabled) {
+                        final int xp = shearingXPMap.get(entityType);
+                        player.giveExp(multiplyXp(player, xp));
+                }
         }
 
         /**
@@ -162,9 +192,16 @@ public class WildlifeSkill extends AbstractSkill {
         public void onEntityTame(EntityTameEvent event) {
                 if (!(event.getOwner() instanceof Player)) return;
                 final Player player = (Player)event.getOwner();
-                // give sp
-                final int skillPoints = tamingSpMap.get(event.getEntityType());
-                if (skillPoints > 0) addSkillPoints(player, skillPoints);
+
+                // Give SP.
+                final int skillPoints = tamingSPMap.get(event.getEntityType());
+                addSkillPoints(player, skillPoints);
+
+                // Give bonus XP.
+                if (plugin.perksEnabled) {
+                        final int xp = tamingXPMap.get(event.getEntityType());
+                        player.giveExp(multiplyXp(player, xp));
+                }
         }
 
         /**
@@ -180,29 +217,92 @@ public class WildlifeSkill extends AbstractSkill {
                 final Player player = event.getPlayer();
                 switch (event.getState()) {
                 case FISHING:
-                        final Fish fish = event.getHook();
-                        double biteChance = fish.getBiteChance();
-                        biteChance = biteChance * getBiteChanceMultiplier(player) / 100.0;
-                        fish.setBiteChance(biteChance);
+                        if (plugin.perksEnabled) {
+                                final Fish fish = event.getHook();
+                                double biteChance = fish.getBiteChance();
+                                biteChance = (biteChance * getBiteChanceMultiplier(player)) / 100.0;
+                                fish.setBiteChance(biteChance);
+                        }
                         break;
                 case CAUGHT_FISH:
-                        // give sp
-                        if (fishingSkillPoints > 0) addSkillPoints(player, fishingSkillPoints);
-                        // give xp
-                        event.setExpToDrop(multiplyXp(player, event.getExpToDrop()));
+                        // Give SP.
+                        addSkillPoints(player, fishingSkillPoints.get());
+                        // Give Bonus XP.
+                        if (plugin.perksEnabled) {
+                                event.setExpToDrop(multiplyXp(player, event.getExpToDrop()));
+                        }
                         break;
-                case FAILED_ATTEMPT:
-                        // punish failed attempts to avoid afk fishing
-                        ItemStack item = player.getItemInHand();
-                        if (item != null && item.getType() == Material.FISHING_ROD) {
-                                final int durability = item.getDurability();
-                                if (durability > 1) item.setDurability((short)(durability - 1));
+                }
+        }
+
+        /**
+         * Butchering animals is part of this skill.
+         */
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+        public void onEntityDeath(EntityDeathEvent event) {
+                final LivingEntity entity = event.getEntity();
+                if (entity.getHealth() > 0.0) return;
+
+                // Figure out damager. Accepted is killing by hand
+                // or arrow; not by potion.
+                Player player = null;
+                {
+                        final EntityDamageEvent lastDamage = entity.getLastDamageCause();
+                        if (lastDamage == null || !(lastDamage instanceof EntityDamageByEntityEvent)) return;
+                        if (lastDamage.getDamage() <= 0) return;
+                        final EntityDamageByEntityEvent lastEntityDamage = (EntityDamageByEntityEvent)lastDamage;
+                        final Entity damager = lastEntityDamage.getDamager();
+                        if (damager instanceof Player) {
+                                player = (Player)damager;
+                        } else if (damager instanceof Arrow) {
+                                final Arrow arrow = (Arrow)damager;
+                                final LivingEntity shooter = arrow.getShooter();
+                                if (shooter instanceof Player) player = (Player)shooter;
                         }
                 }
+                if (player == null) return;
+
+                final int maxHealth = (int)entity.getMaxHealth();
+                final int playerDamage = ExploitsPlugin.getPlayerDamage(entity);
+
+                // Give SP.
+                int sp = butcherSPMap.get(event.getEntity().getType());
+                sp = Util.rollFraction(sp, playerDamage, maxHealth);
+                if (sp == 0) return;
+                addSkillPoints(player, sp);
+
+                // Give bonus XP.
+                if (plugin.perksEnabled) {
+                        final int xp = event.getDroppedExp();
+                        event.setDroppedExp(multiplyXp(player, xp));
+                }
+        }
+
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+        public void onPlayerEggThrow(PlayerEggThrowEvent event) {
+                if (!event.isHatching()) return;
+                if (!(event.getEgg().getShooter() instanceof Player)) return;
+                final Player player = (Player)event.getEgg().getShooter();
+
+                // Give SP.
+                final int skillPoints = breedingSPMap.get(event.getHatchingType());
+                addSkillPoints(player, skillPoints);
+
+                // Give bonux XP.
+                final int xp = breedingXPMap.get(event.getHatchingType());
+                if (xp > 0) player.giveExp(multiplyXp(player, xp));
+
+                // Set bonus hatches.
+                final int hatches = event.getNumHatches();
+                event.setNumHatches((byte)(hatches + getBonusHatches(player)));
         }
 
         public int getBiteChanceMultiplier(Player player) {
                 return 100 + getSkillLevel(player);
+        }
+
+        public int getBonusHatches(Player player) {
+                return getSkillLevel(player) / 50;
         }
 
         // User output
@@ -210,8 +310,14 @@ public class WildlifeSkill extends AbstractSkill {
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(3);
                 result.add("Caught fish drop +" + (getXpMultiplier(player) - 100) + "% XP");
-                result.add("Breeding animals drops +" + (getXpMultiplier(player) - 100) + "% XP");
+                result.add("Taming, breeding and shearing animals drops +" + (getXpMultiplier(player) - 100) + "% XP");
                 result.add("Fish bite +" + (getBiteChanceMultiplier(player) - 100) + "% more likely");
+                final int bonusHatches = getBonusHatches(player);
+                if (bonusHatches > 1) {
+                        result.add("Eggs hatch " + getBonusHatches(player) + " bonus chickens");
+                } else if (bonusHatches == 1) {
+                        result.add("Eggs hatch 1 bonus chicken");
+                }
                 return result;
         }
 
@@ -219,9 +325,22 @@ public class WildlifeSkill extends AbstractSkill {
 
         @Override
         public void loadConfiguration() {
-                breedingSpMap.load(EntityType.class, getConfig().getConfigurationSection("sp.breeding"));
-                breedingXpMap.load(EntityType.class, getConfig().getConfigurationSection("xp.breeding"));
-                shearingSkillPoints = getConfig().getInt("sp.Shearing");
-                fishingSkillPoints = getConfig().getInt("sp.Fishing");
+                // Load breeding SP and XP.
+                breedingSPMap.load(getConfig().getConfigurationSection("sp.breeding"));
+                breedingXPMap.load(getConfig().getConfigurationSection("xp.breeding"));
+
+                // Load taming SP and XP.
+                tamingSPMap.load(getConfig().getConfigurationSection("sp.taming"));
+                tamingXPMap.load(getConfig().getConfigurationSection("xp.taming"));
+
+                // Load shearing SP and XP.
+                shearingSPMap.load(getConfig().getConfigurationSection("sp.shearing"));
+                shearingXPMap.load(getConfig().getConfigurationSection("xp.shearing"));
+
+                // Load butchering SP.
+                butcherSPMap.load(getConfig().getConfigurationSection("sp.butcher"));
+
+                // Load fishing SP.
+                fishingSkillPoints = Fraction.parseFraction(getConfig().getString("sp.Fishing"));
         }
 }

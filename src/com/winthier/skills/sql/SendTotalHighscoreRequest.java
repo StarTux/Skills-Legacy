@@ -14,6 +14,6 @@ public class SendTotalHighscoreRequest extends TotalHighscoreRequest {
 
         @Override
         public void run() {
-                plugin.sendHighscore(sender, "Total", ChatColor.WHITE, count, names, levels, page);
+                plugin.sendHighscore(sender, "Total", ChatColor.AQUA, count, names, levels, page);
         }
 }

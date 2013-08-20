@@ -27,9 +27,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class HerbalismSkill extends AbstractSkill {
+        // Skill Points
         private final EnumIntMap<TreeType> structureSpMap = new EnumIntMap<TreeType>(TreeType.class, 0);
-        private final MaterialIntMap harvestSpMap = new MaterialIntMap(0);
+        private final MaterialFractionMap harvestSpMap = new MaterialFractionMap(0);
         private final MaterialFractionMap fertilizeSpMap = new MaterialFractionMap(0);
+        // Experience Points
+        private final EnumIntMap<TreeType> structureXPMap = new EnumIntMap<TreeType>(TreeType.class, 0);
+        private final MaterialFractionMap harvestXPMap = new MaterialFractionMap(0);
+        private final MaterialFractionMap fertilizeXPMap = new MaterialFractionMap(0);
 
         public HerbalismSkill(SkillsPlugin plugin, SkillType skillType) {
                 super(plugin, skillType);
@@ -44,9 +49,16 @@ public class HerbalismSkill extends AbstractSkill {
 
         public void onTreeGrow(Player player, TreeType species) {
                 if (player == null) return;
-                // give sp
-                final int skillPoints = structureSpMap.get(species);
-                if (skillPoints > 0) addSkillPoints(player, skillPoints);
+
+                // Give SP.
+                final int sp = structureSpMap.get(species);
+                addSkillPoints(player, sp);
+
+                // Give bonus XP.
+                if (plugin.perksEnabled) {
+                        final int xp = structureXPMap.get(species);
+                        if (xp > 0) player.giveExp(multiplyXp(player, xp));
+                }
         }
 
         /**
@@ -57,13 +69,22 @@ public class HerbalismSkill extends AbstractSkill {
                 final Player player = event.getPlayer();
                 final Block block = event.getBlock();
                 final Material mat = block.getType();
-                // filter out stuff that isn't fully grown
-                switch(mat) { case CROPS: case CARROT: case POTATO: if (block.getData() != 7) return; }
-                // Check if a player placed it. Bonemealed crops won't work for now
+
+                // Filter out stuff that isn't fully grown.
+                if (!canHarvest(block)) return;
+
+                // Check if a player placed it. Bonemealed crops won't work for now.
                 if (ExploitsPlugin.isPlayerPlaced(block)) return;
-                // give sp
+
+                // Give SP.
                 final int skillPoints = harvestSpMap.get(mat);
-                if (skillPoints > 0) addSkillPoints(player, skillPoints);
+                addSkillPoints(player, skillPoints);
+
+                // Give bonus XP.
+                if (plugin.perksEnabled) {
+                        final int xp = harvestXPMap.get(mat);
+                        if (xp > 0) player.giveExp(multiplyXp(player, xp));
+                }
         }
 
         /**
@@ -80,10 +101,13 @@ public class HerbalismSkill extends AbstractSkill {
                 if (event.useItemInHand() == Result.DENY) return;
                 final Block block = event.getClickedBlock();
                 if (isFullyGrown(block)) return;
-                final int skillPoints = fertilizeSpMap.get(block.getType());
-                if (Util.random.nextInt(100) < getInstantBonemealChance(player)) {
+                final Material mat = block.getType();
+                final int skillPoints = fertilizeSpMap.get(mat);
+
+                // Give insta grow chance.
+                if (plugin.perksEnabled && Util.random.nextInt(100) < getInstantBonemealChance(player)) {
                         if (setFullyGrown(block, player)) {
-                                if (skillPoints > 0) addSkillPoints(player, skillPoints);
+                                addSkillPoints(player, skillPoints);
                                 int amount = item.getAmount() - 1;
                                 if (amount > 0) {
                                         item.setAmount(amount);
@@ -93,17 +117,41 @@ public class HerbalismSkill extends AbstractSkill {
                                 return;
                         }
                 }
+
+                // Give skill points if the plant grows.
                 if (skillPoints <= 0) return;
                 new BukkitRunnable() {
                         public void run() {
                                 if (!isFullyGrown(block)) return;
                                 addSkillPoints(player, skillPoints);
+                                ExploitsPlugin.setPlayerPlaced(block, false);
+
+                                // Give bonux XP.
+                                if (plugin.perksEnabled) {
+                                        final int xp = fertilizeXPMap.get(mat);
+                                        if (xp > 0) player.giveExp(multiplyXp(player, xp));
+                                }
                         }
                 }.runTask(plugin);
         }
 
         private int getInstantBonemealChance(Player player) {
                 return Math.min(100, getSkillLevel(player) / 9);
+        }
+
+        private static boolean canHarvest(Block block) {
+                final Material mat = block.getType();
+                final int data = block.getData();
+                switch(mat) {
+                case CROPS:
+                case CARROT:
+                case POTATO:
+                case MELON_STEM:
+                case PUMPKIN_STEM:
+                        return data == 7;
+                default:
+                        return true;
+                }
         }
 
         private static boolean isFullyGrown(Block block) {
@@ -119,6 +167,15 @@ public class HerbalismSkill extends AbstractSkill {
                 case SAPLING:
                         return false;
                 case LOG:
+                case LEAVES:
+                case SUGAR_CANE_BLOCK:
+                case PUMPKIN:
+                case MELON_BLOCK:
+                case WATER_LILY:
+                case YELLOW_FLOWER:
+                case RED_ROSE:
+                case VINE:
+                case CACTUS:
                         return true;
                 case BROWN_MUSHROOM:
                 case RED_MUSHROOM:
@@ -140,6 +197,7 @@ public class HerbalismSkill extends AbstractSkill {
                 case MELON_STEM:
                 case PUMPKIN_STEM:
                         block.setData((byte)7);
+                        ExploitsPlugin.setPlayerPlaced(block, false);
                         return true;
                 case SAPLING:
                         return growTree(block, player);
@@ -172,6 +230,7 @@ public class HerbalismSkill extends AbstractSkill {
                         block.setType(id);
                         block.setData(data);
                 }
+                if (result) ExploitsPlugin.setPlayerPlaced(block, false);
                 return result;
         }
 
@@ -206,6 +265,8 @@ public class HerbalismSkill extends AbstractSkill {
                 if (!result) {
                         block.setType(Material.SAPLING);
                         block.setData((byte)data);
+                } else {
+                        ExploitsPlugin.setPlayerPlaced(block, false);
                 }
                 return result;
         }
@@ -272,6 +333,7 @@ public class HerbalismSkill extends AbstractSkill {
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(1);
                 result.add("Bonemeal has a " + getInstantBonemealChance(player) + "% chance of working instantly");
+                result.add("Fertilizing or harvesting plants yields +" + (getXpMultiplier(player) - 100) + "% XP");
                 return result;
         }
 
@@ -279,8 +341,13 @@ public class HerbalismSkill extends AbstractSkill {
 
         @Override
         public void loadConfiguration() {
+                // Load skill points.
                 fertilizeSpMap.load(getConfig().getConfigurationSection("sp.fertilize"));
                 harvestSpMap.load(getConfig().getConfigurationSection("sp.harvest"));
-                structureSpMap.load(TreeType.class, getConfig().getConfigurationSection("sp.structures"));
+                structureSpMap.load(getConfig().getConfigurationSection("sp.structures"));
+                // Load experience points.
+                structureXPMap.load(getConfig().getConfigurationSection("xp.structures"));
+                harvestXPMap.load(getConfig().getConfigurationSection("xp.harvest"));
+                fertilizeXPMap.load(getConfig().getConfigurationSection("xp.fertilize"));
         }
 }

@@ -1,6 +1,8 @@
 package com.winthier.skills.skill;
 
+import com.winthier.skills.ElementType;
 import com.winthier.skills.SkillsPlugin;
+import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.util.Util;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +18,7 @@ public abstract class AbstractSkill implements Listener {
         public final static int MAX_LEVEL = 999;
         private String description;
         private final static int[] gaussian = new int[MAX_LEVEL + 1];
+        private ConfigurationSection config = null;
 
         static {
                 for (int i = 0; i < gaussian.length; ++i) {
@@ -90,10 +93,21 @@ public abstract class AbstractSkill implements Listener {
          * called.  To circumvent hooks, use
          */
         public void addSkillPoints(Player player, int skillPoints) {
-                // TODO hooks
+                if (skillPoints <= 0) return;
                 //player.sendMessage(skillType.getName() + " sp + " + skillPoints);
                 if (!canCollectSkillPoints(player)) return;
-                plugin.playerManager.getPlayerInfo(player).addSkillPoints(skillType, skillPoints);
+                PlayerInfo info = plugin.playerManager.getPlayerInfo(player);
+                boolean bonus = false;
+                for (ElementType element : skillType.getElements()) {
+                        if (element == info.getPrimaryElement()) {
+                                bonus = true;
+                                break;
+                        }
+                }
+                if (bonus) {
+                        skillPoints = plugin.proficiencySkillPointFactor.roll(skillPoints);
+                }
+                info.addSkillPoints(skillType, skillPoints);
         }
 
         public int getSkillLevel(Player player) {
@@ -109,7 +123,29 @@ public abstract class AbstractSkill implements Listener {
         // Handlers
 
         public void onLevelUp(Player player, int oldLevel, int newLevel) {
-                Util.sendMessage(player, "&b%s %s\u25A3 &3Level&f %d", skillType.getDisplayName(), skillType.getColor(), newLevel);
+                final PlayerInfo info = plugin.playerManager.getPlayerInfo(player);
+                final ElementType primaryElement = info.getPrimaryElement();
+                boolean primary = false;
+                if (primaryElement != null) {
+                        for (ElementType element : skillType.getElements()) {
+                                if (element == primaryElement) {
+                                        primary = true;
+                                        break;
+                                }
+                        }
+                }
+                double reward = 0.0;
+                if (primary) {
+                        int sum = 0;
+                        for (int i = oldLevel + 1; i <= newLevel; ++i) sum += i;
+                        reward = (float)sum * plugin.rewardFactor;
+                }
+                if (reward > 0.0) {
+                        info.giveMoney(reward);
+                        Util.sendMessage(player, "&b%s %s%s &3Level&f %d&3, Reward &f%s", skillType.getDisplayName(), skillType.getColor(), Util.ICON, newLevel, plugin.economyManager.format(reward));
+                } else {
+                        Util.sendMessage(player, "&b%s %s%s &3Level&f %d", skillType.getDisplayName(), skillType.getColor(), Util.ICON, newLevel);
+                }
         }
 
         // configuration
@@ -122,17 +158,15 @@ public abstract class AbstractSkill implements Listener {
                 return 100 + getSkillLevel(player) / 2;
         }
 
-        protected ConfigurationSection getSkillsSection() {
-                return plugin.getConfig().getConfigurationSection("skills");
-        }
-
         public ConfigurationSection getConfig() {
-                ConfigurationSection result = getSkillsSection().getConfigurationSection(skillType.getName());
-                if (result == null) {
-                        plugin.getLogger().warning("Skill type has no configuration section: " + skillType.getName());
-                        result = getSkillsSection().createSection(skillType.getName());
+                if (config == null) {
+                        config = plugin.skillsConfig.getConfigurationSection(skillType.getName());
+                        if (config == null) {
+                                plugin.getLogger().warning("Skill type has no configuration section: " + skillType.getName());
+                                config = plugin.skillsConfig.createSection(skillType.getName());
+                        }
                 }
-                return result;
+                return config;
         }
 
         public void loadConfig() {

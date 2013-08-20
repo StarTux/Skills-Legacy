@@ -21,7 +21,7 @@ public class PlayerManager implements Listener {
         public void onEnable() {
                 plugin.getServer().getPluginManager().registerEvents(this, plugin);
                 for (Player player : plugin.getServer().getOnlinePlayers()) {
-                        getPlayerInfo(player);
+                        getPlayerInfo(player).load();
                 }
         }
 
@@ -55,7 +55,6 @@ public class PlayerManager implements Listener {
                 if (info == null) {
                         info = new PlayerInfo(plugin, player);
                         players.put(playerName, info);
-                        info.load();
                 }
                 return info;
         }

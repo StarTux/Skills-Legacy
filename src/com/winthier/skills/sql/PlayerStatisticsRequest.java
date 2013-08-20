@@ -74,15 +74,15 @@ public class PlayerStatisticsRequest extends BukkitRunnable implements SQLReques
 
                 Util.sendMessage(sender, "&3 &m    &b Elements &3&m    ", player);
                 for (ElementType elem : ElementType.values()) {
-                        Util.sendMessage(sender, " %s %s\u25A3 &b%s", Util.shadowZeros(elements.get(elem), 3, ChatColor.DARK_GRAY, ChatColor.WHITE), elem.getColor(), elem.getDisplayName());
+                        Util.sendMessage(sender, " %s %s%s &b%s", Util.shadowZeros(elements.get(elem), 3, ChatColor.DARK_GRAY, ChatColor.WHITE), elem.getColor(), Util.ICON, elem.getDisplayName());
                 }
 
                 Util.sendMessage(sender, "&3 &m    &b Skills &3&m    ", player);
                 for (SkillType skillType : SkillType.values()) {
-                        Util.sendMessage(sender, " %s %s\u25A3 &b%s", Util.shadowZeros(skillLevels.get(skillType), 3, ChatColor.DARK_GRAY, ChatColor.WHITE), skillType.getColor(), skillType.getDisplayName());
+                        Util.sendMessage(sender, " %s %s%s &b%s", Util.shadowZeros(skillLevels.get(skillType), 3, ChatColor.DARK_GRAY, ChatColor.WHITE), skillType.getColor(), Util.ICON, skillType.getDisplayName());
                 }
 
                 Util.sendMessage(sender, "&3 &m    &b Total &3&m    ", player);
-                Util.sendMessage(sender, " %s &b\u25A3 Total Skill Level", Util.shadowZeros(total, 3, ChatColor.DARK_GRAY, ChatColor.WHITE));
+                Util.sendMessage(sender, " %s &b%s Total Skill Level", Util.shadowZeros(total, 3, ChatColor.DARK_GRAY, ChatColor.WHITE), Util.ICON);
         }
 }

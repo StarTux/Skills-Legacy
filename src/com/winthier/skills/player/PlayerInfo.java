@@ -11,12 +11,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerInfo {
-        private final SkillsPlugin plugin;
+        public final SkillsPlugin plugin;
         private Player player;
 
         // Skill information
         private final Map<SkillType, PlayerSkillInfo> skillInfo = new EnumMap<SkillType, PlayerSkillInfo>(SkillType.class);
         private int totalLevel = 0;
+        // A players may choose one primary element.
+        private ElementType primaryElement = null;
 
         // Additional specific information.
         public final TravelingPlayerInfo travelingInfo = new TravelingPlayerInfo();
@@ -49,6 +51,8 @@ public class PlayerInfo {
         public Player getPlayer() {
                 return player;
         }
+
+        // Skill points and levels, getters and setters.
 
         public int getSkillPoints(SkillType skillType) {
                 return skillInfo.get(skillType).skillPoints;
@@ -90,11 +94,46 @@ public class PlayerInfo {
                 }
         }
 
+        public ElementType getPrimaryElement() {
+                return primaryElement;
+        }
+
+        /**
+         * Set the primary skill level of this player.
+         *
+         * Other than some of the other setters, this does not
+         * imply any checks or sql writes.  Instead,
+         * SwitchElementRequest is used to do all these things,
+         * since the cooldown is checked with the database to
+         * avoid multi-server exploits.  If the above request is
+         * successful, it calls this.
+         */
+        public void setPrimaryElement(ElementType element) {
+                this.primaryElement = element;
+        }
+
+        // Economy methods.
+
+        public boolean hasMoney(double amount) {
+                return plugin.economyManager.has(player, amount);
+        }
+
+        public boolean takeMoney(double amount) {
+                return plugin.economyManager.take(player, amount);
+        }
+
+        public boolean giveMoney(double amount) {
+                return plugin.economyManager.give(player, amount);
+        }
+
         // Event handlers. We listen to some events that are
         // general enough so the particular skills shouldn't
         // bother.
 
         public void onJoin(Player player) {
+                // Load player statistics.
+                load();
+
                 // Update Player reference.
                 this.player = player;
 
@@ -105,6 +144,7 @@ public class PlayerInfo {
                 // Update locations for the traveling skill.
                 travelingInfo.setLocation(player.getLocation());
                 travelingInfo.setFarTravelLocation(player.getLocation());
+                
         }
 
         public void onQuit(Player player) {
@@ -129,7 +169,7 @@ public class PlayerInfo {
                                 }
                         }
                 };
-                removalTask.runTaskLater(plugin, 200L);
+                removalTask.runTaskLater(plugin, 100L);
         }
 
         private void cancelRemoval() {
@@ -139,6 +179,8 @@ public class PlayerInfo {
         }
 
         public void onRemoval() {
+                // Make sure the task is cancelled, in case this
+                // is not called by the task.
                 cancelRemoval();
         }
 
