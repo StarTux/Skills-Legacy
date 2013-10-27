@@ -1,7 +1,7 @@
 name: Skills
 description: A skill system for Winthier
 author: StarTux
-version: 0.1
+version: 0.2
 main: com.winthier.skills.SkillsPlugin
 depend:
 - Exploits
