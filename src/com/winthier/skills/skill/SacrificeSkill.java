@@ -67,13 +67,20 @@ public class SacrificeSkill extends AbstractSkill {
         public void onPlayerDeath(PlayerDeathEvent event) {
                 final Player player = event.getEntity();
                 if (player.getHealth() > 0.0f) return;
+
+                // Figure out chance.
                 final int chance = getKeepItemPercentage(player);
                 if (chance <= 0) return;
+
+                // Clear drops.
                 final List<ItemStack> drops = event.getDrops();
                 drops.clear();
+
+                
                 final ItemStack[] items = player.getInventory().getContents();
                 for (int i = 0; i < items.length; ++i) {
                         ItemStack item = items[i];
+                        if (item == null) continue;
                         if (Util.random.nextInt(100) > chance) {
                                 items[i] = null;
                                 drops.add(item);
