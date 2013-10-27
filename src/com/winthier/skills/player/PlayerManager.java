@@ -1,6 +1,7 @@
 package com.winthier.skills.player;
 
 import com.winthier.skills.SkillsPlugin;
+import com.winthier.skills.skill.SkillType;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.entity.Player;
@@ -65,5 +66,16 @@ public class PlayerManager implements Listener {
         public void remove(String playerName) {
                 PlayerInfo info = players.remove(playerName);
                 if (info != null) info.onRemoval();
+        }
+
+        public void addSkillPoints(String playerName, SkillType skillType, int points) {
+                if (points <= 0) return;
+                final Player player = plugin.getServer().getPlayerExact(playerName);
+                if (player != null) {
+                        PlayerInfo info = getPlayerInfo(player);
+                        info.addSkillPoints(skillType, points);
+                } else {
+                        plugin.sqlManager.addSkillPoints(playerName, skillType, points);
+                }
         }
 }

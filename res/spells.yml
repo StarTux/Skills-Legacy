@@ -36,7 +36,7 @@ haste2:
   Icon: Gold-Pickaxe
   XPCost: 15
   MaxLevel: 10
-  UnlockLevels: [ 100, 150, 200, 250, 300, 450, 500, 550, 600, 650 ]
+  UnlockLevels: [ 100, 120, 140, 160, 180, 200, 220, 240, 260, 280 ]
   UnlockPrices: [ 500, 550, 600, 650, 700, 750, 800, 850, 900, 950 ] 
   Amplifiers:   [   3,   3,   4,   4,   4,   4,   4,   4,   4,   4 ]
   Durations:    [  10,  10,  20,  30,  40,  50,  60,  70,  90, 100 ]
@@ -54,6 +54,30 @@ resist:
   Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
   Durations:    [  30,  60,  90, 120, 150, 180, 210, 240, 250, 280 ]
   Description: Activate the Resistance effect for additional protection from harm.
+fire-resist:
+  Type: PotionEffect
+  Element: Earth
+  PotionEffect: Fire-Resistance
+  DisplayName: Fire Resistance
+  Icon: Lava
+  XPCost: 5
+  MaxLevel: 10
+  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
+  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
+  Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
+  Durations:    [  30,  60,  90, 120, 150, 180, 210, 240, 250, 280 ]
+  Description: Activate the Fire Resistance effect for extra fire protection.
+bat-rider:
+  Type: EntityRide
+  Element: Earth
+  EntityType: Bat
+  DisplayName: Bat Rider
+  Description: Spawn a bat to fly you around.
+  Icon: Monster-Egg:65
+  XPCost: 5
+  MaxLevel: 1
+  UnlockLevels: [  50 ]
+  UnlockPrices: [ 200 ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # Fire
 fire-firework:
@@ -72,19 +96,6 @@ fire-firework:
   UnlockLevels: [ 1 ]
   UnlockPrices: [ 0 ]
   Description: Create a firework.
-fire-resist:
-  Type: PotionEffect
-  Element: Fire
-  PotionEffect: Fire-Resistance
-  DisplayName: Fire Resistance
-  Icon: Lava
-  XPCost: 5
-  MaxLevel: 10
-  UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
-  UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
-  Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
-  Durations:    [  30,  60,  90, 120, 150, 180, 210, 240, 250, 280 ]
-  Description: Activate the Fire Resistance effect for extra fire protection.
 strength:
   Type: PotionEffect
   Element: Fire
@@ -98,6 +109,19 @@ strength:
   Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
   Durations:    [  10,  30,  60,  90, 120, 120, 150, 180, 210, 240 ]
   Description: Activate the Strength effect to deal more damage.
+strength2:
+  Type: PotionEffect
+  Element: Fire
+  PotionEffect: Increase-Damage
+  DisplayName: Super Strength
+  Icon: Diamond-Sword
+  XPCost: 5
+  MaxLevel: 10
+  UnlockLevels: [ 100, 110, 120, 130, 140, 150, 160, 170, 180, 190 ]
+  UnlockPrices: [ 100, 200, 300, 400, 500, 500, 600, 700, 800, 900 ]
+  Amplifiers:   [   3,   3,   3,   3,   3,   4,   4,   4,   4,   4 ]
+  Durations:    [  10,  20,  30,  40,  50,  50,  60,  70,  80,  90 ]
+  Description: Gain superhuman strength.
 harm:
   Type: PotionEffect
   Element: Fire
@@ -110,6 +134,27 @@ harm:
   UnlockPrices: [ 100, 500 ]
   Amplifiers:   [   1,   2 ]
   Description: Activate the Damage effect to hurt your enemies.
+rocket-rider:
+  Type: FireworkRide
+  Element: Fire
+  DisplayName: Rocket Rider
+  Description: Become a spaceman by riding a rocket.
+  Icon: Firework-Charge
+  XPCost: 5
+  MaxLevel: 5
+  UnlockLevels: [  20,  40,  60,  80, 100 ]
+  UnlockPrices: [ 100, 200, 300, 400, 500 ]
+  Powers:       [   0,   1,   2,   3,   4 ]
+lightning:
+  Type: Lightning
+  Element: Fire
+  DisplayName: 'Thor''s Hammer'
+  Description: Strike a lightning bolt.
+  Icon: Redstone-Torch-On
+  XPCost: 5
+  MaxLevel: 1
+  UnlockLevels: [ 100 ]
+  UnlockPrices: [ 500 ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #  Air
 air-firework:
@@ -165,6 +210,42 @@ jump:
   Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
   Durations:    [  30,  60,  90, 120, 150, 180, 210, 240, 250, 280 ]
   Description: Activate the Jump Boost effect to jump higher.
+jump2:
+  Type: PotionEffect
+  Element: Air
+  PotionEffect: Jump
+  DisplayName: Insane Jump Boost
+  Icon: Diamond-Boots
+  XPCost: 10
+  MaxLevel: 10
+  UnlockLevels: [ 100, 110, 120, 130, 140, 150, 160, 170, 180, 190 ]
+  UnlockPrices: [ 100, 200, 300, 400, 500, 500, 600, 700, 800, 900 ]
+  Amplifiers:   [   3,   3,   3,   3,   3,   4,   4,   4,   4,   4 ]
+  Durations:    [  15,  30,  45,  60,  90,  90, 100, 110, 120, 130 ]
+  Description: Jump insanely high.
+chicken-rider:
+  Type: EntityRide
+  Element: Air
+  DisplayName: Chicken Rider
+  Description: Spawn a chicken to act as your parachute.
+  EntityType: Chicken
+  Icon: Monster-Egg:93
+  XPCost: 5
+  MaxLevel: 1
+  UnlockLevels: [  25 ]
+  UnlockPrices: [ 150 ]
+velocity:
+  Type: Velocity
+  Element: Air
+  DisplayName: Whoosh!
+  Description: Get a powerful blast of air to push you ahead.
+  Icon: Dispenser
+  XPCost: 1
+  MaxLevel: 3
+  UnlockLevels: [   25,   50,  100 ]
+  UnlockPrices: [  123,  456,  789 ]
+  Amplifiers:   [ .050, .075, .100 ]
+  Durations:    [   20,   20,   20 ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # #  Water
 water-firework:
@@ -183,12 +264,22 @@ water-firework:
   UnlockLevels: [ 1 ]
   UnlockPrices: [ 0 ]
   Description: Create a firework.
+milk:
+  Type: ClearPotionEffects
+  Element: Water
+  DisplayName: Cure
+  Icon: Milk-Bucket
+  XPCost: 5
+  MaxLevel: 1
+  UnlockLevels: [  10 ]
+  UnlockPrices: [ 100 ]
+  Description: Clear all potion effects.
 health:
   Type: PotionEffect
   Element: Water
   PotionEffect: Heal
   DisplayName: Instant Health
-  Icon: Speckled-Melon
+  Icon: Melon
   XPCost: 5
   MaxLevel: 2
   UnlockLevels: [  10,  50 ]
@@ -220,3 +311,25 @@ regen:
   Amplifiers:   [   1,   1,   1,   1,   1,   2,   2,   2,   2,   2 ]
   Durations:    [  15,  30,  45,  60,  75,  75,  90, 105, 120, 135 ]
   Description: Activate the Regeneration effect to regenerate your health.
+boat-rider:
+  Type: EntityRide
+  Element: Water
+  EntityType: Boat
+  DisplayName: Boat Ride
+  Description: Spawn a boat.
+  Icon: Boat
+  XPCost: 5
+  MaxLevel: 1
+  UnlockLevels: [  50 ]
+  UnlockPrices: [ 200 ]
+cat-rider:
+  Type: EntityRide
+  Element: Water
+  EntityType: Ocelot
+  DisplayName: Cat Rider
+  Description: Ride on a cat.
+  Icon: Monster-Egg:98
+  XPCost: 10
+  MaxLevel: 1
+  UnlockLevels: [ 100 ]
+  UnlockPrices: [ 500 ]

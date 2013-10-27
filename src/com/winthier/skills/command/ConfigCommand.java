@@ -187,6 +187,7 @@ public class ConfigCommand implements CommandExecutor {
                                 return true;
                         }
                         for (ElementType element : ElementType.values()) {
+                                if (!element.hasTotem()) continue;
                                 player.getInventory().addItem(Totem.createTotem(element));
                                 player.sendMessage(element.getDisplayName() + " totem given.");
                         }

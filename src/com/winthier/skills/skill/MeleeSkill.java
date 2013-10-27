@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class MeleeSkill extends AbstractSkill {
         private final EnumIntMap<EntityType> spMap = new EnumIntMap<EntityType>(EntityType.class, 0);
@@ -24,7 +25,7 @@ public class MeleeSkill extends AbstractSkill {
                 super(plugin, skillType);
         }
 
-        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
         public void onEntityDeath(EntityDeathEvent event) {
                 final LivingEntity entity = event.getEntity();
                 if (entity.getHealth() > 0.0) return;
@@ -48,10 +49,18 @@ public class MeleeSkill extends AbstractSkill {
                 skillPoints = Util.rollFraction(skillPoints, playerDamage, maxHealth);
                 addSkillPoints(player, skillPoints);
 
-                // Give bonus XP.
                 if (plugin.perksEnabled) {
+                        // Give bonus XP.
                         final int xp = event.getDroppedExp();
                         event.setDroppedExp(multiplyXp(player, xp));
+
+                        // Drop the head.
+                        if (Util.random.nextInt(100) < getSkullDropPercentage(player)) {
+                                ItemStack skull = Util.getMobHead(entity);
+                                if (skull != null) {
+                                        event.getDrops().add(skull);
+                                }
+                        }
                 }
         }
 
@@ -59,7 +68,16 @@ public class MeleeSkill extends AbstractSkill {
 
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(1);
+
+                // Skull Drop
+                final int skullDropPercentage = getSkullDropPercentage(player);
+                if (skullDropPercentage > 0) {
+                        result.add("Killed mobs drop their head " + skullDropPercentage + "% of the time.");
+                }
+
+                // XP bonus.
                 result.add("Killed mobs drop +" + (getXpMultiplier(player) - 100) + "% xp");
+
                 return result;
         }
 

@@ -10,7 +10,9 @@ public enum ElementType {
         EARTH("Earth", ChatColor.DARK_GREEN),
         FIRE("Fire", ChatColor.DARK_RED),
         WATER("Water", ChatColor.DARK_BLUE),
-        AIR("Air", ChatColor.BLUE);
+        AIR("Air", ChatColor.BLUE),
+        MAGIC("Magic", ChatColor.DARK_PURPLE),
+        ;
 
         public final String name;
         public final String displayName;
@@ -24,11 +26,8 @@ public enum ElementType {
                 this.name = name().toLowerCase();
         }
 
-        private void setSkills(SkillType primary, SkillType secondaryA, SkillType secondaryB) {
-                skillTypes = new SkillType[3];
-                skillTypes[0] = primary;
-                skillTypes[1] = secondaryA;
-                skillTypes[2] = secondaryB;
+        private void setSkills(SkillType... skillTypes) {
+                this.skillTypes = skillTypes;
         }
 
         public String getName() {
@@ -45,6 +44,10 @@ public enum ElementType {
 
         public Material getTotemMaterial() {
                 return Totem.getTotemMaterial(this);
+        }
+
+        public boolean hasTotem() {
+                return getTotemMaterial() != null;
         }
 
         /**
@@ -65,6 +68,9 @@ public enum ElementType {
                         break;
                 case WATER:
                         setSkills(SkillType.EATING, SkillType.WILDLIFE, SkillType.HERBALISM);
+                        break;
+                case MAGIC:
+                        setSkills(SkillType.ENCHANTING, SkillType.SACRIFICE, SkillType.KARMA);
                         break;
                 }
                 return skillTypes;

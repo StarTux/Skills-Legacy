@@ -25,6 +25,11 @@ public class EnumFractionMap<K extends Enum<K>> {
                 }
         }
 
+        public Fraction getFraction(K k) {
+                final int i = k.ordinal();
+                return new Fraction(dividends[i], divisors[i]);
+        }
+
         public int get(K k) {
                 return roll(k, 1);
         }

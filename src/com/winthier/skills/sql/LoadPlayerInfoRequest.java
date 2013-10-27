@@ -99,6 +99,8 @@ public class LoadPlayerInfoRequest extends BukkitRunnable implements SQLRequest 
                         playerInfo.spellsInfo.setSpell(spellName, spellInfo.level, spellInfo.active);
                 }
                 if (primaryElement != null) playerInfo.setPrimaryElement(primaryElement);
+
+                playerInfo.setLoaded(true);
         }
 }
 

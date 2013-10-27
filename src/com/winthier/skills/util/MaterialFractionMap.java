@@ -24,6 +24,15 @@ public class MaterialFractionMap {
                 }
         }
 
+        public Fraction getFraction(Material mat) {
+                final int i = mat.ordinal();
+                return new Fraction(dividends[i], divisors[i]);
+        }
+
+        public boolean isNull(Material mat) {
+                return dividends[mat.ordinal()] == 0;
+        }
+
         public int get(Material mat) {
                 return roll(mat, 1);
         }

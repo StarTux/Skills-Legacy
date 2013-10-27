@@ -302,12 +302,12 @@ public class HerbalismSkill extends AbstractSkill {
         }
 
         private static boolean growBigJungleTree(Block northWest, Block northEast, Block southEast, Block southWest) {
-                int id[] = new int[4];
+                Material mat[] = new Material[4];
                 byte data[] = new byte[4];
-                id[0] = northWest.getTypeId();
-                id[1] = northEast.getTypeId();
-                id[2] = southEast.getTypeId();
-                id[3] = southWest.getTypeId();
+                mat[0] = northWest.getType();
+                mat[1] = northEast.getType();
+                mat[2] = southEast.getType();
+                mat[3] = southWest.getType();
                 data[0] = northWest.getData();
                 data[1] = northEast.getData();
                 data[2] = southEast.getData();
@@ -317,10 +317,21 @@ public class HerbalismSkill extends AbstractSkill {
                 southEast.setType(Material.AIR);
                 southWest.setType(Material.AIR);
                 if (northWest.getWorld().generateTree(northWest.getLocation(), TreeType.JUNGLE)) return true;
-                northWest.setTypeIdAndData(id[0], data[0], false);
-                northEast.setTypeIdAndData(id[1], data[1], false);
-                southEast.setTypeIdAndData(id[2], data[2], false);
-                southWest.setTypeIdAndData(id[3], data[3], false);
+                // Reset
+                northWest.setType(mat[0]);
+                northEast.setType(mat[1]);
+                southEast.setType(mat[2]);
+                southWest.setType(mat[3]);
+
+                northWest.setData(data[0]);
+                northEast.setData(data[1]);
+                southEast.setData(data[2]);
+                southWest.setData(data[3]);
+                
+                // northWest.setTypeIdAndData(id[0], data[0], false);
+                // northEast.setTypeIdAndData(id[1], data[1], false);
+                // southEast.setTypeIdAndData(id[2], data[2], false);
+                // southWest.setTypeIdAndData(id[3], data[3], false);
                 return false;
         }
 

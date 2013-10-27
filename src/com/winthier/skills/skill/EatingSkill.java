@@ -1,11 +1,15 @@
 package com.winthier.skills.skill;
 
 import com.winthier.skills.SkillsPlugin;
+import com.winthier.skills.util.EnumFractionMap;
 import com.winthier.skills.util.MaterialIntMap;
 import com.winthier.skills.util.Util;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,6 +19,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 public class EatingSkill extends AbstractSkill {
         private MaterialIntMap foodMap = new MaterialIntMap(0);
+        private Map<Material, Float> saturationMap = new EnumMap<Material, Float>(Material.class);
         private MaterialIntMap spMap = new MaterialIntMap(0);
         private int levelsPerHealthPoint;
 
@@ -23,14 +28,26 @@ public class EatingSkill extends AbstractSkill {
         }
 
         public void onPlayerEat(final Player player, final Material mat) {
-                final int foodPoints = foodMap.get(mat);
                 final int skillPoints = spMap.get(mat);
+                final int foodPoints = foodMap.get(mat);
                 if (skillPoints > 0 && foodPoints > 0) {
-                        final int hunger = 20 - player.getFoodLevel();
+                        final int foodLevel = player.getFoodLevel();
+                        final int hunger = 20 - foodLevel;
                         final int food = Math.min(hunger, foodPoints);
+                        final int newFoodLevel = Math.min(20, foodLevel + foodPoints);
+
+                        final float saturationPoints = saturationMap.get(mat);
+                        final float saturationLevel = player.getSaturation();
+                        final float saturationHunger = Math.max(0.0f, (float)newFoodLevel - saturationLevel);
+                        final float saturationFood = Math.min(saturationHunger, saturationPoints);
+                        final float saturationPct = saturationFood / saturationPoints;
+                        final int satFood = (int)(saturationFood * 10.0);
+                        final int satPct = (int)(saturationPct * 10.0);
 
                         // Give SP.
-                        final int sp = Util.rollFraction(skillPoints, food, foodPoints);
+                        final int foodSP = Util.rollFraction(food, food, foodPoints);
+                        final int satSP = Util.rollFraction(satFood, satPct, 100);
+                        final int sp = foodSP + satSP;
                         addSkillPoints(player, sp);
 
                         // Give bonus health and XP.
@@ -40,7 +57,7 @@ public class EatingSkill extends AbstractSkill {
                                         player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + healthBoost));
                                 }
                                 // Bonus XP.
-                                final int xp = multiplyXp(player, Util.rollFraction(1, sp, skillPoints));
+                                final int xp = multiplyXp(player, Util.rollFraction(1, foodSP, foodPoints));
                                 if (xp > 0) player.giveExp(xp);
                         }
                 }
@@ -81,5 +98,17 @@ public class EatingSkill extends AbstractSkill {
                 foodMap.load(getConfig().getConfigurationSection("food"));
                 spMap.load(getConfig().getConfigurationSection("sp"));
                 levelsPerHealthPoint = getConfig().getInt("LevelsPerHealthPoint");
+
+                for (Material mat : Material.values()) saturationMap.put(mat, 0.0f);
+                ConfigurationSection saturation = getConfig().getConfigurationSection("saturation");
+                for (String key : saturation.getKeys(false)) {
+                        Material mat = Util.enumFromString(Material.class, key);
+                        if (mat == null) {
+                                plugin.getLogger().warning("[Eating] Invalid material: " + key);
+                                continue;
+                        }
+                        float val = (float)saturation.getDouble(key);
+                        saturationMap.put(mat, val);
+                }
         }
 }

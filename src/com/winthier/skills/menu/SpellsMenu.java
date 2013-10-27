@@ -2,10 +2,13 @@ package com.winthier.skills.menu;
 
 import com.winthier.skills.ElementType;
 import com.winthier.skills.SkillsPlugin;
+import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.player.PlayerResponse;
+import com.winthier.skills.skill.SkillType;
 import com.winthier.skills.spell.AbstractSpell;
 import com.winthier.skills.util.Util;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,6 +27,7 @@ public class SpellsMenu extends Menu {
                 this.player = player;
                 this.element = element;
 
+                addItem(new ItemStack(Material.NETHER_STAR));
                 final AbstractSpell spells[] = plugin.spellManager.getSpells(element);
                 for (AbstractSpell spell : spells) {
                         ItemStack item = new ItemStack(Material.BOOK);
@@ -33,7 +37,7 @@ public class SpellsMenu extends Menu {
                         addItem(item);
                 }
                 createInventory();
-                for (int i = 0; i < spells.length; ++i) updateSlot(i);
+                for (int i = 0; i < spells.length + 1; ++i) updateSlot(i);
         }
 
         public AbstractSpell getSpell(int slot) {
@@ -51,7 +55,29 @@ public class SpellsMenu extends Menu {
         private void updateSlot(int slot) {
                 final ItemStack item = getInventory().getItem(slot);
                 if (item == null) return;
-                final AbstractSpell spell = getSpell(slot);
+
+                if (slot == 0) {
+                        ItemMeta meta = item.getItemMeta();
+                        meta.setDisplayName(Util.format("%s%s", element.getColor(), element.getDisplayName()));
+                        List<String> lore = new ArrayList<String>();
+                        lore.add(Util.format("&bClick&3 to select %s%s &b%s %s%s",
+                                             element.getColor(), Util.ICON, element.getDisplayName(),
+                                             element.getColor(), Util.ICON));
+                        lore.add(Util.format("&3as your &bPrimary Element."));
+                        lore.add(Util.format("&7&oEffects:"));
+                        lore.add(Util.format("&b- &7&oLess XP cost for %s spells.", element.getDisplayName()));
+                        lore.add(Util.format("&b- &7&oMore SP while leveling up skills."));
+                        lore.add(Util.format("&b- &7&oMoney for leveling up skills."));
+                        lore.add(Util.format("  &bSkills:"));
+                        for (SkillType skill : element.getSkills()) {
+                                lore.add(Util.format("  %s%s &3&o%s", skill.getColor(), Util.ICON, skill.getDisplayName()));
+                        }
+                        meta.setLore(lore);
+                        item.setItemMeta(meta);
+                        return;
+                }
+
+                final AbstractSpell spell = getSpell(slot - 1);
                 if (spell == null) return;
 
                 final ItemMeta meta = item.getItemMeta();
@@ -119,7 +145,17 @@ public class SpellsMenu extends Menu {
 
         @Override
         public void onClick(Player player, int slot, ClickType type) {
-                AbstractSpell spell = getSpell(slot);
+                if (slot == 0) {
+                        PlayerInfo info = plugin.playerManager.getPlayerInfo(player);
+                        if (info.getPrimaryElement() == element) {
+                                Util.sendMessage(player, "&c%s already is your primary element.", element.getDisplayName());
+                        } else {
+                                plugin.sqlManager.switchElement(info, element);
+                        }
+                        return;
+                }
+
+                AbstractSpell spell = getSpell(slot - 1);
                 if (spell == null) return;
                 switch (type) {
                 case SHIFT_LEFT:

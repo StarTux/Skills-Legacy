@@ -21,6 +21,22 @@ public class Fraction {
                 return roll(1);
         }
 
+        public Fraction add(int summand) {
+                return new Fraction(dividend + summand * divisor, divisor);
+        }
+
+        public Fraction add(int dividend, int divisor) {
+                return new Fraction(this.dividend * divisor + dividend * this.divisor, this.divisor * divisor);
+        }
+
+        public Fraction add(Fraction other) {
+                return add(other.dividend, other.divisor);
+        }
+
+        public boolean isNull() {
+                return dividend == 0;
+        }
+
         public static Fraction parseFraction(String string) {
                 String tokens[] = string.split(Pattern.quote("/"));
                 if (tokens.length > 2) {

@@ -3,7 +3,14 @@ description: A skill system for Winthier
 author: StarTux
 version: 0.1
 main: com.winthier.skills.SkillsPlugin
-depend: [ Exploits, LibSQL, ProtocolLib, Vault ]
+depend:
+- Exploits
+- GriefPrevention
+- LibSQL
+- ProtocolLib
+- Vault
+- VoteRecord
+- WorldGuard
 commands:
   Skill:
     aliases: [ Skills, sk ]
@@ -37,7 +44,7 @@ permissions:
     description: Permissions for administrators.
     default: op
     children:
-    - skills.skillconfig
+      skills.skillconfig: true
   skills.skill:
     description: Use the /skill command.
     default: op

@@ -47,6 +47,10 @@ public class ElementCommand implements CommandExecutor {
                         sendUsageMessage(sender, label);
                         return true;
                 }
+                if (element == ElementType.MAGIC) {
+                        Util.sendMessage(sender, "&cYou can't select Magic as your primary element.");
+                        return true;
+                }
                 if (element == info.getPrimaryElement()) {
                         Util.sendMessage(sender, "&c%s already is your primary element.", element.getDisplayName());
                         return true;

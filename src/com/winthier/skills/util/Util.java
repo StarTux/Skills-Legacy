@@ -7,7 +7,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.winthier.skills.SkillsPlugin;
+import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,12 +19,30 @@ import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.milkbowl.vault.item.ItemInfo;
+import net.milkbowl.vault.item.Items;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Zombie;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.metadata.Metadatable;
 
 public class Util {
         public final static Random random = new Random(System.currentTimeMillis());
@@ -106,6 +126,7 @@ public class Util {
         }
 
         public static int distanceSquared(Location a, Location b) {
+                if (a.getWorld() != b.getWorld()) return 0;
                 final int x = b.getBlockX() - a.getBlockX();
                 final int y = b.getBlockY() - a.getBlockY();
                 final int z = b.getBlockZ() - a.getBlockZ();
@@ -117,6 +138,7 @@ public class Util {
         }
 
         public static int horizontalDistanceSquared(Location a, Location b) {
+                if (a.getWorld() != b.getWorld()) return 0;
                 final int x = b.getBlockX() - a.getBlockX();
                 final int z = b.getBlockZ() - a.getBlockZ();
                 return x * x + z * z;
@@ -248,6 +270,51 @@ public class Util {
                 }
         }
 
+        public static void storeMetadata(SkillsPlugin plugin, Metadatable storage, String key, Object value) {
+                storage.setMetadata(key, new FixedMetadataValue(plugin, value));
+        }
+
+        public static void removeMetadata(SkillsPlugin plugin, Metadatable storage, String key) {
+                storage.removeMetadata(key, plugin);
+        }
+
+        public static Object getMetadata(SkillsPlugin plugin, Metadatable storage, String key) {
+                for (MetadataValue val : storage.getMetadata(key)) {
+                        if (val.getOwningPlugin() == plugin) return val.value();
+                }
+                return null;
+        }
+
+        public static void storeSourceLocation(SkillsPlugin plugin, Entity ent, Location loc) {
+                ent.setMetadata("SourceLocation", new FixedMetadataValue(plugin, loc));
+        }
+
+        public static Location getSourceLocation(SkillsPlugin plugin, Entity ent) {
+                for (MetadataValue val : ent.getMetadata("SourceLocation")) {
+                        if (val.getOwningPlugin() == plugin) {
+                                Object o = val.value();
+                                if (o instanceof Location) return (Location)o;
+                        }
+                }
+                return null;
+        }
+
+        public static int sourceDistance(SkillsPlugin plugin, Entity ent, Location loc) {
+                Location src = getSourceLocation(plugin, ent);
+                if (src == null) return 0;
+                return distance(src, loc);
+        }
+
+        public static int horizontalSourceDistance(SkillsPlugin plugin, Entity ent, Location loc) {
+                Location src = getSourceLocation(plugin, ent);
+                if (src == null) return 0;
+                return horizontalDistance(src, loc);
+        }
+
+        public static String locationToString(Location loc) {
+                return String.format("%s %d,%d,%d", loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+        }
+
         public static List<String> fillParagraph(String par, int width, String prefix) {
                 List<String> result = new ArrayList<String>();
                 StringBuilder line = new StringBuilder(prefix);
@@ -285,5 +352,188 @@ public class Util {
                 } catch (Throwable t) {
                         t.printStackTrace();
                 }
+        }
+
+        public static boolean canBuild(Player player, Block block) {
+                // boolean result = true;
+
+                // try {
+                //         NCPExemptionManager.exemptPermanently(player);
+                //         BlockBreakEvent event = new BlockBreakEvent(block, player);
+                //         Bukkit.getServer().getPluginManager().callEvent(event);
+                //         if (event.isCancelled()) result = false;
+                // } finally {
+                //         NCPExemptionManager.unexempt(player);
+                // }
+
+                // return result;
+                final Location loc = block.getLocation();
+                if (!WGBukkit.getPlugin().canBuild(player, loc)) return false;
+                if (GriefPrevention.instance.allowBuild(player, loc) != null) return false;
+                return true;
+        }
+
+        public static boolean canHurt(SkillsPlugin plugin, Player player, Entity entity) {
+                EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, entity, DamageCause.MAGIC, 0.0);
+                plugin.spellManager.ignoreEvents(true);
+                plugin.getServer().getPluginManager().callEvent(event);
+                plugin.spellManager.ignoreEvents(false);
+                return !event.isCancelled();
+        }
+
+        public static String niceItemName(ItemStack stack) {
+                ItemInfo info = Items.itemByStack(stack);
+                return info.getName();
+        }
+
+        public static ItemStack getMobHead(LivingEntity entity) {
+                boolean valid = false;
+                short damage = 0;
+                String owner = null;
+                String name = null;
+                switch (entity.getType()) {
+                case SKELETON:
+                        final Skeleton skeleton = (Skeleton)entity;
+                        if (skeleton.getSkeletonType() == Skeleton.SkeletonType.WITHER) {
+                                //damage = (short)1;
+                                // We don't want to give that out.
+                                return null;
+                        } else {
+                                damage = (short)0;
+                        }
+                        valid = true;
+                        break;
+                case ZOMBIE:
+                        final Zombie zombie = (Zombie)entity;
+                        if (zombie.isBaby()) return null;
+                        if (zombie.isVillager()) {
+                                damage = (short)3;
+                                owner = "MHF_Villager";
+                                name = "Villager Head";
+                                valid = true;
+                        } else {
+                                damage = (short)2;
+                                valid = true;
+                        }
+                        break;
+                case CREEPER:
+                        damage = (short)4;
+                        valid = true;
+                        break;
+                case BLAZE:
+                        damage = (short)3;
+                        owner = "MHF_Blaze";
+                        name = "Blaze Head";
+                        valid = true;
+                        break;
+                case CAVE_SPIDER:
+                        damage = (short)3;
+                        owner = "MHF_CaveSpider";
+                        name = "Cave Spider Head";
+                        valid = true;
+                        break;
+                case CHICKEN:
+                        damage = (short)3;
+                        owner = "MHF_Chicken";
+                        name = "Chicken Head";
+                        valid = true;
+                        break;
+                case COW:
+                        damage = (short)3;
+                        owner = "MHF_Cow";
+                        name = "Cow Head";
+                        valid = true;
+                        break;
+                case ENDERMAN:
+                        damage = (short)3;
+                        owner = "MHF_Enderman";
+                        name = "Enderman Head";
+                        valid = true;
+                        break;
+                case GHAST:
+                        damage = (short)3;
+                        owner = "MHF_Ghast";
+                        name = "Ghast Head";
+                        valid = true;
+                        break;
+                case IRON_GOLEM:
+                        damage = (short)3;
+                        owner = "MHF_Golem";
+                        name = "Iron Golem Head";
+                        valid = true;
+                        break;
+                case MAGMA_CUBE:
+                        damage = (short)3;
+                        owner = "MHF_LavaSlime";
+                        name = "Magma Cube Head";
+                        valid = true;
+                        break;
+                case MUSHROOM_COW:
+                        damage = (short)3;
+                        owner = "MHF_MushroomCow";
+                        name = "Mushroom Cow Head";
+                        valid = true;
+                        break;
+                case OCELOT:
+                        damage = (short)3;
+                        owner = "MHF_Ocelot";
+                        name = "Ocelot Head";
+                        valid = true;
+                        break;
+                case PIG:
+                        damage = (short)3;
+                        owner = "MHF_Pig";
+                        name = "Pig Head";
+                        valid = true;
+                        break;
+                case PIG_ZOMBIE:
+                        damage = (short)3;
+                        owner = "MHF_PigZombie";
+                        name = "Pig Zombie Head";
+                        valid = true;
+                        break;
+                case SHEEP:
+                        damage = (short)3;
+                        owner = "MHF_Sheep";
+                        name = "Sheep Head";
+                        valid = true;
+                        break;
+                case SLIME:
+                        damage = (short)3;
+                        owner = "MHF_Slime";
+                        name = "Slime Head";
+                        valid = true;
+                        break;
+                case SPIDER:
+                        damage = (short)3;
+                        owner = "MHF_Spider";
+                        name = "Spider Head";
+                        valid = true;
+                        break;
+                case SQUID:
+                        damage = (short)3;
+                        owner = "MHF_Squid";
+                        name = "Squid Head";
+                        valid = true;
+                        break;
+                case VILLAGER:
+                        damage = (short)3;
+                        owner = "MHF_Villager";
+                        name = "Villager Head";
+                        valid = true;
+                        break;
+                }
+                if (!valid) return null;
+                final ItemStack result = new ItemStack(Material.SKULL_ITEM, 1, damage);
+                if (damage == (short)3) {
+                        if (owner == null) return null;
+                        final SkullMeta meta = (SkullMeta)result.getItemMeta();
+                        meta.setOwner(owner);
+                        if (name != null) {
+                                meta.setDisplayName(ChatColor.RESET + name);
+                        }
+                        result.setItemMeta(meta);
+                }
+                return result;
         }
 }

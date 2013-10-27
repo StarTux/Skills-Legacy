@@ -28,8 +28,13 @@ public class PotionEffectSpell extends AbstractSpell {
 
         protected boolean isHarmful() {
                 return
-                        type.equals(PotionEffectType.POISON) ||
+                        type.equals(PotionEffectType.CONFUSION) ||
                         type.equals(PotionEffectType.HARM) ||
+                        type.equals(PotionEffectType.HUNGER) ||
+                        type.equals(PotionEffectType.POISON) ||
+                        type.equals(PotionEffectType.SLOW) ||
+                        type.equals(PotionEffectType.SLOW_DIGGING) ||
+                        type.equals(PotionEffectType.WEAKNESS) ||
                         type.equals(PotionEffectType.WITHER)
                         ;
         }
@@ -49,6 +54,16 @@ public class PotionEffectSpell extends AbstractSpell {
         public boolean cast(Player player, Entity entity) {
                 if (!(entity instanceof LivingEntity)) return cast(player);
                 LivingEntity living = (LivingEntity)entity;
+                if (entity instanceof Player) {
+                        // For other players, check if player
+                        // damage is prohibited if the potion is
+                        // considered harmful.
+                        if (isHarmful() && !Util.canHurt(plugin, player, entity)) return false;
+                } else {
+                        // For any other entity, check if the
+                        // entity can be attacked in any case.
+                        if (!Util.canHurt(plugin, player, entity)) return false;
+                }
                 PotionEffect effect = createPotionEffect(player);
                 return living.addPotionEffect(effect);
         }

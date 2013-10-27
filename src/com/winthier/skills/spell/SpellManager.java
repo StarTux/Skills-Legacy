@@ -36,6 +36,7 @@ public class SpellManager implements Listener {
         private final Map<String, AbstractSpell> spellByName = new HashMap<String, AbstractSpell>();
         private final Map<ElementType, AbstractSpell[]> spellLists = new EnumMap<ElementType, AbstractSpell[]>(ElementType.class);
         private ConfigurationSection config;
+        private boolean ignoreEvents = false;
 
         public SpellManager(SkillsPlugin plugin) {
                 this.plugin = plugin;
@@ -58,6 +59,8 @@ public class SpellManager implements Listener {
 
         @EventHandler(ignoreCancelled = false, priority = EventPriority.LOW)
         public void onPlayerInteract(PlayerInteractEvent event) {
+                if (ignoreEvents) return;
+
                 final Player player = event.getPlayer();
                 final ItemStack item = player.getItemInHand();
                 if (item == null) return;
@@ -92,6 +95,8 @@ public class SpellManager implements Listener {
 
         @EventHandler(ignoreCancelled = false, priority = EventPriority.LOW)
         public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+                if (ignoreEvents) return;
+
                 final Player player = event.getPlayer();
                 final ItemStack item = player.getItemInHand();
                 if (item == null) return;
@@ -102,6 +107,8 @@ public class SpellManager implements Listener {
 
         @EventHandler(ignoreCancelled = false, priority = EventPriority.LOW)
         public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
+                if (ignoreEvents) return;
+
                 if (!(event.getDamager() instanceof Player)) return;
                 final Player player = (Player)event.getDamager();
                 ItemStack item = player.getItemInHand();
@@ -113,6 +120,8 @@ public class SpellManager implements Listener {
 
         @EventHandler(ignoreCancelled = false, priority = EventPriority.LOW)
         public void onCraftItem(CraftItemEvent event) {
+                if (ignoreEvents) return;
+
                 if (!(event.getWhoClicked() instanceof Player)) return;
                 Player player = (Player)event.getWhoClicked();
                 for (ItemStack item : event.getInventory().getMatrix()) {
@@ -149,6 +158,13 @@ public class SpellManager implements Listener {
 
         public AbstractSpell[] getSpells(ElementType element) {
                 return spellLists.get(element);
+        }
+
+        /**
+         * Ignore events to prevent stack overflow;
+         */
+        public void ignoreEvents(boolean val) {
+                ignoreEvents = val;
         }
 
         // Totem use functions. A positive check for the item being a totem is assumed.
@@ -230,7 +246,7 @@ public class SpellManager implements Listener {
                         break;
                 }
                 player.playSound(loc, soundName, 0.5f, 1.0f);
-                Util.playParticleEffect(player, loc, particleName, 64, 0.5f, 0.01f);
+                Util.playParticleEffect(player, loc, particleName, 64, 0.5f, 0.001f);
         }
 
         private void onFailSpell(Player player, Location loc, AbstractSpell spell) {

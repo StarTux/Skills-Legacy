@@ -24,8 +24,7 @@ public class EnchantingSkill extends AbstractSkill {
          */
         public int getMaxEnchantingLevel(Player player) {
                 int level = getSkillLevel(player);
-                if (level < 100) return 30;
-                return Math.min(50, 31 + (level - 100) / 20);
+                return Math.min(50, 30 + level / 20);
         }
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

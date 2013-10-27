@@ -16,6 +16,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class ArcherySkill extends AbstractSkill {
         private final EnumIntMap<EntityType> spMap = new EnumIntMap<EntityType>(EntityType.class, 0);
@@ -26,7 +28,19 @@ public class ArcherySkill extends AbstractSkill {
                 super(plugin, skillType);
         }
 
+        /**
+         * Make sure that a launched arrow remembers its
+         * source location.
+         */
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        public void onProjectileLaunch(ProjectileLaunchEvent event) {
+                final Entity entity = event.getEntity();
+                if (entity.getType() != EntityType.ARROW) return;
+
+                Util.storeSourceLocation(plugin, entity, entity.getLocation());
+        }
+
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
         public void onEntityDeath(EntityDeathEvent event) {
                 final LivingEntity entity = event.getEntity();
                 if (entity.getHealth() > 0.0) return;
@@ -51,15 +65,26 @@ public class ArcherySkill extends AbstractSkill {
                 if (ExploitsPlugin.getKillDistance(player) < minKillDistance) return;
                 final int maxHealth = (int)entity.getMaxHealth();
                 final int playerDamage = Math.min(maxHealth, ExploitsPlugin.getPlayerDamage(entity));
+                // Get SP from player damage to max health ratio.
                 skillPoints = Util.rollFraction(skillPoints, playerDamage, maxHealth);
-                int distance = Math.min(normDistance * 4, Util.horizontalDistance(player.getLocation(), entity.getLocation()));
+                // Multiply with source distance to norm distance ratio.
+                final int distance = Math.min(128, Util.sourceDistance(plugin, arrow, entity.getLocation()));
                 skillPoints = Util.rollFraction(skillPoints, distance, normDistance);
+                // Apply SP.
                 addSkillPoints(player, skillPoints);
 
-                // Give bonus XP.
                 if (plugin.perksEnabled) {
+                        // Give bonus XP.
                         final int xp = event.getDroppedExp();
                         event.setDroppedExp(multiplyXp(player, xp));
+
+                        // Drop the head.
+                        if (Util.random.nextInt(100) < getSkullDropPercentage(player)) {
+                                ItemStack skull = Util.getMobHead(entity);
+                                if (skull != null) {
+                                        event.getDrops().add(skull);
+                                }
+                        }
                 }
         }
 
@@ -67,7 +92,15 @@ public class ArcherySkill extends AbstractSkill {
 
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(1);
-                result.add("Killed mobs drop +" + (getXpMultiplier(player) - 100) + "% xp");
+
+                // Skull Drop
+                final int skullDropPercentage = getSkullDropPercentage(player);
+                if (skullDropPercentage > 0) {
+                        result.add("Sniped mobs drop their head " + skullDropPercentage + "% of the time.");
+                }
+
+                // XP Bonus
+                result.add("Shot mobs drop +" + (getXpMultiplier(player) - 100) + "% xp");
                 return result;
         }
 

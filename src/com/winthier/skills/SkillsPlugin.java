@@ -4,6 +4,7 @@ import com.winthier.skills.command.ConfigCommand;
 import com.winthier.skills.command.ElementCommand;
 import com.winthier.skills.command.HighscoreCommand;
 import com.winthier.skills.command.SkillCommand;
+import com.winthier.skills.listener.NoCheatPlusListener;
 import com.winthier.skills.menu.MenuManager;
 import com.winthier.skills.player.EconomyManager;
 import com.winthier.skills.player.PlayerInfo;
@@ -14,6 +15,7 @@ import com.winthier.skills.skill.SkillType;
 import com.winthier.skills.spell.SpellManager;
 import com.winthier.skills.sql.SQLManager;
 import com.winthier.skills.util.Fraction;
+import com.winthier.skills.util.MagicWatchdog;
 import com.winthier.skills.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -30,13 +32,19 @@ public class SkillsPlugin extends JavaPlugin {
         public final SpellManager spellManager = new SpellManager(this);
         public final ScoreboardManager scoreboardManager = new ScoreboardManager(this);
         public final MenuManager menuManager = new MenuManager(this);
+        public final MagicWatchdog magicWatchdog = new MagicWatchdog(this);
         // Configuration
-        public ConfigurationSection skillsConfig = null;
         public boolean perksEnabled = true;
         public int switchElementCooldown = 60; // In minutes.
         public double rewardFactor = 0.1;
         public Fraction proficiencySpellCostFactor = null;
         public Fraction proficiencySkillPointFactor = null;
+        // Config cache
+        private ConfigurationSection skillsConfig = null;
+        private ConfigurationSection challengeConfig = null;
+
+        // NoCheatPlus
+        public final NoCheatPlusListener ncpListener = new NoCheatPlusListener(this);
 
         @Override
         public void onEnable() {
@@ -47,9 +55,12 @@ public class SkillsPlugin extends JavaPlugin {
                 sqlManager.onEnable();
                 // Economy doesn't need enabling, but it can't hurt.
                 economyManager.onEnable();
+                // EntityListener
+                ncpListener.onEnable();
+                // MagicWatchdog
+                magicWatchdog.onEnable();
 
                 // Initialize all skills and load their configurations.
-                skillsConfig = getConfigFile("skills.yml");
                 perksEnabled = getConfig().getBoolean("PerksEnabled");
                 switchElementCooldown = getConfig().getInt("SwitchElementCooldown");
                 rewardFactor = getConfig().getDouble("RewardFactor");
@@ -84,6 +95,7 @@ public class SkillsPlugin extends JavaPlugin {
                 playerManager.onDisable();
                 SkillType.disableAll();
                 sqlManager.onDisable();
+                ncpListener.onDisable();
         }
 
         @Override
@@ -92,6 +104,19 @@ public class SkillsPlugin extends JavaPlugin {
                 return false;
         }
 
+        public ConfigurationSection getSkillsConfig() {
+                if (skillsConfig == null) {
+                        skillsConfig = getConfigFile("skills.yml");
+                }
+                return skillsConfig;
+        }
+
+        public ConfigurationSection getChallengeConfig() {
+                if (challengeConfig == null) {
+                        challengeConfig = getConfigFile("challenge.yml");
+                }
+                return challengeConfig;
+        }
 
         public ConfigurationSection getConfigFile(String path) {
                 return YamlConfiguration.loadConfiguration(getResource(path));

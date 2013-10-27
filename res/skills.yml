@@ -4,25 +4,29 @@ mining:
     Skill points are given for stone, sandstone, coal, iron, gold, redstone, lapis, diamonds, emeralds and quartz.
     Broken ores will drop more experience points as you climb up levels.
   sp:
-    Emerald-Ore: 5
-    Diamond-Ore: 5 # 50 | 10
+    Emerald-Ore: 10
+    Diamond-Ore: 10 # 50 | 10
     Gold-Ore: 5 # 20 | 10
-    Lapis-Ore: 4 # 45 | 15
-    Glowstone: 2
+    Lapis-Ore: 5 # 45 | 15
+    Glowstone: 3
     Redstone-Ore: 2 # 6 | 1.5
     Glowing-Redstone-Ore: 2 # 6 | 1.5
-    Quartz-Ore: 1
     Iron-Ore: 1 # 2 | 1.75
-    Coal-Ore: 1/2
+    Quartz-Ore: 1
+    Coal-Ore: 1/3
     Obsidian: 1
+    Clay: 1/3
     Sandstone: 1/8
-    Stone: 1/20
+    Stone: 1/24
     Dirt: 1/40
     Sand: 1/40
     Grass: 1/32
   xp:
-    Stone: 1/16
+    Stone: 1/10
+    Dirt: 1/20
+    Grass: 1/16
     Sandstone: 1/2
+    Clay: 1
     Obsidian: 2
     Iron-Ore: 3 
     Gold-Ore: 5
@@ -30,6 +34,7 @@ alchemy:
   Description: |-
     Refine materials in a furnace. You earn skill points as you take cooked food, stone, dyes and ores out of a furnace.
     Blast blocks with TNT. You gain SP for blowing up all sorts of blocks.
+    Brew mighty potions. The purer the ingredient, the more SP you gain.
   sp:
     smelting:
       Emerald: 2
@@ -59,10 +64,41 @@ alchemy:
       Glowing-Redstone-Ore: 2
       Quartz-Ore: 1
       Iron-Ore: 1
-      Coal-Ore: 1/2
+      Coal-Ore: 1
       Sandstone: 1/4
-      Stone: 1/16
-  xp: {}
+      Stone: 1/6
+      Dirt: 1/20
+      Gravel: 1/20
+    brewing:
+      Blaze-Powder: 2
+      Fermented-Spider-Eye: 2
+      Ghast-Tear: 20
+      Glowstone-Dust: 3
+      Golden-Carrot: 4
+      Magma-Cream: 5
+      Nether-Stalk: 1
+      # Pufferfish: 1
+      Redstone: 3
+      Speckled-Melon: 4
+      Spider-Eye: 2
+      Sugar: 1
+      Sulphur: 3
+  xp:
+    brewing:
+      Blaze-Powder: 2
+      Fermented-Spider-Eye: 2
+      Ghast-Tear: 20
+      Glowstone-Dust: 3
+      Golden-Carrot: 4
+      Magma-Cream: 5
+      Nether-Stalk: 1
+      # Pufferfish: 1
+      Redstone: 3
+      Speckled-Melon: 4
+      Spider-Eye: 2
+      Sugar: 1
+      Sulphur: 3
+
 eating:
   Description: |-
     Fill up your hunger bar by eating good foods.
@@ -70,53 +106,77 @@ eating:
     Eating food gives you a health boost depending on your skill level.
   LevelsPerHealthPoint: 100
   food:
-    Bread: 5
-    Carrot-Item: 4
+    Apple: 4
     Baked-Potato: 6
-    Potato-Item: 1
-    Poisonous-Potato: 2
-    Golden-Carrot: 6
-    Pumpkin-Pie: 8
+    Bread: 5
+    Cake: 2
+    Carrot-Item: 4
+    Cooked-Beef: 8
+    Cooked-Chicken: 6
+    Cooked-Fish: 5
     Cookie: 2
+    Golden-Apple: 4
+    Golden-Carrot: 6
+    Grilled-Pork: 8
     Melon: 2
     Mushroom-Soup: 6
-    Raw-Chicken: 2
-    Cooked-Chicken: 6
-    Raw-Beef: 3
-    Cooked-Beef: 8
-    Raw-Fish: 2
-    Cooked-Fish: 5
+    Poisonous-Potato: 2
     Pork: 3
-    Grilled-Pork: 8
-    Apple: 4
-    Golden-Apple: 4
+    Potato-Item: 1
+    Pumpkin-Pie: 8
+    Raw-Beef: 3
+    Raw-Chicken: 2
+    Raw-Fish: 2
     Rotten-Flesh: 4
     Spider-Eye: 2
-    Cake: 2
+  saturation:
+    Apple: 2.4
+    Baked-Potato: 7.2
+    Bread: 6
+    Cake: 0.4
+    Carrot-Item: 4.8
+    Cooked-Beef: 12.8
+    Cooked-Chicken: 7.2
+    Cooked-Fish: 6
+    Cookie: 0.4
+    Golden-Apple: 9.6
+    Golden-Carrot: 14.4
+    Grilled-Pork: 12.8
+    Melon: 1.2
+    Mushroom-Soup: 7.2
+    Poisonous-Potato: 1.2
+    Pork: 1.8
+    Potato-Item: 0.6
+    Pumpkin-Pie: 4.8
+    Raw-Beef: 1.8
+    Raw-Chicken: 1.2
+    Raw-Fish: 1.2
+    Rotten-Flesh: 0.8
+    Spider-Eye: 3.2
   sp:
-    Bread: 5
-    Carrot-Item: 4
-    Baked-Potato: 6
+    Apple: 1
+    Baked-Potato: 1
+    Bread: 1
+    Cake: 1
+    Carrot-Item: 1
+    Cooked-Beef: 1
+    Cooked-Chicken: 1
+    Cooked-Fish: 1
+    Cookie: 1
+    Golden-Apple: 1
+    Golden-Carrot: 1
+    Grilled-Pork: 1
+    Melon: 1
+    Mushroom-Soup: 1
+    Poisonous-Potato: 1
+    Pork: 1
     Potato-Item: 1
-    Poisonous-Potato: 2
-    Golden-Carrot: 8
-    Pumpkin-Pie: 8
-    Cookie: 2
-    Melon: 2
-    Mushroom-Soup: 2
-    Raw-Chicken: 2
-    Cooked-Chicken: 6
-    Raw-Beef: 3
-    Cooked-Beef: 8
-    Raw-Fish: 2
-    Cooked-Fish: 5
-    Pork: 3
-    Grilled-Pork: 8
-    Apple: 4
-    Golden-Apple: 10
+    Pumpkin-Pie: 1
+    Raw-Beef: 1
+    Raw-Chicken: 1
+    Raw-Fish: 1
     Rotten-Flesh: 0
     Spider-Eye: 0
-    Cake: 2
 herbalism:
   Description: |-
     Cultivate and harvest growing things.
@@ -135,13 +195,14 @@ herbalism:
     harvest:
       Long-Grass: 1/16
       Dead-Bush: 1/8
-      Log: 1/2
-      Huge-Mushroom-1: 1/2
-      Huge-Mushroom-2: 1/2
-      Leaves: 1/4
+      Log: 1
+      Huge-Mushroom-1: 1
+      Huge-Mushroom-2: 1
+      Leaves: 1/8
       Crops: 1/8
       Carrot: 1/8
       Potato: 1/8
+      Nether-Warts: 1/8
       Cactus: 1
       Pumpkin: 1/2
       Melon-Block: 1/2
@@ -205,12 +266,14 @@ traveling:
   Description: |-
     Explore the world of Winthier.
     Traveling long distances by foot, pig, horse or ender pearl gives you skill points.
-  NormDistance: 40
-  MinPearlingDistance: 32
-  WalkingSkillPoints: 1
-  SprintingSkillPoints: 1
-  PearlingSkillPoints: 2
-  RidingSkillPoints: 1
+
+  NormDistance: 80
+  WalkingSkillPoints: 3
+  RidingSkillPoints: 4
+
+  PearlingNormDistance: 16
+  PearlingSkillPoints: 1
+
   FarTravelDistance: 64
 wildlife:
   Description: |-
@@ -218,22 +281,22 @@ wildlife:
     Collect skill points by taming, breeding, shearing different animals or catching fish.
     As you level up this skill, you will have more luck catching fish and get more experience points for fishing and breeding.
   sp:
-    Fishing: 3
+    Fishing: 5
     breeding:
       Chicken: 1/4
-      Sheep: 1
-      Cow: 1
-      Mushroom-Cow: 1
-      Pig: 1
-      Sheep: 1
-      Ocelot: 2
-      Wolf: 2
-    taming:
-      Horse: 1
-      Ocelot: 3
+      Sheep: 2
+      Cow: 2
+      Mushroom-Cow: 2
+      Pig: 2
+      Ocelot: 4
       Wolf: 3
+      Horse: 5
+    taming:
+      Horse: 5
+      Ocelot: 5
+      Wolf: 5
     shearing:
-      Sheep: 1/8
+      Sheep: 1/2
       Mushroom-Cow: 1
     butcher:
       Chicken: 1/2
@@ -250,6 +313,7 @@ wildlife:
       Pig: 1
       Sheep: 1
       Wolf: 3
+      Horse: 3
     taming:
       Horse: 2
       Ocelot: 3
@@ -267,18 +331,19 @@ melee:
   sp:
     Silverfish: 1
     Slime: 1
-    Cave-Spider: 2
+    Cave-Spider: 3
     Enderman: 5
-    Pig-Zombie: 2
-    Skeleton: 4
+    Skeleton: 5
     Spider: 2
-    Zombie: 2
+    Zombie: 1
     Magma-Cube: 2
     Blaze: 4
     Witch: 5
     Creeper: 5
-    Giant: 10
-    Wither: 20
+    Pig-Zombie: 10
+    Ghast: 10
+    Giant: 20
+    Wither: 30
     Ender-Dragon: 50
 archery:
   Description: |-
@@ -291,7 +356,6 @@ archery:
     Silverfish: 1
     Slime: 1
     Cave-Spider: 2
-    Enderman: 2
     Pig-Zombie: 2
     Skeleton: 5
     Spider: 2
@@ -300,6 +364,7 @@ archery:
     Blaze: 4
     Witch: 5
     Creeper: 4
+    Ghast: 10
     Giant: 10
     Wither: 20
     Ender-Dragon: 50
@@ -355,3 +420,77 @@ enchanting:
     Diamond-Chestplate: 3
     Diamond-Leggings: 3
     Diamond-Boots: 3
+sacrifice:
+  Description: |-
+    Make an offering to the mighty Creeper Overlord.
+    Sacrifice valuable items by burning them.
+  sp:
+    # Harvest
+    Log: 1/4
+    Leaves: 1/2
+    Nether-Stalk: 1/8
+    # Vegetables
+    Wheat: 1/4
+    Carrot-Item: 1/4
+    Potato-Item: 1/4
+    # Meat
+    Raw-Beef: 1/4
+    Raw-Fish: 1/4
+    Pork: 1/4
+    Raw-Chicken: 1/4
+    # Dishes
+    Pumpkin-Pie: 1/4
+    # Ores
+    Coal-Ore: 1
+    Iron-Ore: 3
+    Gold-Ore: 10
+    Diamond-Ore: 10
+    Emerald-Ore: 30
+    Quartz-Ore: 5
+    # Gems
+    Iron-Ingot: 1
+    Gold-Ingot: 1/3
+    Diamond: 5
+    Emerald: 1/10
+    Quartz: 1
+    # Trophies
+    Ghast-Tear: 20
+    Nether-Star: 50
+  xp:
+    # Harvest
+    Log: 1/4
+    Leaves: 1/4
+    Nether-Stalk: 1/2
+    # Vegetables
+    Wheat: 1/8
+    Carrot-Item: 1/8
+    Potato-Item: 1/8
+    # Meat
+    Raw-Beef: 1/4
+    Raw-Fish: 1/4
+    Pork: 1/4
+    Raw-Chicken: 1/4
+    # Dishes
+    Pumpkin-Pie: 1/8
+    Bread: 1/4
+    # Ores
+    Coal-Ore: 1
+    Iron-Ore: 1
+    Gold-Ore: 1
+    Diamond-Ore: 3
+    Emerald-Ore: 10
+    Quartz-Ore: 1
+    # Gems
+    Iron-Ingot: 1
+    Gold-Ingot: 1
+    Diamond: 3
+    Emerald: 1
+    Quartz: 1
+    # Trophies
+    Ghast-Tear: 100
+    Nether-Star: 500
+karma:
+  Description: |-
+    Do a good thing for the community and vote for Winthier.
+    Voting on consecutive days will increase your reward.
+  BaseExp: 1

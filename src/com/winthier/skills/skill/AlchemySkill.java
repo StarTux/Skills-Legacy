@@ -4,8 +4,10 @@ import com.winthier.exploits.ExploitsPlugin;
 import com.winthier.skills.SkillsPlugin;
 import com.winthier.skills.util.MaterialFractionMap;
 import com.winthier.skills.util.MaterialIntMap;
+import com.winthier.skills.util.Util;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,15 +18,19 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class AlchemySkill extends AbstractSkill {
         private int cachedAmount = -1;
         private MaterialFractionMap furnaceSpMap = new MaterialFractionMap(0);
         private MaterialFractionMap blastSpMap = new MaterialFractionMap(0);
+        private MaterialFractionMap brewingSpMap = new MaterialFractionMap(0);
+        private MaterialFractionMap brewingXpMap = new MaterialFractionMap(0);
 
         public AlchemySkill(SkillsPlugin plugin, SkillType skillType) {
                 super(plugin, skillType);
@@ -89,11 +95,52 @@ public class AlchemySkill extends AbstractSkill {
                 }
         }
 
+        public void setBrewer(Block block, Player player) {
+                if (player == null) {
+                        Util.removeMetadata(plugin, block, "Brewer");
+                        return;
+                }
+                Util.storeMetadata(plugin, block, "Brewer", player.getName());
+        }
+
+        public Player getBrewer(Block block) {
+                final Object o = Util.getMetadata(plugin, block, "Brewer");
+                if (o == null || !(o instanceof String)) return null;
+                final String name = (String)o;
+                final Player player = plugin.getServer().getPlayerExact(name);
+                return player;
+        }
+
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        public void onPlayerInteract(PlayerInteractEvent event) {
+                if (event.getClickedBlock().getType() != Material.BREWING_STAND) return;
+                setBrewer(event.getClickedBlock(), event.getPlayer());
+        }
+
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        public void onBrew(BrewEvent event) {
+                final Player player = getBrewer(event.getBlock());
+                if (player == null) return;
+                final ItemStack ingredient = event.getContents().getIngredient();
+                if (ingredient == null) return;
+
+                // Give SP
+                final int sp = brewingSpMap.get(ingredient.getType());
+                addSkillPoints(player, sp);
+
+                // Give XP
+                if (plugin.perksEnabled) {
+                        int xp = brewingXpMap.get(ingredient.getType());
+                        xp = multiplyXp(player, xp);
+                        if (xp > 0) player.giveExp(xp);
+                }
+        }
+
         // User output
 
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(1);
-                result.add("Smelted items drop +" + (getXpMultiplier(player) - 100) + "% XP");
+                result.add("Smelted items and brewed potions drop +" + (getXpMultiplier(player) - 100) + "% xp");
                 return result;
         }
 
@@ -103,5 +150,7 @@ public class AlchemySkill extends AbstractSkill {
         public void loadConfiguration() {
                 furnaceSpMap.load(getConfig().getConfigurationSection("sp.smelting"));
                 blastSpMap.load(getConfig().getConfigurationSection("sp.blasting"));
+                brewingSpMap.load(getConfig().getConfigurationSection("sp.brewing"));
+                brewingXpMap.load(getConfig().getConfigurationSection("xp.brewing"));
         }
 }

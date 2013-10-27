@@ -29,6 +29,8 @@ public enum SkillType {
         EATING    (EatingSkill    .class, "Eating",     ChatColor.DARK_BLUE  ),
         HERBALISM (HerbalismSkill .class, "Herbalism",  ChatColor.GREEN      ),
         ENCHANTING(EnchantingSkill.class, "Enchanting", ChatColor.DARK_PURPLE),
+        SACRIFICE (SacrificeSkill .class, "Sacrifice",  ChatColor.DARK_RED   ),
+        KARMA     (KarmaSkill     .class, "Karma",      ChatColor.RED        ),
         ;
 
         // Map lower case names to skill types to speed things up.
@@ -151,7 +153,7 @@ public enum SkillType {
                                 elements[0] = elem;
                                 return elements;
                         }
-                        if (skillTypes[1] == this || skillTypes[2] == this) {
+                        if (skillTypes.length > 1 && (skillTypes[1] == this || skillTypes[2] == this)) {
                                 if (elements == null) {
                                         elements = new ElementType[2];
                                         elements[0] = elem;

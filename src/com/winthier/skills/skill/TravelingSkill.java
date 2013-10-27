@@ -8,17 +8,22 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class TravelingSkill extends AbstractSkill {
-        private int normDistance, normDistanceSquared, minPearlingDistance, minPearlingDistanceSquared;
+        private int normDistance, normDistanceSquared, pearlingNormDistance;
         private int farTravelDistance, farTravelDistanceSquared;
-        private int walkingSkillPoints, sprintingSkillPoints, pearlingSkillPoints, ridingSkillPoints;
+        private int walkingSkillPoints, pearlingSkillPoints, ridingSkillPoints;
 
         public TravelingSkill(SkillsPlugin plugin, SkillType skillType) {
                 super(plugin, skillType);
@@ -55,11 +60,11 @@ public class TravelingSkill extends AbstractSkill {
                                         return;
                                 }
                         }
+
+                        // Give SP.
                         int skillPoints = 0;
                         if (riding) {
                                 skillPoints = ridingSkillPoints;
-                        } else if (player.isSprinting()) {
-                                skillPoints = sprintingSkillPoints;
                         } else {
                                 skillPoints = walkingSkillPoints;
                         }
@@ -73,25 +78,67 @@ public class TravelingSkill extends AbstractSkill {
                 }
         }
 
+        /**
+         * Teleportation should not count towards the travling
+         * skill. Make sure that all the cached values are set
+         * accordingly.
+         */
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerTeleport(PlayerTeleportEvent event) {
                 final Player player = event.getPlayer();
                 final TravelingPlayerInfo info = plugin.playerManager.getPlayerInfo(player).travelingInfo;
+
                 final Location to = event.getTo();
-                final Location from = event.getFrom();
                 info.setLocation(to);
                 info.setFarTravelLocation(to);
-                if (event.getCause() == TeleportCause.ENDER_PEARL) {
-                        int dist = Util.horizontalDistanceSquared(from, to);
-                        if (dist >= minPearlingDistanceSquared) {
-                                final int skillPoints = pearlingSkillPoints;
-                                addSkillPoints(player, skillPoints);
-                        }
-                }
+        }
+
+        /**
+         * Make sure that a launched ender pearl remembers its
+         * source location.
+         */
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        public void onProjectileLaunch(ProjectileLaunchEvent event) {
+                final Entity entity = event.getEntity();
+                if (entity.getType() != EntityType.ENDER_PEARL) return;
+
+                Util.storeSourceLocation(plugin, entity, entity.getLocation());
+        }
+
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        public void onProjectileHit(ProjectileHitEvent event) {
+                final Projectile projectile = event.getEntity();
+                if (projectile.getType() != EntityType.ENDER_PEARL) return;
+
+                final LivingEntity shooter = projectile.getShooter();
+                if (!(shooter instanceof Player)) return;
+                final Player player = (Player)shooter;
+
+                if (!player.isValid()) return;
+                if (player.isFlying()) return;
+                if (player.isSleeping()) return;
+                if (player.isDead()) return;
+                if (player.isInsideVehicle()) return;
+
+                final int distance = Math.min(128, Util.horizontalSourceDistance(plugin, projectile, player.getLocation()));
+                if (distance <= 0) return;
+
+                // Give SP.
+                int skillPoints = Util.rollFraction(pearlingSkillPoints, distance, pearlingNormDistance);
+                addSkillPoints(player, skillPoints);
+        }
+
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        public void onPlayerRespawn(PlayerRespawnEvent event) {
+                final Player player = event.getPlayer();
+                final TravelingPlayerInfo info = plugin.playerManager.getPlayerInfo(player).travelingInfo;
+                final Location to = event.getRespawnLocation();
+                info.setLocation(to);
+                info.setFarTravelLocation(to);
         }
 
         protected int getBonusXp(Player player) {
-                return getSkillLevel(player) / 10;
+                return getSkillLevel(player) / 16;
         }
 
         // User output
@@ -108,13 +155,14 @@ public class TravelingSkill extends AbstractSkill {
         public void loadConfiguration() {
                 normDistance = getConfig().getInt("NormDistance");
                 normDistanceSquared = normDistance * normDistance;
-                minPearlingDistance = getConfig().getInt("MinPearlingDistance");
-                minPearlingDistanceSquared = minPearlingDistance * minPearlingDistance;
+
+                walkingSkillPoints = getConfig().getInt("WalkingSkillPoints");
+                ridingSkillPoints = getConfig().getInt("RidingSkillPoints");
+
+                pearlingNormDistance = getConfig().getInt("PearlingNormDistance");
+                pearlingSkillPoints = getConfig().getInt("PearlingSkillPoints");
+
                 farTravelDistance = getConfig().getInt("FarTravelDistance");
                 farTravelDistanceSquared = farTravelDistance * farTravelDistance;
-                walkingSkillPoints = getConfig().getInt("WalkingSkillPoints");
-                sprintingSkillPoints = getConfig().getInt("SprintingSkillPoints");
-                pearlingSkillPoints = getConfig().getInt("PearlingSkillPoints");
-                ridingSkillPoints = getConfig().getInt("RidingSkillPoints");
         }
 }

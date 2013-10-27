@@ -242,6 +242,7 @@ public class WildlifeSkill extends AbstractSkill {
         public void onEntityDeath(EntityDeathEvent event) {
                 final LivingEntity entity = event.getEntity();
                 if (entity.getHealth() > 0.0) return;
+                if (entity instanceof Ageable && !((Ageable)entity).isAdult()) return;
 
                 // Figure out damager. Accepted is killing by hand
                 // or arrow; not by potion.
@@ -271,10 +272,18 @@ public class WildlifeSkill extends AbstractSkill {
                 if (sp == 0) return;
                 addSkillPoints(player, sp);
 
-                // Give bonus XP.
                 if (plugin.perksEnabled) {
+                        // Give bonus XP.
                         final int xp = event.getDroppedExp();
                         event.setDroppedExp(multiplyXp(player, xp));
+
+                        // Drop the head.
+                        if (Util.random.nextInt(100) < getSkullDropPercentage(player)) {
+                                ItemStack skull = Util.getMobHead(entity);
+                                if (skull != null) {
+                                        event.getDrops().add(skull);
+                                }
+                        }
                 }
         }
 
@@ -288,13 +297,15 @@ public class WildlifeSkill extends AbstractSkill {
                 final int skillPoints = breedingSPMap.get(event.getHatchingType());
                 addSkillPoints(player, skillPoints);
 
-                // Give bonux XP.
-                final int xp = breedingXPMap.get(event.getHatchingType());
-                if (xp > 0) player.giveExp(multiplyXp(player, xp));
+                if (plugin.perksEnabled) {
+                        // Give bonux XP.
+                        final int xp = breedingXPMap.get(event.getHatchingType());
+                        if (xp > 0) player.giveExp(multiplyXp(player, xp));
 
-                // Set bonus hatches.
-                final int hatches = event.getNumHatches();
-                event.setNumHatches((byte)(hatches + getBonusHatches(player)));
+                        // Set bonus hatches.
+                        final int hatches = event.getNumHatches();
+                        event.setNumHatches((byte)(hatches + getBonusHatches(player)));
+                }
         }
 
         public int getBiteChanceMultiplier(Player player) {
@@ -302,16 +313,27 @@ public class WildlifeSkill extends AbstractSkill {
         }
 
         public int getBonusHatches(Player player) {
-                return getSkillLevel(player) / 50;
+                return getSkillLevel(player) / 75;
         }
 
         // User output
 
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(3);
-                result.add("Caught fish drop +" + (getXpMultiplier(player) - 100) + "% XP");
-                result.add("Taming, breeding and shearing animals drops +" + (getXpMultiplier(player) - 100) + "% XP");
+
+                // Skull Drop
+                final int skullDropPercentage = getSkullDropPercentage(player);
+                if (skullDropPercentage > 0) {
+                        result.add("Butchered animals drop their head " + skullDropPercentage + "% of the time.");
+                }
+
+                // Taming XP bonus
+                result.add("Taming, fishing, breeding and shearing animals drops +" + (getXpMultiplier(player) - 100) + "% xp");
+
+                // Fishing bonus
                 result.add("Fish bite +" + (getBiteChanceMultiplier(player) - 100) + "% more likely");
+
+                // Bonus hatches
                 final int bonusHatches = getBonusHatches(player);
                 if (bonusHatches > 1) {
                         result.add("Eggs hatch " + getBonusHatches(player) + " bonus chickens");

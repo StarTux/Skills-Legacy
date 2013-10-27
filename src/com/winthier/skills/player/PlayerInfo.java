@@ -7,6 +7,7 @@ import com.winthier.skills.skill.SkillType;
 import java.util.EnumMap;
 import java.util.Map;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -24,7 +25,9 @@ public class PlayerInfo {
         public final TravelingPlayerInfo travelingInfo = new TravelingPlayerInfo();
         public final SpellsPlayerInfo spellsInfo = new SpellsPlayerInfo(this);
 
+        // Loading and purging.
         private BukkitRunnable removalTask = null;
+        private boolean loaded = false;
 
         public PlayerInfo(SkillsPlugin plugin, Player player) {
                 this.plugin = plugin;
@@ -50,6 +53,36 @@ public class PlayerInfo {
 
         public Player getPlayer() {
                 return player;
+        }
+
+        //
+
+        /**
+         * Check if this player's info has been loaded from the
+         * database.  Nothing should be modified before data have
+         * been loaded.
+         */
+        public boolean isLoaded() {
+                return loaded;
+        }
+
+        /**
+         * Set this info to be loaded and ready to use.  This is
+         * called by LoadPlayerInfoRequest.run().
+         */
+        public void setLoaded(boolean loaded) {
+                this.loaded = loaded;
+        }
+
+        /**
+         * Check if a given player is currently eligible to
+         * collect experience points.
+         */
+        public boolean canCollectSkillPoints() {
+                if (player.getGameMode() == GameMode.CREATIVE) return false;
+                if (!player.hasPermission("skills.play")) return false;
+                if (!plugin.playerManager.getPlayerInfo(player).isLoaded()) return false;
+                return true;
         }
 
         // Skill points and levels, getters and setters.
