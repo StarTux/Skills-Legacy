@@ -450,12 +450,40 @@ sacrifice:
     # Gems
     Iron-Ingot: 1
     Gold-Ingot: 1/3
-    Diamond: 5
+    Diamond: 7
     Emerald: 1/10
     Quartz: 1
+    # Blocks
+    Iron-Block: 9
+    Gold-Block: 3
+    Diamond-Block: 63
+    Emerald-Block: 9/10
+    Quartz-Block: 9
+    # Tools
+    Iron-Pickaxe: 1
+    Iron-Shovel: 1/3
+    Iron-Axe: 1
+    Iron-Sword: 2/3
+    Iron-Hoe: 2/3
+
+    Diamond-Pickaxe: 3
+    Diamond-Shovel: 1
+    Diamond-Axe: 3
+    Diamond-Sword: 2
+    Diamond-Hoe: 2
+
+    Iron-Helmet: 5/3
+    Iron-Chestplate: 8/3
+    Iron-Legings: 7/3
+    Iron-Boots: 4/3
+
+    Diamond-Helmet: 5
+    Diamond-Chestplate: 8
+    Diamond-Legings: 7
+    Diamond-Boots: 4
     # Trophies
     Ghast-Tear: 20
-    Nether-Star: 50
+    Nether-Star: 100
   xp:
     # Harvest
     Log: 1/4
@@ -486,6 +514,12 @@ sacrifice:
     Diamond: 3
     Emerald: 1
     Quartz: 1
+    # Blocks
+    Iron-Block: 9
+    Gold-Block: 9
+    Diamond-Block: 9
+    Emerald-Block: 9
+    Quartz-Block: 9
     # Trophies
     Ghast-Tear: 100
     Nether-Star: 500
