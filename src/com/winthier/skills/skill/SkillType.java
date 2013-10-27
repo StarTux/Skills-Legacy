@@ -153,7 +153,12 @@ public enum SkillType {
                                 elements[0] = elem;
                                 return elements;
                         }
-                        if (skillTypes.length > 1 && (skillTypes[1] == this || skillTypes[2] == this)) {
+                        if (skillTypes[1] == this || skillTypes[2] == this) {
+                                if (elem == ElementType.MAGIC) {
+                                        elements = new ElementType[1];
+                                        elements[0] = elem;
+                                        return elements;
+                                }
                                 if (elements == null) {
                                         elements = new ElementType[2];
                                         elements[0] = elem;
