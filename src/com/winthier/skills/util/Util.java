@@ -536,4 +536,10 @@ public class Util {
                 }
                 return result;
         }
+
+        public static String printPermilAsPercent(int permil) {
+                if (permil >= 1000) return "100.0";
+                if (permil <= 0) return "0.0";
+                return "" + (permil / 10) + "." + (permil % 100);
+        }
 }

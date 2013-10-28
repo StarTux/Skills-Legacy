@@ -79,7 +79,7 @@ public class ArcherySkill extends AbstractSkill {
                         event.setDroppedExp(multiplyXp(player, xp));
 
                         // Drop the head.
-                        if (Util.random.nextInt(100) < getSkullDropPercentage(player)) {
+                        if (Util.random.nextInt(1000) < getSkullDropPermil(player)) {
                                 ItemStack skull = Util.getMobHead(entity);
                                 if (skull != null) {
                                         event.getDrops().add(skull);
@@ -94,9 +94,9 @@ public class ArcherySkill extends AbstractSkill {
                 List<String> result = new ArrayList<String>(1);
 
                 // Skull Drop
-                final int skullDropPercentage = getSkullDropPercentage(player);
-                if (skullDropPercentage > 0) {
-                        result.add("Sniped mobs drop their head " + skullDropPercentage + "% of the time.");
+                final int skullPermil = getSkullDropPermil(player);
+                if (skullPermil > 0) {
+                        result.add("Sniped mobs drop their head " + Util.printPermilAsPercent(skullPermil) + "% of the time.");
                 }
 
                 // XP Bonus

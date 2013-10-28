@@ -159,8 +159,8 @@ public abstract class AbstractSkill implements Listener {
                 return 100 + getSkillLevel(player) / 2;
         }
 
-        protected int getSkullDropPercentage(Player player) {
-                return Math.min(10, getSkillLevel(player) / 150);
+        protected int getSkullDropPermil(Player player) {
+                return Math.min(50, getSkillLevel(player) / 50);
         }
 
         public ConfigurationSection getConfig() {
