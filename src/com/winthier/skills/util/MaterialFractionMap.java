@@ -8,19 +8,24 @@ import org.bukkit.configuration.ConfigurationSection;
 public class MaterialFractionMap {
         private final int dividends[];
         private final int divisors[];
-        private final int defaultValue;
+        private final int defaultDividend, defaultDivisor;
 
-        public MaterialFractionMap(int defaultValue) {
-                this.defaultValue = defaultValue;
+        public MaterialFractionMap(int defaultDividend, int defaultDivisor) {
+                this.defaultDividend = defaultDividend;
+                this.defaultDivisor = defaultDivisor;
                 dividends = new int[Material.values().length];
                 divisors = new int[Material.values().length];
                 reset();
         }
 
+        public MaterialFractionMap(int defaultDividend) {
+                this(defaultDividend, 1);
+        }
+
         public void reset() {
                 for (int i = 0; i < dividends.length; ++i) {
-                        dividends[i] = defaultValue;
-                        divisors[i] = 1;
+                        dividends[i] = defaultDividend;
+                        divisors[i] = defaultDivisor;
                 }
         }
 

@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class SacrificeSkill extends AbstractSkill {
         private final MaterialFractionMap spMap = new MaterialFractionMap(0);
-        private final MaterialFractionMap xpMap = new MaterialFractionMap(0);
+        private final MaterialFractionMap xpMap = new MaterialFractionMap(1, 16);
         private final Map<String, ItemStack[]> deathDrops = new HashMap<String, ItemStack[]>();
 
         public SacrificeSkill(SkillsPlugin plugin, SkillType skillType) {
@@ -81,7 +81,7 @@ public class SacrificeSkill extends AbstractSkill {
                 for (int i = 0; i < items.length; ++i) {
                         ItemStack item = items[i];
                         if (item == null) continue;
-                        if (Util.random.nextInt(100) > chance) {
+                        if (Util.random.nextInt(100) >= chance) {
                                 items[i] = null;
                                 drops.add(item);
                         }
