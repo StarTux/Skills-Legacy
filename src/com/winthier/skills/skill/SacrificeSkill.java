@@ -20,9 +20,10 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class SacrificeSkill extends AbstractSkill {
-        private final MaterialFractionMap spMap = new MaterialFractionMap(0);
+        private final MaterialFractionMap spMap = new MaterialFractionMap(1, 64);
         private final MaterialFractionMap xpMap = new MaterialFractionMap(1, 16);
-        private final Map<String, ItemStack[]> deathDrops = new HashMap<String, ItemStack[]>();
+        private final Map<String, ItemStack[]> inventories = new HashMap<String, ItemStack[]>();
+        private final Map<String, ItemStack[]> armorContents = new HashMap<String, ItemStack[]>();
 
         public SacrificeSkill(SkillsPlugin plugin, SkillType skillType) {
                 super(plugin, skillType);
@@ -65,6 +66,8 @@ public class SacrificeSkill extends AbstractSkill {
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
         public void onPlayerDeath(PlayerDeathEvent event) {
+                if (!plugin.perksEnabled) return;
+
                 final Player player = event.getEntity();
                 if (player.getHealth() > 0.0f) return;
 
@@ -76,25 +79,45 @@ public class SacrificeSkill extends AbstractSkill {
                 final List<ItemStack> drops = event.getDrops();
                 drops.clear();
 
-                
-                final ItemStack[] items = player.getInventory().getContents();
-                for (int i = 0; i < items.length; ++i) {
-                        ItemStack item = items[i];
-                        if (item == null) continue;
-                        if (Util.random.nextInt(100) >= chance) {
-                                items[i] = null;
-                                drops.add(item);
+                final ItemStack[] inventory = player.getInventory().getContents();
+                final ItemStack[] armorContent = player.getInventory().getArmorContents();
+                for (int j = 0; j < 2; ++j) {
+                        ItemStack[] items = null;
+                        switch (j) {
+                        case 0:
+                                items = inventory;
+                                break;
+                        case 1:
+                                items = armorContent;
+                                break;
+                        default:
+                                break;
+                        }
+                        for (int i = 0; i < items.length; ++i) {
+                                ItemStack item = items[i];
+                                if (item == null) continue;
+                                if (Util.random.nextInt(100) >= chance) {
+                                        items[i] = null;
+                                        drops.add(item);
+                                }
                         }
                 }
-                deathDrops.put(player.getName(), items);
+                inventories.put(player.getName(), inventory);
+                armorContents.put(player.getName(), armorContent);
         }
 
         @EventHandler(priority = EventPriority.LOW)
         public void onPlayerRespawn(PlayerRespawnEvent event) {
+                if (!plugin.perksEnabled) return;
                 final Player player = event.getPlayer();
-                final ItemStack[] items = deathDrops.remove(player.getName());
-                if (items == null) return;
-                player.getInventory().setContents(items);
+
+                // Fetch and remove stored inventories.
+                final ItemStack[] inventory = inventories.remove(player.getName());
+                final ItemStack[] armorContent = armorContents.remove(player.getName());
+
+                // Give to player.
+                if (inventory != null) player.getInventory().setContents(inventory);
+                if (armorContent != null) player.getInventory().setArmorContents(armorContent);
         }
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
