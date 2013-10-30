@@ -67,5 +67,12 @@ public class CreateTableRequest implements SQLRequest {
                           " PRIMARY KEY(`player`, `spell`)" +
                           ") ENGINE=MyISAM");
                 s.close();
+
+                s = c.createStatement();
+                s.execute("CREATE TABLE IF NOT EXISTS `skills_sacrifice` (" +
+                          " `material` VARCHAR(32) NOT NULL," +
+                          " `count` INT(11) UNSIGNED DEFAULT 0," +
+                          " PRIMARY KEY (`material`)" +
+                          ") ENGINE=MyISAM");
         }
 }
