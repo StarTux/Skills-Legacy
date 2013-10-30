@@ -121,6 +121,8 @@ public class AlchemySkill extends AbstractSkill {
         public void onBrew(BrewEvent event) {
                 final Player player = getBrewer(event.getBlock());
                 if (player == null) return;
+                setBrewer(event.getBlock(), null);
+
                 final ItemStack ingredient = event.getContents().getIngredient();
                 if (ingredient == null) return;
 
