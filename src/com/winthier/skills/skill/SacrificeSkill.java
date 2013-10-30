@@ -129,7 +129,10 @@ public class SacrificeSkill extends AbstractSkill {
 
                 // Check the actual item.
                 final ItemStack stack = item.getItemStack();
-                if (spMap.isNull(stack.getType())) return;
+                if (spMap.isNull(stack.getType())) return; // Should never happen.
+
+                // Add it to the item count.
+                plugin.sqlManager.addSacrificeCount(stack.getType(), stack.getAmount());
                 //item.getWorld().strikeLightningEffect(item.getLocation());
                 Util.sendMessage(player, "(&cCreeper Overlord&r) &4Thank you for the %s.", Util.niceItemName(stack));
                 Util.playParticleEffect(player, item.getLocation().add(0.0, 1.5, 0.0), "magicCrit", stack.getAmount(), 0.4f, 0.1f);

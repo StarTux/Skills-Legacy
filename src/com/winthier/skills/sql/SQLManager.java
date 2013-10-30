@@ -7,6 +7,7 @@ import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.skill.AbstractSkill;
 import com.winthier.skills.skill.SkillType;
 import com.winthier.skills.spell.AbstractSpell;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
 public class SQLManager {
@@ -85,5 +86,9 @@ public class SQLManager {
 
         public void switchElement(PlayerInfo info, ElementType element) {
                 connectionManager.queueRequest(new SwitchElementRequest(plugin, info, element, plugin.switchElementCooldown));
+        }
+
+        public void addSacrificeCount(Material mat, int count) {
+                connectionManager.queueRequest(new AddSacrificeCountRequest(mat, count));
         }
 }
