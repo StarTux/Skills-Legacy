@@ -33,6 +33,15 @@ public class CreateTableRequest implements SQLRequest {
                           ") ENGINE=MyISAM");
                 s.close();
 
+                // Create total skill level table.
+                s = c.createStatement();
+                s.execute("CREATE TABLE IF NOT EXISTS `skills_total` (" +
+                          " `player` VARCHAR(16) NOT NULL," +
+                          " `level` INT(11) UNSIGNED NOT NULL," +
+                          " PRIMARY KEY (`player`)" +
+                          ") ENGINE=MyISAM");
+                s.close();
+
                 // Create table for gauss numbers.
                 s = c.createStatement();
                 s.execute("CREATE TABLE IF NOT EXISTS `skills_gaussian` (" +
@@ -74,5 +83,6 @@ public class CreateTableRequest implements SQLRequest {
                           " `count` INT(11) UNSIGNED DEFAULT 0," +
                           " PRIMARY KEY (`material`)" +
                           ") ENGINE=MyISAM");
+                s.close();
         }
 }

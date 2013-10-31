@@ -28,10 +28,18 @@ public abstract class TotalHighscoreRequest extends BukkitRunnable implements SQ
         @Override
         public void execute(Connection c) throws SQLException {
                 PreparedStatement s;
+
+                // Build statement.
                 StringBuilder sb = new StringBuilder();
-                s = c.prepareStatement("SELECT player, skill, SUM((SELECT MAX(level) FROM skills_gaussian AS g WHERE g.points <= sp.points)) AS level FROM skills_sp AS sp GROUP BY player ORDER BY level DESC LIMIT ?, ?");
+                //s = c.prepareStatement("SELECT player, skill, SUM((SELECT MAX(level) FROM skills_gaussian AS g WHERE g.points <= sp.points)) AS level FROM skills_sp AS sp GROUP BY player ORDER BY level DESC LIMIT ?, ?");
+                s = c.prepareStatement(" SELECT `player`, `level`" +
+                                       " FROM skills_total" +
+                                       " ORDER BY `level` DESC" +
+                                       " LIMIT ?, ?");
                 s.setInt(1, page * pageLength);
                 s.setInt(2, pageLength);
+
+                // Execute and evaluate.
                 ResultSet result = s.executeQuery();
                 for (count = 0; count < pageLength; ++count) {
                         if (!result.next()) break;
@@ -39,6 +47,8 @@ public abstract class TotalHighscoreRequest extends BukkitRunnable implements SQ
                         levels[count] = result.getInt("level");
                 }
                 s.close();
+
+
                 runTask(plugin);
         }
 }

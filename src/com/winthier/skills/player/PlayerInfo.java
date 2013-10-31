@@ -123,7 +123,10 @@ public class PlayerInfo {
                         int oldLevel = info.skillLevel;
                         flushCache(skillType);
                         int newLevel = info.skillLevel;
-                        if (newLevel > oldLevel) skillType.getSkill().onLevelUp(player, oldLevel, newLevel);
+                        if (newLevel != oldLevel) {
+                                skillType.getSkill().onLevelUp(player, oldLevel, newLevel);
+                                plugin.sqlManager.updateTotalSkillLevel(player.getName());
+                        }
                 }
         }
 

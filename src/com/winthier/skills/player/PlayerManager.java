@@ -76,6 +76,7 @@ public class PlayerManager implements Listener {
                         info.addSkillPoints(skillType, points);
                 } else {
                         plugin.sqlManager.addSkillPoints(playerName, skillType, points);
+                        plugin.sqlManager.updateTotalSkillLevel(playerName);
                 }
         }
 }

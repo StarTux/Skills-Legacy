@@ -128,8 +128,10 @@ public class ConfigCommand implements CommandExecutor {
                         // If the player is online
                         if (affectedPlayer != null) {
                                 skillType.getSkill().setSkillLevel(affectedPlayer, level);
+                                plugin.sqlManager.updateTotalSkillLevel(affectedPlayer.getName());
                         } else {
                                 plugin.sqlManager.setSkillPoints(playerName, skillType, skillType.getSkill().getSkillPointsForLevel(level));
+                                plugin.sqlManager.updateTotalSkillLevel(playerName);
                                 // force reload in case player data are still cached
                                 plugin.playerManager.remove(playerName);
                         }
@@ -166,7 +168,7 @@ public class ConfigCommand implements CommandExecutor {
                         } else {
                                 info.spellsInfo.setSpellLevel(spell, level);
                         }
-                        Util.sendMessage(sender, "&aSet %s level for %s to %d.", spell.getName(), playerName, level);
+                        Util.sendMessage(sender, "&eSet %s level for %s to %d.", spell.getName(), playerName, level);
                         return true;
                 }
                 if (args.length == 1 && args[0].equalsIgnoreCase("Reload")) {
@@ -206,7 +208,21 @@ public class ConfigCommand implements CommandExecutor {
                         }
                         PlayerInfo info = plugin.playerManager.getPlayerInfo(player);
                         info.setPrimaryElement(element);
-                        Util.sendMessage(sender, "&aSet primary element of %s to %s.", player.getName(), element.getDisplayName());
+                        Util.sendMessage(sender, "&eSet primary element of %s to %s.", player.getName(), element.getDisplayName());
+                        return true;
+                }
+                if (args.length == 2 && "UpdateTotalLevel".equalsIgnoreCase(args[0])) {
+                        String name = args[1];
+                        if (name.length() > 16) {
+                                Util.sendMessage(sender, "&cInvalid name: %s", name);
+                                return true;
+                        }
+                        if ("*".equals(name)) {
+                                plugin.sqlManager.updateAllTotalSkillLevels();
+                        } else {
+                                plugin.sqlManager.updateTotalSkillLevel(name);
+                        }
+                        Util.sendMessage(sender, "&eFlushing total skill level(s).");
                         return true;
                 }
                 sendHelp(sender);
@@ -224,5 +240,6 @@ public class ConfigCommand implements CommandExecutor {
                 Util.sendMessage(sender, "&e/skc &6SpellLevel <spell> <player> <level>&r - Modify a player's spell level.");
                 Util.sendMessage(sender, "&e/skc &6Totems&r - Get a full set of totems.");
                 Util.sendMessage(sender, "&e/skc &6Element <player> <element>&r - Set the primary element of a player.");
+                Util.sendMessage(sender, "&e/skc &6UpdateTotalLevel <player|*>&r - Update total skill levels in the database.");
         }
 }

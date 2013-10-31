@@ -33,10 +33,18 @@ public abstract class HighscoreRequest extends BukkitRunnable implements SQLRequ
         public void execute(Connection c) throws SQLException {
                 PreparedStatement s;
                 StringBuilder sb = new StringBuilder();
-                s = c.prepareStatement("SELECT `player`, `points` FROM `skills_sp` WHERE skill = ? ORDER BY points DESC LIMIT ?, ?");
+
+                // Build statement.
+                s = c.prepareStatement(" SELECT `player`, `points`" +
+                                       " FROM `skills_sp`" +
+                                       " WHERE skill = ?" +
+                                       " ORDER BY points DESC" +
+                                       " LIMIT ?, ?");
                 s.setString(1, skill.getName());
                 s.setInt(2, page * pageLength);
                 s.setInt(3, pageLength);
+
+                // Execute and evaluate.
                 ResultSet result = s.executeQuery();
                 for (count = 0; count < pageLength; ++count) {
                         if (!result.next()) break;
@@ -44,6 +52,7 @@ public abstract class HighscoreRequest extends BukkitRunnable implements SQLRequ
                         levels[count] = AbstractSkill.getLevelForSkillPoints(result.getInt("points"));
                 }
                 s.close();
+
                 runTask(plugin);
         }
 

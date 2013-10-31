@@ -91,4 +91,12 @@ public class SQLManager {
         public void addSacrificeCount(Material mat, int count) {
                 connectionManager.queueRequest(new AddSacrificeCountRequest(mat, count));
         }
+
+        public void updateTotalSkillLevel(String player) {
+                connectionManager.queueRequest(new UpdateTotalLevelRequest(player));
+        }
+
+        public void updateAllTotalSkillLevels() {
+                connectionManager.queueRequest(new UpdateAllTotalLevelsRequest());
+        }
 }
