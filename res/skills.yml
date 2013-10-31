@@ -70,7 +70,7 @@ alchemy:
     brewing:
       Blaze-Powder: 4
       Fermented-Spider-Eye: 4
-      Ghast-Tear: 40
+      Ghast-Tear: 20
       Glowstone-Dust: 6
       Golden-Carrot: 8
       Magma-Cream: 9
@@ -273,44 +273,47 @@ traveling:
   PearlingSkillPoints: 1
 
   FarTravelDistance: 64
+
 wildlife:
   Description: |-
     Take care of wild and farm animals.
     Collect skill points by taming, breeding, shearing different animals or catching fish.
     As you level up this skill, you will have more luck catching fish and get more experience points for fishing and breeding.
+
   sp:
     Fishing: 5
     breeding:
       Chicken: 1/4
-      Sheep: 2
-      Cow: 2
-      Mushroom-Cow: 2
-      Pig: 2
-      Ocelot: 4
-      Wolf: 3
-      Horse: 5
+      Sheep: 4
+      Cow: 4
+      Mushroom-Cow: 4
+      Pig: 4
+      Ocelot: 8
+      Wolf: 4
+      Horse: 10
     taming:
-      Horse: 5
-      Ocelot: 5
+      Horse: 10
+      Ocelot: 10
       Wolf: 5
     shearing:
-      Sheep: 1/2
+      Sheep: 1
       Mushroom-Cow: 1
     butcher:
-      Chicken: 1/2
-      Cow: 1
-      Pig: 1
-      Mushroom-Cow: 1
-      Squid: 3
+      Chicken: 1
+      Cow: 2
+      Pig: 2
+      Mushroom-Cow: 2
+      Squid: 4
+
   xp:
     breeding:
       Chicken: 1
       Cow: 1
-      Mushroom-Cow: 2
-      Ocelot: 3
+      Mushroom-Cow: 1
+      Ocelot: 2
       Pig: 1
       Sheep: 1
-      Wolf: 3
+      Wolf: 1
       Horse: 3
     taming:
       Horse: 2
@@ -318,7 +321,7 @@ wildlife:
       Wolf: 3
     shearing:
       Sheep: 1
-      Mushroom-Cow: 2
+      Mushroom-Cow: 1
       
 melee:
   Description: |-
@@ -484,7 +487,7 @@ sacrifice:
     Gold-Ore: 15
     Diamond-Ore: 20
     Emerald-Ore: 30
-    Quartz-Ore: 10
+    Quartz-Ore: 5
 
     # Gems
     Clay-Ball: 1/16
@@ -504,7 +507,7 @@ sacrifice:
     Gold-Block: 3
     Diamond-Block: 63
     Emerald-Block: 9/10
-    Quartz-Block: 9
+    Quartz-Block: 4
     TNT: 1/3
     Glowstone: 1
     Mossy-Cobblestone: 1/2
@@ -613,7 +616,7 @@ sacrifice:
     Gold-Block: 9
     Diamond-Block: 9
     Emerald-Block: 9
-    Quartz-Block: 9
+    Quartz-Block: 4
     # Trophies
     Skull-Item: 5
     Dragon-Egg: 50
