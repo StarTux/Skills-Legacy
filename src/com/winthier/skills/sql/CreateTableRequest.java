@@ -5,6 +5,7 @@ import com.winthier.skills.skill.AbstractSkill;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.bukkit.Material;
 
 public class CreateTableRequest implements SQLRequest {
         public CreateTableRequest() {}
@@ -50,10 +51,17 @@ public class CreateTableRequest implements SQLRequest {
                           " PRIMARY KEY(`points`)" +
                           ") ENGINE=MyISAM");
                 s.close();
-                for (int i = 0; i < AbstractSkill.MAX_LEVEL; ++i) {
-                        int sp = AbstractSkill.gaussian(i);
+
+                {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(" INSERT IGNORE INTO `skills_gaussian`");
+                        sb.append(" (`points`, `level`) VALUES (0, 0)");
+                        for (int i = 1; i <= AbstractSkill.MAX_LEVEL; ++i) {
+                                int sp = AbstractSkill.gaussian(i);
+                                sb.append(", (").append(sp).append(", ").append(i).append(")");
+                        }
                         s = c.createStatement();
-                        s.execute("INSERT IGNORE INTO `skills_gaussian` (`points`, `level`) VALUES (" + sp + ", " + i + ")");
+                        s.execute(sb.toString());
                         s.close();
                 }
 
@@ -84,5 +92,21 @@ public class CreateTableRequest implements SQLRequest {
                           " PRIMARY KEY (`material`)" +
                           ") ENGINE=MyISAM");
                 s.close();
+
+                {
+                        // Initialize sacrifice table.
+                        s = c.createStatement();
+                        StringBuilder sb = new StringBuilder();
+                        Material[] mats = Material.values();
+                        sb.append(" INSERT IGNORE INTO `skills_sacrifice`");
+                        sb.append(" (`material`, `count`) VALUES");
+                        // Skip mats[0] as it is AIR.
+                        sb.append(" ('").append(mats[1].name().toLowerCase()).append("', 0)");
+                        for (int i = 2; i < mats.length; ++i) {
+                                sb.append(", ('").append(mats[i].name().toLowerCase()).append("', 0)");
+                        }
+                        s.execute(sb.toString());
+                        s.close();
+                }
         }
 }
