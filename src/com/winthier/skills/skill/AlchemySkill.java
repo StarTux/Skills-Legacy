@@ -27,7 +27,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class AlchemySkill extends AbstractSkill {
         private int cachedAmount = -1;
-        private MaterialFractionMap furnaceSpMap = new MaterialFractionMap(0);
+        private MaterialFractionMap furnaceSpMap = new MaterialFractionMap(1, 16);
         private MaterialFractionMap blastSpMap = new MaterialFractionMap(0);
         private MaterialFractionMap brewingSpMap = new MaterialFractionMap(0);
         private MaterialFractionMap brewingXpMap = new MaterialFractionMap(0);
