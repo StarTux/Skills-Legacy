@@ -383,6 +383,10 @@ public class Util {
 
         public static String niceItemName(ItemStack stack) {
                 ItemInfo info = Items.itemByStack(stack);
+                if (info == null) {
+                        // TODO: Capitalize
+                        return stack.getType().name().toLowerCase().replaceAll("_", " ");
+                }
                 return info.getName();
         }
 
