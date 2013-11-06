@@ -101,9 +101,9 @@ public class CreateTableRequest implements SQLRequest {
                         sb.append(" INSERT IGNORE INTO `skills_sacrifice`");
                         sb.append(" (`material`, `count`) VALUES");
                         // Skip mats[0] as it is AIR.
-                        sb.append(" ('").append(mats[1].name().toLowerCase()).append("', 0)");
+                        sb.append(" ('").append(mats[1].name().toLowerCase()).append("', 1)");
                         for (int i = 2; i < mats.length; ++i) {
-                                sb.append(", ('").append(mats[i].name().toLowerCase()).append("', 0)");
+                                sb.append(", ('").append(mats[i].name().toLowerCase()).append("', 1)");
                         }
                         s.execute(sb.toString());
                         s.close();
