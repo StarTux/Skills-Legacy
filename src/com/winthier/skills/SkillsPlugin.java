@@ -128,7 +128,7 @@ public class SkillsPlugin extends JavaPlugin {
         public void sendSkillInfo(CommandSender sender, Player player, SkillType skillType) {
                 AbstractSkill skill = skillType.getSkill();
                 PlayerInfo info = playerManager.getPlayerInfo(player);
-                Util.sendMessage(sender, "&3=== %s%s &b%s %s%s &bSkill Info&3 ===", skillType.getColor(), Util.ICON, skillType.getDisplayName(), skillType.getColor(), Util.ICON);
+                Util.sendMessage(sender, "%s%s &b%s &bSkill Info %s%s", skillType.getColor(), Util.ICON, skillType.getDisplayName(), skillType.getColor(), Util.ICON);
                 ElementType elems[] = skillType.getElements();
                 if (elems.length > 0) {
                         Util.sendMessage(sender, "&3 &m   &b Elements &3&m   ");
@@ -164,11 +164,12 @@ public class SkillsPlugin extends JavaPlugin {
         }
 
         public void sendHighscore(CommandSender sender, String name, ChatColor color, int count, String[] names, int[] levels, int page) {
-                Util.sendMessage(sender, "&3=== %s%s &b%s Highscore (page %d) %s%s &3===", color, Util.ICON, name, page + 1, color, Util.ICON);
-                Util.sendMessage(sender, "&3Rank &fLevel &bName");
+                Util.sendMessage(sender, "%s%s &b%s Highscore (page %d) %s%s", color, Util.ICON, name, page + 1, color, Util.ICON);
+                Util.sendMessage(sender, "&7&oFor skill highscores, type &3/hi &b[&oskill&b] [&opage&b]");
+                Util.sendMessage(sender, " &3Rank &fLevel &bName");
                 for (int i = 0; i < count; ++i) {
                         final int rank = page * names.length + i + 1;
-                        Util.sendMessage(sender, "%s %s &b%s",
+                        Util.sendMessage(sender, " %s %s &b%s",
                                          Util.shadowZeros(rank, 2, ChatColor.BLACK, ChatColor.DARK_AQUA),
                                          Util.shadowZeros(levels[i], 3, ChatColor.DARK_GRAY, ChatColor.WHITE),
                                          names[i]);

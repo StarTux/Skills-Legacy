@@ -70,7 +70,8 @@ public class PlayerStatisticsRequest extends BukkitRunnable implements SQLReques
 
         @Override
         public void run() {
-                Util.sendMessage(sender, "&3=== &bSkill Statistics for %s&3 ===", player);
+                Util.sendMessage(sender, "&3%s &bSkill Statistics for %s &3%s", Util.ICON, player, Util.ICON);
+                Util.sendMessage(sender, "&7&oFor skill details, type &3/sk &b[&oskill&b]");
 
                 Util.sendMessage(sender, "&3 &m    &b Elements &3&m    ", player);
                 for (ElementType elem : ElementType.values()) {

@@ -61,6 +61,6 @@ public class ElementCommand implements CommandExecutor {
         }
 
         private void sendUsageMessage(CommandSender sender, String label) {
-                Util.sendMessage(sender, "&3Usage: &b/%s &fEarth&7|&fFire&7|&fAir&7|&fWater&7 - Switch your primary element.", label);
+                Util.sendMessage(sender, "&7&oTo switch element, type &3/%s &bEarth&3|&bFire&3|&bAir&3|&bWater", label);
         }
 }
