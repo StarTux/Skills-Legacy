@@ -32,6 +32,7 @@ public class EatingSkill extends AbstractSkill {
                 final int foodPoints = foodMap.get(mat);
                 if (skillPoints > 0 && foodPoints > 0) {
                         final int foodLevel = player.getFoodLevel();
+                        if (foodLevel >= 20) return;
                         final int hunger = 20 - foodLevel;
                         final int food = Math.min(hunger, foodPoints);
                         final int newFoodLevel = Math.min(20, foodLevel + foodPoints);
