@@ -219,11 +219,11 @@ public class HerbalismSkill extends AbstractSkill {
                 switch (id) {
                 case RED_MUSHROOM:
                         result = world.generateTree(loc, TreeType.RED_MUSHROOM);
-                        if (result) onTreeGrow(player, TreeType.RED_MUSHROOM);
+                        //if (result) onTreeGrow(player, TreeType.RED_MUSHROOM);
                         break;
                 case BROWN_MUSHROOM:
                         result = world.generateTree(loc, TreeType.BROWN_MUSHROOM);
-                        if (result) onTreeGrow(player, TreeType.BROWN_MUSHROOM);
+                        //if (result) onTreeGrow(player, TreeType.BROWN_MUSHROOM);
                         break;
                 }
                 if (!result) {
@@ -244,23 +244,23 @@ public class HerbalismSkill extends AbstractSkill {
                 switch (data & 0x03) {
                 case 0: // Oak
                         result = world.generateTree(loc, TreeType.TREE);
-                        if (result) onTreeGrow(player, TreeType.TREE);
+                        //if (result) onTreeGrow(player, TreeType.TREE);
                         if (!result) result = world.generateTree(loc, TreeType.BIG_TREE);
-                        if (result) onTreeGrow(player, TreeType.BIG_TREE);
+                        //if (result) onTreeGrow(player, TreeType.BIG_TREE);
                         break;
                 case 1: // Spruce
                         result = world.generateTree(loc, TreeType.REDWOOD);
-                        if (result) onTreeGrow(player, TreeType.REDWOOD);
+                        //if (result) onTreeGrow(player, TreeType.REDWOOD);
                         break;
                 case 2: // Birch
                         result = world.generateTree(loc, TreeType.BIRCH);
-                        if (result) onTreeGrow(player, TreeType.BIRCH);
+                        //if (result) onTreeGrow(player, TreeType.BIRCH);
                         break;
                 case 3: // Jungle
                         result = growBigJungleTree(block);
-                        if (result) onTreeGrow(player, TreeType.JUNGLE);
+                        //if (result) onTreeGrow(player, TreeType.JUNGLE);
                         if (!result) result = world.generateTree(loc, TreeType.SMALL_JUNGLE);
-                        if (result) onTreeGrow(player, TreeType.SMALL_JUNGLE);
+                        //if (result) onTreeGrow(player, TreeType.SMALL_JUNGLE);
                 }
                 if (!result) {
                         block.setType(Material.SAPLING);
