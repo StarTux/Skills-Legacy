@@ -241,11 +241,11 @@ velocity:
   Description: Get a powerful blast of air to push you ahead.
   Icon: Dispenser
   XPCost: 1
-  MaxLevel: 3
-  UnlockLevels: [   25,   50,  100 ]
-  UnlockPrices: [  123,  456,  789 ]
-  Amplifiers:   [ .050, .075, .100 ]
-  Durations:    [   20,   20,   20 ]
+  MaxLevel: 5
+  UnlockLevels: [   25,   50,  100,  150,  200 ]
+  UnlockPrices: [  123,  456,  789, 1000, 1250 ]
+  Amplifiers:   [ .050, .075, .100, .125, .150 ]
+  Durations:    [   20,   20,   20,   20,   20 ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # #  Water
 water-firework:
