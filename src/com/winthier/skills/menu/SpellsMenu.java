@@ -109,26 +109,26 @@ public class SpellsMenu extends Menu {
                                 lore.add(Util.format("&3%s level to unlock: &b%s", spell.getElement().getDisplayName(), spell.getUnlockLevel(level + 1)));
                                 lore.add(Util.format("&3Price to unlock: &b%s", plugin.economyManager.format(spell.getUnlockPrice(level + 1))));
                         } else {
-                                lore.add(Util.format("&3%s level to upgrade: &b%s", spell.getElement().getDisplayName(), spell.getUnlockLevel(level + 1)));
+                                lore.add(Util.format("&3%s level to upgrade: &b%s&3/&b%s", spell.getElement().getDisplayName(), plugin.playerManager.getPlayerInfo(player).getElementalLevel(element), spell.getUnlockLevel(level + 1)));
                                 lore.add(Util.format("&3Price to upgrade: &b%s", plugin.economyManager.format(spell.getUnlockPrice(level + 1))));
                         }
                 }
                 lore.add("");
                 if (unlocked) {
-                        if (level < spell.getMaxLevel()) {
-                                lore.add(Util.format("&3&oShift Click &bto upgrade"));
-                        }
-                        lore.add(Util.format("&3&oLeft Click &bto load onto totem."));
+                        lore.add(Util.format("&b&oLeft Click&3 to load onto totem."));
                         item.setType(spell.getIconMaterial());
                         item.setDurability(spell.getIconDurability());
                         item.setAmount(level);
                         if (active) {
-                                lore.add(Util.format("&3&oRight Click &bto unequip."));
+                                lore.add(Util.format("&b&oRight Click&3 to unequip."));
                         } else {
-                                lore.add(Util.format("&3&oRight Click &bto equip."));
+                                lore.add(Util.format("&b&oRight Click&3 to equip."));
+                        }
+                        if (level < spell.getMaxLevel()) {
+                                lore.add(Util.format("&b&oShift Click&3 to upgrade"));
                         }
                 } else {
-                        lore.add(Util.format("&3&oShift Click &bto unlock"));
+                        lore.add(Util.format("&b&oShift Click&3 to unlock"));
                         item.setType(Material.CHEST);
                         item.setAmount(1);
                 }

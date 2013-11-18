@@ -27,9 +27,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class SpellManager implements Listener {
         private final SkillsPlugin plugin;
@@ -133,6 +135,28 @@ public class SpellManager implements Listener {
                 }
         }
 
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+        public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+                final int slot = event.getNewSlot();
+                final Player player = event.getPlayer();
+                final PlayerInfo info = plugin.playerManager.getPlayerInfo(player);
+                if (info.totemInformed) return;
+                final ItemStack item = player.getInventory().getItem(slot);
+                if (!Totem.isTotem(item)) return;
+                info.totemInformed = true;
+                new BukkitRunnable() {
+                        public void run() {
+                                if (!Totem.isTotem(player.getItemInHand())) {
+                                        info.totemInformed = false;
+                                        return;
+                                }
+                                Util.sendMessage(player, "&3This is your &b%s Totem&3.", Totem.getTotemType(item).getDisplayName());
+                                Util.sendMessage(player, "&b&oLeft click&3 to cast a spell.");
+                                Util.sendMessage(player, "&b&oRight click&3 to select a spell.");
+                                Util.sendMessage(player, "&b&oShift &3and&b&o right click&3 to open the spell menu.");
+                        }
+                }.runTaskLater(plugin, 20L);
+        }
 
         public AbstractSpell getSpell(String spellName) {
                 return spellByName.get(spellName);

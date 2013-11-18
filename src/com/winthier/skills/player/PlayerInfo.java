@@ -28,6 +28,7 @@ public class PlayerInfo {
         // Loading and purging.
         private BukkitRunnable removalTask = null;
         private boolean loaded = false;
+        public boolean totemInformed = false;
 
         public PlayerInfo(SkillsPlugin plugin, Player player) {
                 this.plugin = plugin;
