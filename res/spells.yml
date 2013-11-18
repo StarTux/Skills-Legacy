@@ -21,7 +21,7 @@ haste:
   PotionEffect: Fast-Digging
   DisplayName: Haste
   Icon: Gold-Pickaxe
-  XPCost: 10
+  XPCost: 5
   MaxLevel: 10
   UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
   UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
@@ -34,7 +34,7 @@ haste2:
   PotionEffect: Fast-Digging
   DisplayName: Advanced Haste
   Icon: Gold-Pickaxe
-  XPCost: 15
+  XPCost: 10
   MaxLevel: 10
   UnlockLevels: [ 100, 120, 140, 160, 180, 200, 220, 240, 260, 280 ]
   UnlockPrices: [ 500, 550, 600, 650, 700, 750, 800, 850, 900, 950 ] 
@@ -47,7 +47,7 @@ resist:
   PotionEffect: Damage-Resistance
   DisplayName: Resistance
   Icon: Gold-Chestplate
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 10
   UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
   UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
@@ -60,7 +60,7 @@ fire-resist:
   PotionEffect: Fire-Resistance
   DisplayName: Fire Resistance
   Icon: Lava
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 10
   UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
   UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
@@ -74,7 +74,7 @@ bat-rider:
   DisplayName: Bat Rider
   Description: Spawn a bat to fly you around.
   Icon: Monster-Egg:65
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 1
   UnlockLevels: [  50 ]
   UnlockPrices: [ 200 ]
@@ -102,7 +102,7 @@ strength:
   PotionEffect: Increase-Damage
   DisplayName: Strength
   Icon: Gold-Sword
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 10
   UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
   UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
@@ -128,7 +128,7 @@ harm:
   PotionEffect: Harm
   DisplayName: Instant Damage
   Icon: Fire
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 2
   UnlockLevels: [  10,  50 ]
   UnlockPrices: [ 100, 500 ]
@@ -140,7 +140,7 @@ rocket-rider:
   DisplayName: Rocket Rider
   Description: Become a spaceman by riding a rocket.
   Icon: Firework-Charge
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 5
   UnlockLevels: [  20,  40,  60,  80, 100 ]
   UnlockPrices: [ 100, 200, 300, 400, 500 ]
@@ -190,7 +190,7 @@ speed:
   PotionEffect: Speed
   DisplayName: Swiftness
   Icon: Sugar
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 10
   UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
   UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
@@ -203,7 +203,7 @@ jump:
   PotionEffect: Jump
   DisplayName: Jump Boost
   Icon: Gold-Boots
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 10
   UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
   UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
@@ -216,7 +216,7 @@ jump2:
   PotionEffect: Jump
   DisplayName: Insane Jump Boost
   Icon: Diamond-Boots
-  XPCost: 10
+  XPCost: 5
   MaxLevel: 10
   UnlockLevels: [ 100, 110, 120, 130, 140, 150, 160, 170, 180, 190 ]
   UnlockPrices: [ 100, 200, 300, 400, 500, 500, 600, 700, 800, 900 ]
@@ -230,7 +230,7 @@ chicken-rider:
   Description: Spawn a chicken to act as your parachute.
   EntityType: Chicken
   Icon: Monster-Egg:93
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 1
   UnlockLevels: [  25 ]
   UnlockPrices: [ 150 ]
@@ -269,7 +269,7 @@ milk:
   Element: Water
   DisplayName: Cure
   Icon: Milk-Bucket
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 1
   UnlockLevels: [  10 ]
   UnlockPrices: [ 100 ]
@@ -280,7 +280,7 @@ health:
   PotionEffect: Heal
   DisplayName: Instant Health
   Icon: Melon
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 2
   UnlockLevels: [  10,  50 ]
   UnlockPrices: [ 100, 500 ]
@@ -292,7 +292,7 @@ health2:
   PotionEffect: Heal
   DisplayName: Advanced Instant Health
   Icon: Speckled-Melon
-  XPCost: 15
+  XPCost: 5
   MaxLevel: 7
   UnlockLevels: [ 100, 200, 300, 400, 500, 600, 700 ]
   UnlockPrices: [ 650, 700, 750, 800, 850, 900, 1000 ]
@@ -304,7 +304,7 @@ regen:
   PotionEffect: Regeneration
   DisplayName: Regeneration
   Icon: Ghast-Tear
-  XPCost: 15
+  XPCost: 5
   MaxLevel: 10
   UnlockLevels: [  10,  20,  30,  40,  50,  60,  70,  80,  90, 100 ]
   UnlockPrices: [  10,  20,  30,  50,  80, 130, 210, 340, 550, 890 ]
@@ -318,7 +318,7 @@ boat-rider:
   DisplayName: Boat Ride
   Description: Spawn a boat.
   Icon: Boat
-  XPCost: 5
+  XPCost: 2
   MaxLevel: 1
   UnlockLevels: [  50 ]
   UnlockPrices: [ 200 ]
@@ -329,7 +329,7 @@ cat-rider:
   DisplayName: Cat Rider
   Description: Ride on a cat.
   Icon: Monster-Egg:98
-  XPCost: 10
+  XPCost: 3
   MaxLevel: 1
   UnlockLevels: [ 100 ]
   UnlockPrices: [ 500 ]
