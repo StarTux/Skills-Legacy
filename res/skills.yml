@@ -233,23 +233,23 @@ herbalism:
     harvest:
       Long-Grass: 1/16
       Dead-Bush: 1/8
-      Log: 1/2
-      Huge-Mushroom-1: 1/2
-      Huge-Mushroom-2: 1/2
-      Leaves: 1/4
-      Crops: 1/2
-      Carrot: 1/2
-      Potato: 1/2
-      Cactus: 1
-      Pumpkin: 1/2
-      Melon-Block: 1/2
-      Vine: 1
-      Sugar-Cane-Block: 1/4
-      Red-Rose: 1
-      Yellow-Flower: 1
-      Water-Lily: 2
-      Brown-Mushroom: 1
-      Red-Mushroom: 1
+      Log: 1/4
+      Huge-Mushroom-1: 1/4
+      Huge-Mushroom-2: 1/4
+      Leaves: 1/8
+      Crops: 1/4
+      Carrot: 1/4
+      Potato: 1/4
+      Cactus: 1/2
+      Pumpkin: 1/4
+      Melon-Block: 1/4
+      Vine: 1/2
+      Sugar-Cane-Block: 1/8
+      Red-Rose: 1/2
+      Yellow-Flower: 1/2
+      Water-Lily: 1
+      Brown-Mushroom: 1/2
+      Red-Mushroom: 1/2
     structures:
       Tree: 2
       Big-Tree: 2
@@ -626,4 +626,4 @@ karma:
   Description: |-
     Do a good thing for the community and vote for Winthier.
     Voting on consecutive days will increase your reward.
-  BaseExp: 1
+  BaseExp: 10
