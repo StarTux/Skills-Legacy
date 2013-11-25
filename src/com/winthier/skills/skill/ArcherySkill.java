@@ -100,7 +100,7 @@ public class ArcherySkill extends AbstractSkill {
                 }
 
                 // XP Bonus
-                result.add("Shot mobs drop +" + (getXpMultiplier(player) - 100) + "% xp");
+                result.add("Shot mobs drop +" + (getXpMultiplier(player) - 100) + "% XP");
                 return result;
         }
 

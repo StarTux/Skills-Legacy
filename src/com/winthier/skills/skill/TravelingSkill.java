@@ -145,7 +145,7 @@ public class TravelingSkill extends AbstractSkill {
 
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(1);
-                result.add("Traveling far distances earns you " + getBonusXp(player) + " xp");
+                result.add("Traveling far distances earns you " + getBonusXp(player) + " XP");
                 return result;
         }
 

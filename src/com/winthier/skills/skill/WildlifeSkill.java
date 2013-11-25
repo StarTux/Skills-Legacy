@@ -328,7 +328,7 @@ public class WildlifeSkill extends AbstractSkill {
                 }
 
                 // Taming XP bonus
-                result.add("Taming, fishing, breeding and shearing animals drops +" + (getXpMultiplier(player) - 100) + "% xp");
+                result.add("Taming, fishing, breeding and shearing animals drops +" + (getXpMultiplier(player) - 100) + "% XP");
 
                 // Fishing bonus
                 result.add("Fish bite +" + (getBiteChanceMultiplier(player) - 100) + "% more likely");

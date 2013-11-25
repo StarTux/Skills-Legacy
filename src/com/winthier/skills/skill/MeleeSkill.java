@@ -76,7 +76,7 @@ public class MeleeSkill extends AbstractSkill {
                 }
 
                 // XP bonus.
-                result.add("Killed mobs drop +" + (getXpMultiplier(player) - 100) + "% xp");
+                result.add("Killed mobs drop +" + (getXpMultiplier(player) - 100) + "% XP");
 
                 return result;
         }

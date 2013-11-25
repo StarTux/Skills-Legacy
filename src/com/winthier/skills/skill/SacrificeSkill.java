@@ -153,7 +153,7 @@ public class SacrificeSkill extends AbstractSkill {
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(1);
                 result.add("" + getKeepItemPercentage(player) + "% chance to keep your items upon death");
-                result.add("Sacrificing items grants you +" + (getXpMultiplier(player) - 100) + "% xp");
+                result.add("Sacrificing items grants you +" + (getXpMultiplier(player) - 100) + "% XP");
                 return result;
         }
 

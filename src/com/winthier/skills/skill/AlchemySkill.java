@@ -142,7 +142,7 @@ public class AlchemySkill extends AbstractSkill {
 
         public List<String> getPerkDescription(Player player) {
                 List<String> result = new ArrayList<String>(1);
-                result.add("Smelted items and brewed potions drop +" + (getXpMultiplier(player) - 100) + "% xp");
+                result.add("Smelted items and brewed potions drop +" + (getXpMultiplier(player) - 100) + "% XP");
                 return result;
         }
 
