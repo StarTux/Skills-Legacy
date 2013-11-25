@@ -58,7 +58,7 @@ public class EatingSkill extends AbstractSkill {
                                         player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + healthBoost));
                                 }
                                 // Bonus XP.
-                                final int xp = multiplyXp(player, Util.rollFraction(1, foodSP, foodPoints));
+                                final int xp = multiplyXp(player, foodSP);
                                 if (xp > 0) player.giveExp(xp);
                         }
                 }
