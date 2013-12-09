@@ -47,7 +47,7 @@ public class EatingSkill extends AbstractSkill {
 
                         // Give SP.
                         final int foodSP = Util.rollFraction(food, food, foodPoints);
-                        final int satSP = Util.rollFraction(satFood, satPct, 100);
+                        final int satSP = Util.rollFraction(satFood, satPct, 200);
                         final int sp = foodSP + satSP;
                         addSkillPoints(player, sp);
 
