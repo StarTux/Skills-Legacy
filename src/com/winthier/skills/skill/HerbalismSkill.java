@@ -241,26 +241,26 @@ public class HerbalismSkill extends AbstractSkill {
                 final Location loc = block.getLocation();
                 final TreeType species;
                 boolean result = false;
-                switch (data & 0x03) {
+                switch (data) {
                 case 0: // Oak
                         result = world.generateTree(loc, TreeType.TREE);
-                        //if (result) onTreeGrow(player, TreeType.TREE);
                         if (!result) result = world.generateTree(loc, TreeType.BIG_TREE);
-                        //if (result) onTreeGrow(player, TreeType.BIG_TREE);
                         break;
                 case 1: // Spruce
                         result = world.generateTree(loc, TreeType.REDWOOD);
-                        //if (result) onTreeGrow(player, TreeType.REDWOOD);
                         break;
                 case 2: // Birch
                         result = world.generateTree(loc, TreeType.BIRCH);
-                        //if (result) onTreeGrow(player, TreeType.BIRCH);
                         break;
                 case 3: // Jungle
-                        result = growBigJungleTree(block);
-                        //if (result) onTreeGrow(player, TreeType.JUNGLE);
+                        result = growBigTree(block, TreeType.JUNGLE);
                         if (!result) result = world.generateTree(loc, TreeType.SMALL_JUNGLE);
-                        //if (result) onTreeGrow(player, TreeType.SMALL_JUNGLE);
+                case 4: // Acacia
+                        result = world.generateTree(loc, TreeType.ACACIA);
+                        break;
+                case 5: // Dark Oak
+                        result = growBigTree(block, TreeType.DARK_OAK);
+                        break;
                 }
                 if (!result) {
                         block.setType(Material.SAPLING);
@@ -271,37 +271,37 @@ public class HerbalismSkill extends AbstractSkill {
                 return result;
         }
 
-        private static boolean growBigJungleTree(Block block) {
+        private static boolean growBigTree(Block block, TreeType type) {
                 final World world = block.getWorld();
                 boolean result = false;
                 final Block north = block.getRelative(BlockFace.NORTH);
                 final Block east = block.getRelative(BlockFace.EAST);
                 final Block northEast = block.getRelative(BlockFace.NORTH_EAST);
-                if (isJungleSapling(north) && isJungleSapling(east) && isJungleSapling(northEast)) {
-                        result = growBigJungleTree(north, northEast, east, block);
+                if (isSapling(north, type) && isSapling(east, type) && isSapling(northEast, type)) {
+                        result = growBigTree(north, northEast, east, block, type);
                         if (result) return result;
                 }
                 final Block south = block.getRelative(BlockFace.SOUTH);
                 final Block southEast = block.getRelative(BlockFace.SOUTH_EAST);
-                if (isJungleSapling(south) && isJungleSapling(east) && isJungleSapling(southEast)) {
-                        result = growBigJungleTree(block, east, southEast, south);
+                if (isSapling(south, type) && isSapling(east, type) && isSapling(southEast, type)) {
+                        result = growBigTree(block, east, southEast, south, type);
                         if (result) return result;
                 }
                 final Block west = block.getRelative(BlockFace.WEST);
                 final Block southWest = block.getRelative(BlockFace.SOUTH_WEST);
-                if (isJungleSapling(south) && isJungleSapling(west) && isJungleSapling(southWest)) {
-                        result = growBigJungleTree(west, block, south, southWest);
+                if (isSapling(south, type) && isSapling(west, type) && isSapling(southWest, type)) {
+                        result = growBigTree(west, block, south, southWest, type);
                         if (result) return result;
                 }
                 final Block northWest = block.getRelative(BlockFace.NORTH_WEST);
-                if (isJungleSapling(north) && isJungleSapling(west) && isJungleSapling(northWest)) {
-                        result = growBigJungleTree(northWest, north, block, west);
+                if (isSapling(north, type) && isSapling(west, type) && isSapling(northWest, type)) {
+                        result = growBigTree(northWest, north, block, west, type);
                         if (result) return result;
                 }
                 return result;
         }
 
-        private static boolean growBigJungleTree(Block northWest, Block northEast, Block southEast, Block southWest) {
+        private static boolean growBigTree(Block northWest, Block northEast, Block southEast, Block southWest, TreeType type) {
                 Material mat[] = new Material[4];
                 byte data[] = new byte[4];
                 mat[0] = northWest.getType();
@@ -316,7 +316,7 @@ public class HerbalismSkill extends AbstractSkill {
                 northEast.setType(Material.AIR);
                 southEast.setType(Material.AIR);
                 southWest.setType(Material.AIR);
-                if (northWest.getWorld().generateTree(northWest.getLocation(), TreeType.JUNGLE)) return true;
+                if (northWest.getWorld().generateTree(northWest.getLocation(), type)) return true;
                 // Reset
                 northWest.setType(mat[0]);
                 northEast.setType(mat[1]);
@@ -335,8 +335,21 @@ public class HerbalismSkill extends AbstractSkill {
                 return false;
         }
 
-        private static boolean isJungleSapling(Block block) {
-                return (block.getType() == Material.SAPLING && (int)(block.getData() & 3) ==  3);
+        /**
+         * This is bad. Don't use. Consider TreeSpecies.
+         */
+        private static boolean isSapling(Block block, TreeType type) {
+                if (block.getType() != Material.SAPLING) return false;
+                int data = (int)block.getData();
+                switch (type) {
+                case TREE: return data == 0;
+                case REDWOOD: case TALL_REDWOOD: return data == 1;
+                case BIRCH: return data == 2;
+                case JUNGLE: case SMALL_JUNGLE: return data == 3;
+                case ACACIA: return data == 4;
+                case DARK_OAK: return data == 5;
+                }
+                return false;
         }
 
         // User output
