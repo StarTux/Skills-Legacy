@@ -278,7 +278,6 @@ wildlife:
   Description: |-
     Take care of wild and farm animals.
     Collect skill points by taming, breeding, shearing different animals or catching fish.
-    As you level up this skill, you will get more experience points for fishing and breeding.
 
   sp:
     Fishing: 5

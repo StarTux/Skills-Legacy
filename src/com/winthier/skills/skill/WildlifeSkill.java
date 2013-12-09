@@ -13,8 +13,11 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fish;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -27,6 +30,7 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Colorable;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
@@ -159,10 +163,54 @@ public class WildlifeSkill extends AbstractSkill {
                 final int skillPoints = breedingSPMap.get(entityType);
                 addSkillPoints(player, skillPoints);
 
-                // Give bonus XP.
                 if (plugin.perksEnabled) {
+                        // Give bonus XP.
                         final int xp = multiplyXp(player, breedingXPMap.get(entityType));
                         if (xp > 0) player.giveExp(xp);
+
+                        // Drop the head.
+                        if (Util.random.nextInt(1000) < getSkullDropPermil(player)) {
+                                ItemStack skull = Util.getMobHead(baby);
+                                if (skull != null) {
+                                        baby.getWorld().dropItemNaturally(baby.getLocation(), skull);
+                                }
+                        }
+
+                        // Spawn bonus entities
+                        int bonusHatches = getBonusHatches(player);
+                        if (bonusHatches > 0) bonusHatches = Util.random.nextInt(bonusHatches);
+                        for (int i = 0; i < bonusHatches; ++i) {
+                                LivingEntity sibling = (LivingEntity)baby.getWorld().spawnEntity(baby.getLocation(), baby.getType());
+                                if (sibling == null) break;
+                                sibling.setRemoveWhenFarAway(baby.getRemoveWhenFarAway());
+                                if (sibling instanceof Ageable) {
+                                        Ageable ageable = (Ageable)sibling;
+                                        ageable.setBaby();
+                                }
+                                if (sibling instanceof Tameable) {
+                                        Tameable original = (Tameable)baby;
+                                        Tameable copy = (Tameable)sibling;
+                                        copy.setTamed(original.isTamed());
+                                        copy.setOwner(original.getOwner());
+                                }
+                                if (sibling instanceof Ocelot) {
+                                        Ocelot original = (Ocelot)baby;
+                                        Ocelot copy = (Ocelot)sibling;
+                                        copy.setCatType(original.getCatType());
+                                }
+                                if (sibling instanceof Colorable) {
+                                        Colorable original = (Colorable)baby;
+                                        Colorable copy = (Colorable)sibling;
+                                        copy.setColor(original.getColor());
+                                }
+                                if (sibling instanceof Horse) {
+                                        Horse original = (Horse)baby;
+                                        Horse copy = (Horse)sibling;
+                                        copy.setVariant(original.getVariant());
+                                        copy.setStyle(original.getStyle());
+                                        copy.setColor(original.getColor());
+                                }
+                        }
                 }
         }
 
@@ -268,14 +316,6 @@ public class WildlifeSkill extends AbstractSkill {
                         // Give bonus XP.
                         final int xp = event.getDroppedExp();
                         event.setDroppedExp(multiplyXp(player, xp));
-
-                        // Drop the head.
-                        if (Util.random.nextInt(1000) < getSkullDropPermil(player)) {
-                                ItemStack skull = Util.getMobHead(entity);
-                                if (skull != null) {
-                                        event.getDrops().add(skull);
-                                }
-                        }
                 }
         }
 
@@ -296,12 +336,19 @@ public class WildlifeSkill extends AbstractSkill {
 
                         // Set bonus hatches.
                         final int hatches = event.getNumHatches();
-                        event.setNumHatches((byte)(hatches + getBonusHatches(player)));
+                        int bonusHatches = getBonusHatches(player);
+                        if (bonusHatches > 0) bonusHatches = Util.random.nextInt(bonusHatches);
+                        event.setNumHatches((byte)(hatches + bonusHatches));
                 }
         }
 
         public int getBonusHatches(Player player) {
-                return getSkillLevel(player) / 75;
+                return Math.min(4, getSkillLevel(player) / 75);
+        }
+
+        @Override
+        protected int getSkullDropPermil(Player player) {
+                return Math.min(50, getSkillLevel(player) / 20);
         }
 
         // User output
@@ -312,7 +359,7 @@ public class WildlifeSkill extends AbstractSkill {
                 // Skull Drop
                 final int skullPermil = getSkullDropPermil(player);
                 if (skullPermil > 0) {
-                        result.add("Butchered animals drop their head " + Util.printPermilAsPercent(skullPermil) + "% of the time.");
+                        result.add("Bred animals drop their head " + Util.printPermilAsPercent(skullPermil) + "% of the time.");
                 }
 
                 // Taming XP bonus
@@ -321,9 +368,9 @@ public class WildlifeSkill extends AbstractSkill {
                 // Bonus hatches
                 final int bonusHatches = getBonusHatches(player);
                 if (bonusHatches > 1) {
-                        result.add("Eggs hatch " + getBonusHatches(player) + " bonus chickens");
+                        result.add("Breeding animals grants up to " + bonusHatches + " extra siblings");
                 } else if (bonusHatches == 1) {
-                        result.add("Eggs hatch 1 bonus chicken");
+                        result.add("Breeding animals sometimes grants an extra sibling");
                 }
                 return result;
         }
