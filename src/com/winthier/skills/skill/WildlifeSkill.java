@@ -216,14 +216,6 @@ public class WildlifeSkill extends AbstractSkill {
         public void onPlayerFish(PlayerFishEvent event) {
                 final Player player = event.getPlayer();
                 switch (event.getState()) {
-                case FISHING:
-                        if (plugin.perksEnabled) {
-                                final Fish fish = event.getHook();
-                                double biteChance = fish.getBiteChance();
-                                biteChance = (biteChance * getBiteChanceMultiplier(player)) / 100.0;
-                                fish.setBiteChance(biteChance);
-                        }
-                        break;
                 case CAUGHT_FISH:
                         // Give SP.
                         addSkillPoints(player, fishingSkillPoints.get());
@@ -308,10 +300,6 @@ public class WildlifeSkill extends AbstractSkill {
                 }
         }
 
-        public int getBiteChanceMultiplier(Player player) {
-                return 100 + getSkillLevel(player);
-        }
-
         public int getBonusHatches(Player player) {
                 return getSkillLevel(player) / 75;
         }
@@ -329,9 +317,6 @@ public class WildlifeSkill extends AbstractSkill {
 
                 // Taming XP bonus
                 result.add("Taming, fishing, breeding and shearing animals drops +" + (getXpMultiplier(player) - 100) + "% XP");
-
-                // Fishing bonus
-                result.add("Fish bite +" + (getBiteChanceMultiplier(player) - 100) + "% more likely");
 
                 // Bonus hatches
                 final int bonusHatches = getBonusHatches(player);
