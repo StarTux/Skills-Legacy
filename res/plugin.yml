@@ -7,10 +7,11 @@ depend:
 - Exploits
 - GriefPrevention
 - LibSQL
-- ProtocolLib
 - Vault
 - VoteRecord
 - WorldGuard
+softdepend:
+- ProtocolLib
 commands:
   Skill:
     aliases: [ Skills, sk ]
