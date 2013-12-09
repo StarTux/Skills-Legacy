@@ -71,7 +71,7 @@ public class EnchantingSkill extends AbstractSkill {
 
                 new BukkitRunnable() {
                         public void run() {
-                                final int xpLevel = Math.min(39, oldLevel - player.getLevel()) / 2;
+                                final int xpLevel = Math.min(39, oldLevel - player.getLevel());
                                 if (xpLevel > 0) onEnchant(player, mat, xpLevel);
                         }
                 }.runTask(plugin);
