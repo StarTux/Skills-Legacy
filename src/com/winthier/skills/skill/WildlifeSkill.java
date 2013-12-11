@@ -179,7 +179,7 @@ public class WildlifeSkill extends AbstractSkill {
                         // Spawn bonus entities
                         int bonusHatches = getBonusHatches(player);
                         for (int i = 0; i < bonusHatches; ++i) {
-                                if (Util.random.nextInt(i + 1) > 0) continue;
+                                if (Util.random.nextInt(i + 2) > 0) continue;
                                 LivingEntity sibling = (LivingEntity)baby.getWorld().spawnEntity(baby.getLocation(), baby.getType());
                                 if (sibling == null) break;
                                 sibling.setRemoveWhenFarAway(baby.getRemoveWhenFarAway());
@@ -338,7 +338,7 @@ public class WildlifeSkill extends AbstractSkill {
                         int hatches = event.getNumHatches();
                         int bonusHatches = getBonusHatches(player);
                         for (int i = 0; i < bonusHatches; ++i) {
-                                if (Util.random.nextInt(i + 1) == 0) hatches += 1;
+                                if (Util.random.nextInt(i + 2) == 0) hatches += 1;
                         }
                         event.setNumHatches((byte)(hatches));
                 }
