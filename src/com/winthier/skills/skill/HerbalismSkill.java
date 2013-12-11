@@ -255,6 +255,7 @@ public class HerbalismSkill extends AbstractSkill {
                 case 3: // Jungle
                         result = growBigTree(block, TreeType.JUNGLE);
                         if (!result) result = world.generateTree(loc, TreeType.SMALL_JUNGLE);
+                        break;
                 case 4: // Acacia
                         result = world.generateTree(loc, TreeType.ACACIA);
                         break;
