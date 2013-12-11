@@ -254,7 +254,7 @@ public class SpellManager implements Listener {
                 switch (spell.getElement()) {
                 case EARTH:
                         soundName = "dig.grass";
-                        particleName = "tilecrack_2_0";
+                        particleName = "blockcrack_2_0";
                         break;
                 case FIRE:
                         soundName = "mob.ghast.fireball";
@@ -266,7 +266,7 @@ public class SpellManager implements Listener {
                         break;
                 case AIR:
                         soundName = "random.bow";
-                        particleName = "tilecrack_18_0";
+                        particleName = "blockcrack_18_0";
                         break;
                 }
                 player.playSound(loc, soundName, 0.5f, 1.0f);

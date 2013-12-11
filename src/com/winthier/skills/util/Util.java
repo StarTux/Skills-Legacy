@@ -1,12 +1,12 @@
 package com.winthier.skills.util;
 
-// import com.comphenix.protocol.Packets;
-// import com.comphenix.protocol.ProtocolLibrary;
-// import com.comphenix.protocol.ProtocolManager;
-// import com.comphenix.protocol.events.PacketContainer;
-// import com.comphenix.protocol.utility.MinecraftReflection;
-// import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-// import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.utility.MinecraftReflection;
+import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.winthier.skills.SkillsPlugin;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
@@ -227,16 +227,16 @@ public class Util {
         }
 
         public static ItemStack addGlow(ItemStack item) {
-                // item = MinecraftReflection.getBukkitItemStack(item);
-                // NbtCompound compound = (NbtCompound)NbtFactory.fromItemTag(item);
-                // compound.put(NbtFactory.ofList("ench"));
+                item = MinecraftReflection.getBukkitItemStack(item);
+                NbtCompound compound = (NbtCompound)NbtFactory.fromItemTag(item);
+                compound.put(NbtFactory.ofList("ench"));
                 return item;
         }
 
         public static ItemStack removeGlow(ItemStack item) {
-                // item = MinecraftReflection.getBukkitItemStack(item);
-                // NbtCompound compound = (NbtCompound)NbtFactory.fromItemTag(item);
-                // compound.remove("ench");
+                item = MinecraftReflection.getBukkitItemStack(item);
+                NbtCompound compound = (NbtCompound)NbtFactory.fromItemTag(item);
+                compound.remove("ench");
                 return item;
         }
 
@@ -332,41 +332,29 @@ public class Util {
         }
 
         public static void playParticleEffect(Player player, Location location, String particleName, int count, float offset, float speed) {
-                // try {
-                //         final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-                //         PacketContainer packet = protocolManager.createPacket(63);
-                //         packet.getStrings().write(0, particleName);
-                //         // location
-                //         packet.getFloat().write(0, (float)location.getX());
-                //         packet.getFloat().write(1, (float)location.getY());
-                //         packet.getFloat().write(2, (float)location.getZ());
-                //         // offset
-                //         packet.getFloat().write(3, offset);
-                //         packet.getFloat().write(4, offset);
-                //         packet.getFloat().write(5, offset);
-                //         // speed
-                //         packet.getFloat().write(6, speed);
-                //         // count
-                //         packet.getIntegers().write(0, count);
-                //         protocolManager.sendServerPacket(player, packet);
-                // } catch (Throwable t) {
-                //         t.printStackTrace();
-                // }
+                try {
+                        final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+                        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.WORLD_PARTICLES);
+                        packet.getStrings().write(0, particleName);
+                        // location
+                        packet.getFloat().write(0, (float)location.getX());
+                        packet.getFloat().write(1, (float)location.getY());
+                        packet.getFloat().write(2, (float)location.getZ());
+                        // offset
+                        packet.getFloat().write(3, offset);
+                        packet.getFloat().write(4, offset);
+                        packet.getFloat().write(5, offset);
+                        // speed
+                        packet.getFloat().write(6, speed);
+                        // count
+                        packet.getIntegers().write(0, count);
+                        protocolManager.sendServerPacket(player, packet);
+                } catch (Throwable t) {
+                        t.printStackTrace();
+                }
         }
 
         public static boolean canBuild(Player player, Block block) {
-                // boolean result = true;
-
-                // try {
-                //         NCPExemptionManager.exemptPermanently(player);
-                //         BlockBreakEvent event = new BlockBreakEvent(block, player);
-                //         Bukkit.getServer().getPluginManager().callEvent(event);
-                //         if (event.isCancelled()) result = false;
-                // } finally {
-                //         NCPExemptionManager.unexempt(player);
-                // }
-
-                // return result;
                 final Location loc = block.getLocation();
                 if (!WGBukkit.getPlugin().canBuild(player, loc)) return false;
                 if (GriefPrevention.instance.allowBuild(player, loc) != null) return false;

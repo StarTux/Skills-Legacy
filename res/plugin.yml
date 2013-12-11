@@ -10,7 +10,6 @@ depend:
 - Vault
 - VoteRecord
 - WorldGuard
-softdepend:
 - ProtocolLib
 commands:
   Skill:
