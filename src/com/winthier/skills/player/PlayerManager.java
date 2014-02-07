@@ -77,6 +77,9 @@ public class PlayerManager implements Listener {
                 } else {
                         plugin.sqlManager.addSkillPoints(playerName, skillType, points);
                         plugin.sqlManager.updateTotalSkillLevel(playerName);
+                        // There isn't necessarily a levelup, but
+                        // voting once a day is good enough.
+                        plugin.sqlManager.updateLastLevelup(playerName, skillType);
                 }
         }
 }

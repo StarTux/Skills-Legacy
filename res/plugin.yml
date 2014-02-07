@@ -11,6 +11,7 @@ depend:
 - VoteRecord
 - WorldGuard
 - ProtocolLib
+- NoCheatPlus
 commands:
   Skill:
     aliases: [ Skills, sk ]

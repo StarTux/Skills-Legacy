@@ -99,4 +99,8 @@ public class SQLManager {
         public void updateAllTotalSkillLevels() {
                 connectionManager.queueRequest(new UpdateAllTotalLevelsRequest());
         }
+
+        public void updateLastLevelup(String player, SkillType skill) {
+                connectionManager.queueRequest(new UpdateLastLevelupRequest(player, skill));
+        }
 }
