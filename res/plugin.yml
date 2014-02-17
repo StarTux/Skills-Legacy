@@ -14,21 +14,21 @@ depend:
 - NoCheatPlus
 commands:
   Skill:
-    aliases: [ Skills, sk ]
+    aliases: [ skills, sk ]
     description: User interface for Skills.
     usage: /<command> [skilltype]
     permission: skills.skill
   Highscore:
-    aliases: [ High, HiScore, hi ]
+    aliases: [ hi ]
     usage: /<command> [skilltype]
     permission: skills.hi
   Element:
-    aliases: [ Elem ]
+    aliases: [ elem ]
     description: Choose your primary element
     usage: /<command> <element>
     permission: skills.element
   SkillConfig:
-    aliases: [ SkillsConfig, skc ]
+    aliases: [ skc ]
     description: Admin interface for Skills.
     usage: /<command> [skilltype]
     permission: skills.skillconfig
