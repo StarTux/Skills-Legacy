@@ -60,6 +60,11 @@ public class SkillsPlugin extends JavaPlugin {
                 // MagicWatchdog
                 magicWatchdog.onEnable();
 
+                // Trigger skill decay.
+                if (getConfig().getBoolean("SkillDecay")) {
+                        sqlManager.checkSkillDecay();
+                }
+
                 // Initialize all skills and load their configurations.
                 perksEnabled = getConfig().getBoolean("PerksEnabled");
                 switchElementCooldown = getConfig().getInt("SwitchElementCooldown");
@@ -80,11 +85,6 @@ public class SkillsPlugin extends JavaPlugin {
                 new ConfigCommand(this).onEnable();
                 new HighscoreCommand(this).onEnable();
                 new ElementCommand(this).onEnable();
-
-                // Trigger skill decay.
-                if (getConfig().getBoolean("SkillDecay")) {
-                        sqlManager.checkSkillDecay();
-                }
 
                 // Write config. Make sure that defauls are written to disk.
                 getConfig().options().copyDefaults(true);
