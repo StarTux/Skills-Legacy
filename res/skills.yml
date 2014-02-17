@@ -282,13 +282,13 @@ wildlife:
   sp:
     Fishing: 5
     breeding:
-      Chicken: 1/4
-      Sheep: 4
-      Cow: 4
-      Mushroom-Cow: 4
-      Pig: 4
+      Chicken: 1/6
+      Sheep: 3
+      Cow: 3
+      Mushroom-Cow: 3
+      Pig: 3
       Ocelot: 8
-      Wolf: 4
+      Wolf: 3
       Horse: 10
     taming:
       Horse: 10
