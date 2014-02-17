@@ -7,6 +7,7 @@ import com.winthier.skills.player.PlayerInfo;
 import com.winthier.skills.skill.AbstractSkill;
 import com.winthier.skills.skill.SkillType;
 import com.winthier.skills.spell.AbstractSpell;
+import java.util.Collection;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
@@ -92,8 +93,12 @@ public class SQLManager {
                 connectionManager.queueRequest(new AddSacrificeCountRequest(mat, count));
         }
 
-        public void updateTotalSkillLevel(String player) {
-                connectionManager.queueRequest(new UpdateTotalLevelRequest(player));
+        public void updateTotalSkillLevel(String... players) {
+                connectionManager.queueRequest(new UpdateTotalLevelRequest(players));
+        }
+
+        public void updateTotalSkillLevel(Collection<String> players) {
+                connectionManager.queueRequest(new UpdateTotalLevelRequest(players));
         }
 
         public void updateAllTotalSkillLevels() {
@@ -102,5 +107,13 @@ public class SQLManager {
 
         public void updateLastLevelup(String player, SkillType skill) {
                 connectionManager.queueRequest(new UpdateLastLevelupRequest(player, skill));
+        }
+
+        public void decaySkills(int days, double percentage) {
+                connectionManager.queueRequest(new SkillDecayRequest(plugin, days, percentage));
+        }
+
+        public void checkSkillDecay() {
+                connectionManager.queueRequest(new CheckSkillDecayRequest(plugin));
         }
 }

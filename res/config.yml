@@ -1,5 +1,6 @@
 sql: {}
 PerksEnabled: true
+SkillDecay: false
 SwitchElementCooldown: 60
 RewardFactor: 0.5
 ProficiencySpellCostFactor: 1/2

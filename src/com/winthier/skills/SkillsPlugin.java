@@ -81,6 +81,11 @@ public class SkillsPlugin extends JavaPlugin {
                 new HighscoreCommand(this).onEnable();
                 new ElementCommand(this).onEnable();
 
+                // Trigger skill decay.
+                if (getConfig().getBoolean("SkillDecay")) {
+                        sqlManager.checkSkillDecay();
+                }
+
                 // Write config. Make sure that defauls are written to disk.
                 getConfig().options().copyDefaults(true);
                 saveConfig();

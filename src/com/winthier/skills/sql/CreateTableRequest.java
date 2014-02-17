@@ -75,6 +75,15 @@ public class CreateTableRequest implements SQLRequest {
                 //           ") ENGINE=MyISAM");
                 // s.close();
 
+                s = c.createStatement();
+                s.execute(" CREATE TABLE IF NOT EXISTS `skills_dates` (" +
+                          " `name` VARCHAR(16) NOT NULL," +
+                          " `date` DATE NOT NULL," +
+                          " PRIMARY KEY(`name`)" +
+                          ") ENGINE=MyISAM");
+                s.close();
+                
+
                 // Create table for spell levels.
                 s = c.createStatement();
                 s.execute("CREATE TABLE IF NOT EXISTS `skills_spells` (" +

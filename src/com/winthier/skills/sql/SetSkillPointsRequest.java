@@ -21,8 +21,8 @@ public class SetSkillPointsRequest implements SQLRequest {
         public void execute(Connection c) throws SQLException {
                 PreparedStatement s;
                 s = c.prepareStatement("INSERT INTO `skills_sp`" +
-                                       " (`player`, `skill`, `points`)" +
-                                       " VALUES (?, ?, ?)" +
+                                       " (`player`, `skill`, `points`, `last_levelup`)" +
+                                       " VALUES (?, ?, ?, NOW())" +
                                        " ON DUPLICATE KEY" +
                                        " UPDATE `points` = ?");
                 s.setString(1, player);
