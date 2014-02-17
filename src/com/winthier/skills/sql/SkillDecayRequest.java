@@ -28,21 +28,33 @@ public class SkillDecayRequest implements SQLRequest {
                 PreparedStatement s;
                 // Fetch player list
                 s = c.prepareStatement(" SELECT `player`" +
-                                       " FROM `skills_sp`" +
-                                       " WHERE `last_levelup` < DATE_SUB(NOW(), INTERVAL ? DAY)" +
-                                       " GROUP BY `player`");
+                                       " FROM (" +
+                                       "  SELECT `player`, MAX(`last_levelup`) AS date" +
+                                       "  FROM `skills_sp`" +
+                                       "  GROUP BY `player`" +
+                                       " ) AS `tbl`" +
+                                       " WHERE `date` < DATE_SUB(NOW(), INTERVAL ? DAY)");
                 s.setInt(1, days);
                 ResultSet result = s.executeQuery();
                 while (result.next()) {
                         players.add(result.getString("player"));
                 }
                 s.close();
+                if (players.isEmpty()) {
+                        plugin.getLogger().info("Decayed 0 skills of 0 players.");
+                        return;
+                }
                 // Reduce skill points
-                s = c.prepareStatement(" UPDATE `skills_sp`" +
-                                       " SET `points` = FLOOR(? * `points`)" +
-                                       " WHERE `last_levelup` < DATE_SUB(NOW(), INTERVAL ? DAY)");
+                StringBuilder sb = new StringBuilder();
+                sb.append(" UPDATE `skills_sp`");
+                sb.append(" SET `points` = FLOOR(? * `points`)");
+                sb.append(" WHERE `player` IN (?");
+                for (int i = 1; i < players.size(); ++i) sb.append(", ?");
+                sb.append(")");
+                s = c.prepareStatement(sb.toString());
                 s.setDouble(1, percentage);
-                s.setInt(2, days);
+                int i = 2;
+                for (String player : players) s.setString(i++, player);
                 final int count = s.executeUpdate();
                 plugin.getLogger().info("Decayed " + count + " skills of " + players.size() + " players.");
                 // Update total skill levels
