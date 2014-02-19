@@ -61,8 +61,8 @@ public class SkillsPlugin extends JavaPlugin {
                 magicWatchdog.onEnable();
 
                 // Trigger skill decay.
-                if (getConfig().getBoolean("SkillDecay")) {
-                        sqlManager.checkSkillDecay();
+                if (getConfig().getBoolean("skillDecay.Enable")) {
+                        sqlManager.checkSkillDecay(getConfig().getInt("skillDecay.Days", 30), getConfig().getDouble("skillDecay.Percentage", 0.99));
                 }
 
                 // Initialize all skills and load their configurations.

@@ -11,9 +11,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class CheckSkillDecayRequest implements SQLRequest {
         private final SkillsPlugin plugin;
+        private final int days;
+        private final double percentage;
 
-        public CheckSkillDecayRequest(SkillsPlugin plugin) {
+        public CheckSkillDecayRequest(SkillsPlugin plugin, int days, double percentage) {
                 this.plugin = plugin;
+                this.days = days;
+                this.percentage = percentage;
         }
 
         @Override
@@ -42,7 +46,7 @@ public class CheckSkillDecayRequest implements SQLRequest {
                 // Trigger skill decay
                 new BukkitRunnable() {
                         public void run() {
-                                plugin.sqlManager.decaySkills(7, 0.99);
+                                plugin.sqlManager.decaySkills(days, percentage);
                         }
                 }.runTask(plugin);
         }

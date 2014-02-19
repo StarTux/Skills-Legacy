@@ -1,6 +1,9 @@
 sql: {}
 PerksEnabled: true
-SkillDecay: false
+skillDecay:
+  Enable: false
+  Days: 30
+  Percentage: 0.99
 SwitchElementCooldown: 60
 RewardFactor: 0.5
 ProficiencySpellCostFactor: 1/2

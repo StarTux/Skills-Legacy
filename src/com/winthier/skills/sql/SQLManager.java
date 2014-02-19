@@ -113,7 +113,7 @@ public class SQLManager {
                 connectionManager.queueRequest(new SkillDecayRequest(plugin, days, percentage));
         }
 
-        public void checkSkillDecay() {
-                connectionManager.queueRequest(new CheckSkillDecayRequest(plugin));
+        public void checkSkillDecay(int days, double percentage) {
+                connectionManager.queueRequest(new CheckSkillDecayRequest(plugin, days, percentage));
         }
 }
