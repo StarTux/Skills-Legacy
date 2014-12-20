@@ -93,40 +93,40 @@ public class TravelingSkill extends AbstractSkill {
                 info.setFarTravelLocation(to);
         }
 
-        /**
-         * Make sure that a launched ender pearl remembers its
-         * source location.
-         */
-        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-        public void onProjectileLaunch(ProjectileLaunchEvent event) {
-                final Entity entity = event.getEntity();
-                if (entity.getType() != EntityType.ENDER_PEARL) return;
+        // /**
+        //  * Make sure that a launched ender pearl remembers its
+        //  * source location.
+        //  */
+        // @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        // public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        //         final Entity entity = event.getEntity();
+        //         if (entity.getType() != EntityType.ENDER_PEARL) return;
 
-                Util.storeSourceLocation(plugin, entity, entity.getLocation());
-        }
+        //         Util.storeSourceLocation(plugin, entity, entity.getLocation());
+        // }
 
-        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-        public void onProjectileHit(ProjectileHitEvent event) {
-                final Projectile projectile = event.getEntity();
-                if (projectile.getType() != EntityType.ENDER_PEARL) return;
+        // @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        // public void onProjectileHit(ProjectileHitEvent event) {
+        //         final Projectile projectile = event.getEntity();
+        //         if (projectile.getType() != EntityType.ENDER_PEARL) return;
 
-                final LivingEntity shooter = projectile.getShooter();
-                if (!(shooter instanceof Player)) return;
-                final Player player = (Player)shooter;
+        //         final LivingEntity shooter = projectile.getShooter();
+        //         if (!(shooter instanceof Player)) return;
+        //         final Player player = (Player)shooter;
 
-                if (!player.isValid()) return;
-                if (player.isFlying()) return;
-                if (player.isSleeping()) return;
-                if (player.isDead()) return;
-                if (player.isInsideVehicle()) return;
+        //         if (!player.isValid()) return;
+        //         if (player.isFlying()) return;
+        //         if (player.isSleeping()) return;
+        //         if (player.isDead()) return;
+        //         if (player.isInsideVehicle()) return;
 
-                final int distance = Math.min(128, Util.horizontalSourceDistance(plugin, projectile, player.getLocation()));
-                if (distance <= 0) return;
+        //         final int distance = Math.min(128, Util.horizontalSourceDistance(plugin, projectile, player.getLocation()));
+        //         if (distance <= 0) return;
 
-                // Give SP.
-                int skillPoints = Util.rollFraction(pearlingSkillPoints, distance, pearlingNormDistance);
-                addSkillPoints(player, skillPoints);
-        }
+        //         // Give SP.
+        //         int skillPoints = Util.rollFraction(pearlingSkillPoints, distance, pearlingNormDistance);
+        //         addSkillPoints(player, skillPoints);
+        // }
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerRespawn(PlayerRespawnEvent event) {

@@ -42,6 +42,7 @@ public class HerbalismSkill extends AbstractSkill {
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onStructureGrow(StructureGrowEvent event) {
+                if (!isFullyGrown(event.getLocation().getBlock())) return;
                 final Player player = event.getPlayer();
                 if (player == null) return;
                 onTreeGrow(player, event.getSpecies());
@@ -107,7 +108,7 @@ public class HerbalismSkill extends AbstractSkill {
                 // Give insta grow chance.
                 if (plugin.perksEnabled && Util.random.nextInt(100) < getInstantBonemealChance(player)) {
                         if (setFullyGrown(block, player)) {
-                                addSkillPoints(player, skillPoints);
+                                //addSkillPoints(player, skillPoints);
                                 int amount = item.getAmount() - 1;
                                 if (amount > 0) {
                                         item.setAmount(amount);
@@ -167,6 +168,7 @@ public class HerbalismSkill extends AbstractSkill {
                 case SAPLING:
                         return false;
                 case LOG:
+                case LOG_2:
                 case LEAVES:
                 case SUGAR_CANE_BLOCK:
                 case PUMPKIN:

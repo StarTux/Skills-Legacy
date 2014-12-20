@@ -208,7 +208,7 @@ herbalism:
       Sugar-Cane-Block: 1/8
       Red-Rose: 1/2
       Yellow-Flower: 1/2
-      Water-Lily: 1
+      #Water-Lily: 1
       Brown-Mushroom: 1/2
       Red-Mushroom: 1/2
     structures:
@@ -247,7 +247,7 @@ herbalism:
       Sugar-Cane-Block: 1/8
       Red-Rose: 1/2
       Yellow-Flower: 1/2
-      Water-Lily: 1
+      #Water-Lily: 1
       Brown-Mushroom: 1/2
       Red-Mushroom: 1/2
     structures:
@@ -270,7 +270,7 @@ traveling:
   RidingSkillPoints: 4
 
   PearlingNormDistance: 16
-  PearlingSkillPoints: 1
+  PearlingSkillPoints: 0
 
   FarTravelDistance: 64
 
